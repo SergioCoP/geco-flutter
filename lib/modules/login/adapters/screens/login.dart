@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/kernel/validations/validations_app.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -17,7 +19,7 @@ class _Login extends State<Login> {
         body: Column(
       children: <Widget>[
         Container(
-            child: Container(
+          child: Container(
           alignment: Alignment.center,
           height: 150,
           color: ColorsApp.primaryColor,
@@ -57,10 +59,12 @@ class _FormCardState extends State<_FormCard> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isButtonDisabled = true;
+  bool passVisible = true;
 
   final TextEditingController _email = TextEditingController(text: '');
 
   final TextEditingController _password = TextEditingController(text: '');
+  final dio = Dio();
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +80,11 @@ class _FormCardState extends State<_FormCard> {
               children: [
                 Form(
                     key: _formKey,
-                    onChanged: () {},
+                    onChanged: () {
+                      setState(() {
+                        _isButtonDisabled = !_formKey.currentState!.validate();
+                      });
+                    },
                     child: Column(children: <Container>[
                       Container(
                           margin: const EdgeInsets.all(10),
@@ -101,6 +109,14 @@ class _FormCardState extends State<_FormCard> {
                                         borderRadius:
                                             BorderRadius.circular(15)),
                                   ),
+                                  validator: (val){
+                                    RegExp regex = RegExp(ValidationsApp.email);
+                                    if(val!.isEmpty ){
+                                      return 'Campo obligatorio';
+                                    }else if(!regex.hasMatch(val)){
+                                      return 'Correo invalido';
+                                    }
+                                  },
                                   keyboardType: TextInputType.emailAddress,
                                   controller: _email,
                                 ),
@@ -120,11 +136,29 @@ class _FormCardState extends State<_FormCard> {
                               Container(
                                 margin: const EdgeInsets.all(10),
                                 child: TextFormField(
+                                  obscureText: passVisible,
                                   decoration: InputDecoration(
                                     border: OutlineInputBorder(
                                         borderRadius:
                                             BorderRadius.circular(15)),
+                                            suffixIcon: IconButton(
+                                              icon: Icon(
+                                                passVisible ? Icons.visibility
+                                                : Icons.visibility_off),
+                                                onPressed: (){
+                                                  setState(() {
+                                                    passVisible = !passVisible;
+                                                  });
+                                                },
+                                            ),
+                                            
                                   ),
+                                  
+                                  validator: (val){
+                                    if(val!.isEmpty){
+                                      return 'Campo obligatorio';
+                                    }
+                                  },
                                   keyboardType: TextInputType.text,
                                   controller: _password,
                                 ),
@@ -161,7 +195,13 @@ class _FormCardState extends State<_FormCard> {
                                       minimumSize: const Size(400, 60),
                                       backgroundColor:
                                           ColorsApp.secondaryColor),
-                                  onPressed: () {},
+                                  onPressed: _isButtonDisabled ? null : () async{
+                                    Response response;
+                                    response = await dio.get('http://192.168.52.240:8080/registerUser');
+    
+                                    Navigator.of(context)
+                                        .pushNamed('/controlPanel');
+                                  },
                                   child: const Text('Iniciar'),
                                 ),
                               )
