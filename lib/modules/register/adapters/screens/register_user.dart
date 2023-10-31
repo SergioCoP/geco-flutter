@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 
@@ -13,7 +14,7 @@ class RegisterUser extends StatelessWidget {
   final TextEditingController _correo = TextEditingController(text: '');
   final TextEditingController _contrasena = TextEditingController(text: '');
   final TextEditingController _confcontrasena = TextEditingController(text: '');
-
+  final dio = Dio();
   RegisterUser({super.key});
   @override
   Widget build(BuildContext context) {
