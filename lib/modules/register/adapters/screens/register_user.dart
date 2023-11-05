@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/kernel/validations/validations_app.dart';
 
 class RegisterUser extends StatefulWidget {
   const RegisterUser({super.key});
@@ -136,8 +137,11 @@ class _RegisterUser extends State<RegisterUser> {
                                 keyboardType: TextInputType.emailAddress,
                                 controller: _correo,
                                 validator: (val) {
+                                  RegExp regex = RegExp(ValidationsApp.email);
                                   if (val!.isEmpty) {
                                     return 'Campo obligatorio';
+                                  } else if (!regex.hasMatch(val)) {
+                                    return 'Correo invalido';
                                   }
                                 },
                               ),
