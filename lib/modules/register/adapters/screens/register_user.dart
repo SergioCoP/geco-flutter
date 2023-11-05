@@ -84,6 +84,11 @@ class _RegisterUser extends State<RegisterUser> {
                                     )),
                                 keyboardType: TextInputType.text,
                                 controller: _nombre,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
                             ),
                             Container(
@@ -96,6 +101,11 @@ class _RegisterUser extends State<RegisterUser> {
                                     )),
                                 keyboardType: TextInputType.text,
                                 controller: _aPaterno,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
                             ),
                             Container(
@@ -108,6 +118,11 @@ class _RegisterUser extends State<RegisterUser> {
                                     )),
                                 keyboardType: TextInputType.text,
                                 controller: _aMaterno,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
                             ),
                             Container(
@@ -120,6 +135,11 @@ class _RegisterUser extends State<RegisterUser> {
                                     )),
                                 keyboardType: TextInputType.emailAddress,
                                 controller: _correo,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
                             ),
                             Container(
@@ -132,6 +152,11 @@ class _RegisterUser extends State<RegisterUser> {
                                     )),
                                 keyboardType: TextInputType.text,
                                 controller: _contrasena,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
                             ),
                             Container(
@@ -144,6 +169,13 @@ class _RegisterUser extends State<RegisterUser> {
                                     )),
                                 keyboardType: TextInputType.text,
                                 controller: _confcontrasena,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  } else if (val != _contrasena.text) {
+                                    return 'Las contraseñas no coinciden';
+                                  }
+                                },
                               ),
                             ),
                             Container(
@@ -166,7 +198,7 @@ class _RegisterUser extends State<RegisterUser> {
                                                 Response response;
                                                 try {
                                                   response = await dio.request(
-                                                      'http://192.168.32.1:8080/registerUser',
+                                                      'http://192.168.0.163:8080/registerUser',
                                                       data: {
                                                         'email': _correo.text,
                                                         'password':
@@ -181,7 +213,7 @@ class _RegisterUser extends State<RegisterUser> {
                                                       },
                                                       options: Options(
                                                           method: 'POST'));
-
+                                                  print(response);
                                                   if (response.data ==
                                                       'register') {
                                                     print('Registrado');
