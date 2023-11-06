@@ -57,11 +57,11 @@ class ControlPanel extends StatelessWidget{
                             shape:
                               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                               child:  Container(
-                              margin: const EdgeInsets.only(right: 40,top: 10,left: 10,bottom: 10),
+                              margin: const EdgeInsets.only(right: 30,top: 10,left: 10,bottom: 10),
                                 child:  Row(
                                     children: [
                                        Container(
-                                        margin: const EdgeInsets.only(right: 30,top: 5,bottom: 5),
+                                        margin: const EdgeInsets.only(right: 20,top: 5,bottom: 5),
                                         child: const Text('En renta',style: TextStyle(fontWeight: FontWeight.bold),)) ,
                                        Container(
                                         margin: const EdgeInsets.only(left: 10,top: 5,bottom: 5),
@@ -76,7 +76,8 @@ class ControlPanel extends StatelessWidget{
                     )
                   ]),
               ),
-            )
+            ),
+            
           ],
         ),
     );

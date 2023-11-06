@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/kernel/toasts/toasts.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
 
 class Login extends StatefulWidget {
@@ -95,7 +97,7 @@ class _FormCardState extends State<_FormCard> {
                                 Container(
                                   margin: const EdgeInsets.only(top: 10),
                                   child: const Text(
-                                    "Usuario",
+                                    "Correo",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 22,
@@ -203,7 +205,7 @@ class _FormCardState extends State<_FormCard> {
                                             Response response;
                                             try {
                                               response = await dio.request(
-                                                  'http://192.168.32.1:8080/login',
+                                                  'http://192.168.52.240:8080/login',
                                                   queryParameters: {
                                                     "email": _email.text,
                                                     "password": _password.text
@@ -212,10 +214,10 @@ class _FormCardState extends State<_FormCard> {
                                                       Options(method: 'GET'));
 
                                               if (response.data) {
-                                                Navigator.of(context)
-                                                    .pushNamed('/controlPanel');
+                                              Toasts.showSuccessToast('Bienvenido');
+                                                Navigator.of(context).pushNamed('/controlPanel');
                                               } else {
-                                                print('No login');
+                                                   Toasts.showWarningToast('Contraseña o correo incorrectos');
                                               }
                                             } catch (e) {
                                               print(e);
