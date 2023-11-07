@@ -1,6 +1,9 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/widgets/user_card.dart';
+import 'package:geco_mobile/modules/user/entities/person.dart';
+import 'package:geco_mobile/modules/user/entities/user.dart';
 
 class UserManagement extends StatefulWidget {
   const UserManagement({super.key});
@@ -10,77 +13,46 @@ class UserManagement extends StatefulWidget {
 }
 
 class _UserManagementState extends State<UserManagement> {
-  final double heightOfFirstContainer = 150.0;
-  final double brCards = 40.0;
+  final double heightOfFirstContainer = 200.0;
+  final double brCards = 50.0;
+  final path = 'http://192.168.1.75:8080';
+  Future<List<User>>? _listUsuarios;
 
-  List<Map> usersData = [
-    {
-      'idUser': 1,
-      'status': 1,
-      'idPerson': {
-        'name': 'Alberto',
-        'lastname': 'Quiñonez',
-        'surname': 'Bahena'
+  Future<List<User>> obtenerUsuariosFetch() async {
+    List<User> usuarios = [];
+    final dio = Dio();
+    final response = await dio.get('$path/getUsers');
+    if (response.statusCode == 200) {
+      for (var user in response.data) {
+        usuarios.add(User(
+            user["idUser"],
+            user["status"],
+            Person(user["idPerson"]["name"], user["idPerson"]["lastname"],
+                user["idPerson"]["surname"])));
       }
-    },
-    {
-      'idUser': 1,
-      'status': 0,
-      'idPerson': {'name': 'Sergio', 'lastname': 'Montes', 'surname': 'De Oca'}
-    },
-  ];
-  List<Map> filteredUsersData = [];
+      return usuarios;
+    } else {
+      throw Exception("Fallà la peticiòn");
+    }
+  }
 
-  List<Widget> cardList = [];
+  List<Widget> crearCards(List<User> data) {
+    List<UserCard> userCards = [];
+    for (var user in data) {
+      userCards.add(UserCard(user: user));
+    }
+    return userCards;
+  }
 
   @override
   void initState() {
     super.initState();
-    filteredUsersData = List.from(usersData);
-    for (var user in filteredUsersData) {
-      final status = user['status'] > 0 ? true : false;
-      var name = user['idPerson']['name'];
-      var lastname = user['idPerson']['lastname'];
-      var surname = user['idPerson']['surname'];
-      var fullName = '$name $lastname $surname';
-      UserCard card =
-          UserCard(name: fullName, uid: user['idUser'], isActive: status);
-      cardList.add(card);
-    }
+    _listUsuarios = obtenerUsuariosFetch();
   }
 
   void filtrarUsuario(String query) {
     query = query.toLowerCase();
-    setState(() {
-      try {
-        List<Map> usersTemp = [];
-        List<Widget> cardTemp = [];
-        for (var user in usersData) {
-          var name = user['idPerson']['name'];
-          var lastname = user['idPerson']['lastname'];
-          var surname = user['idPerson']['surname'];
-          var fullName = '$name $lastname $surname';
-          if (fullName.toString().toLowerCase().contains(query)) {
-            usersTemp.add(user);
-          }
-        }
-        filteredUsersData = List.from(usersTemp);
 
-        for (var user in filteredUsersData) {
-          final status = user['status'] > 0 ? true : false;
-          var name = user['idPerson']['name'];
-          var lastname = user['idPerson']['lastname'];
-          var surname = user['idPerson']['surname'];
-          var fullName = '$name $lastname $surname';
-          UserCard card =
-              UserCard(name: fullName, uid: user['idUser'], isActive: status);
-          cardTemp.add(card);
-        }
-        cardList = List.from(cardTemp);
-      } catch (e) {
-        print(e);
-      }
-    });
   }
 
   @override
@@ -91,18 +63,30 @@ class _UserManagementState extends State<UserManagement> {
       ),
       body: Stack(
         children: [
-          //Aqui van todas las cards
           Scaffold(
-              body: Container(
-            margin: const EdgeInsets.only(
-              top: 120,
+            body: Container(
+              margin: const EdgeInsets.only(
+                top: 140,
+              ),
+              child: FutureBuilder(
+                future: _listUsuarios,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasData) {
+                    return GridView.count(
+                      mainAxisSpacing: 2,
+                      crossAxisCount: 2,
+                      children: crearCards(snapshot.data),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Text("Ha sucedido un error maquiavelico.");
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             ),
-            child: GridView.count(
-              mainAxisSpacing: 5,
-              crossAxisCount: 2,
-              children: cardList,
-            ),
-          )),
+          ),
 
           //Aqui va para registrar un usuario, buscar usuarios
           Positioned(
@@ -129,10 +113,11 @@ class _UserManagementState extends State<UserManagement> {
                         margin: const EdgeInsets.only(right: 12),
                         padding: const EdgeInsets.all(8),
                         child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorsApp.buttonPrimaryColor,
-                          ),
-                            onPressed: () {}, child: const Icon(Icons.add)),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorsApp.buttonPrimaryColor,
+                            ),
+                            onPressed: () {},
+                            child: const Icon(Icons.add)),
                       ),
                     ],
                   ),
@@ -158,43 +143,6 @@ class _UserManagementState extends State<UserManagement> {
   }
 }
 
-/**
-  List usersData = [
-    {'idUser':1,'status':1,'idPerson':{'name':'Alberto','lastname':'Quiñonez','surname':'Bahena'}},
-  ];
-  List filteredUsersData = [];
-  List<Widget> cardList = [];
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   fetchData();
-  // }
-
-  // Future<void> fetchData() async {
-  //   try {
-  //     const path = 'http://192.168.1.73:8080';
-  //     final dio = Dio();
-  //     final response = await dio.get('$path/getUsers');
-  //     if (response.data != null) {
-  //       setState(() {
-  //         usersData = response.data;
-  //         filteredUsersData = usersData;
-  //         for (var user in usersData) {
-  //           final status = user['status'] > 0 ? true : false;
-  //           var fullName =
-  //               '$user["idPerson"]["name"] $user["idPerson"]["surname"] $user["idPerson"]["lastname"]';
-  //           UserCard card =
-  //               UserCard(name: fullName, uid: user['idUser'], isActive: status);
-  //           cardList.add(card);
-  //           print(cardList);
-  //         }
-  //       });
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 class IsEmpty extends StatelessWidget {
   const IsEmpty({super.key});
 
@@ -203,5 +151,3 @@ class IsEmpty extends StatelessWidget {
     return const Text('No hay ningun usuario registrado Actualmente :)');
   }
 }
-
- */

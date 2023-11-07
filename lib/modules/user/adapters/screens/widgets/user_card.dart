@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/user/entities/user.dart';
 
 class UserCard extends StatefulWidget {
-  final String name;
-  final int uid;
-  final bool isActive;
+  final User user;
 
-  const UserCard(
-      {super.key,
-      required this.name,
-      required this.uid,
-      required this.isActive});
+  const UserCard({super.key, required this.user});
 
   @override
   State<UserCard> createState() => _UserCardState();
@@ -20,7 +15,7 @@ class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 3.0,
+      elevation: 5.0,
       shadowColor: const Color.fromARGB(118, 0, 0, 0),
       shape: const RoundedRectangleBorder(
         side: BorderSide(
@@ -29,33 +24,33 @@ class _UserCardState extends State<UserCard> {
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
       child: SizedBox(
-        height: 300,
         child: Column(
           children: <Widget>[
+            //Qui está el idUser del usuario
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(5.0),
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.isActive
+                  backgroundColor: widget.user.status! == 1
                       ? ColorsApp.buttonPrimaryColor
                       : ColorsApp.buttonCancelColor,
                 ),
                 child: Text(
-                  '# ${widget.uid}',
+                  '# ${widget.user.idUser}',
                   style: const TextStyle(fontSize: 15),
                 ),
               ),
             ),
             //Aqui està el nombre de usuario
             Container(
-              height: 90,
-              padding: const EdgeInsets.all(5),
+              height: 80,
+              padding: const EdgeInsets.all(7),
               child: Text(
-                widget.name,
+                '${widget.user.person!.name} ${widget.user.person!.lastname} ${widget.user.person!.surname}',
                 textAlign: TextAlign.center,
                 style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
               ),
             ),
             Container(
@@ -65,53 +60,44 @@ class _UserCardState extends State<UserCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
+                  Container( //Bton de info
                     margin: const EdgeInsets.all(1),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/user/showUser',
-                          arguments: {'data': widget.uid},
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorsApp.infoColor,
-                      ),
+                    child: MaterialButton(
+                      onPressed: () {},
+                      minWidth: 50.0,
+                      color: ColorsApp.infoColor,
                       child: const Icon(Icons.edit_document),
                     ),
                   ),
-                  Container(
+                  Container( //Bton de cambiar estado
                     margin: const EdgeInsets.all(1),
-                    child: ElevatedButton(
+                    child: MaterialButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          'user/changeStatusUser',
-                          arguments: {'data': widget.uid},
-                        );
+                        //  Navigator.pushNamed(
+                        //       context,
+                        //       'user/changeStatusUser',
+                        //       arguments: {'data': widget.user.idUser},
+                        //     );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: widget.isActive
-                            ? ColorsApp.buttonCancelColor
-                            : ColorsApp.buttonPrimaryColor,
-                      ),
+                      minWidth: 50.0,
+                      color: widget.user.status! > 0
+                          ? ColorsApp.buttonCancelColor
+                          : ColorsApp.buttonPrimaryColor,
                       child: const Icon(Icons.swap_horizontal_circle),
                     ),
                   ),
                   Container(
                     margin: const EdgeInsets.all(1),
-                    child: ElevatedButton(
+                    child: MaterialButton(
                       onPressed: () {
-                        Navigator.pushNamed(
-                          context,
-                          '/updateUser',
-                          arguments: {'data': widget.uid},
-                        );
+                        // Navigator.pushNamed(
+                        //   context,
+                        //   '/updateUser',
+                        //   arguments: {'data': widget.user.idUser},
+                        // );
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorsApp.infoColor,
-                      ),
+                      minWidth: 50.0,
+                      color: ColorsApp.infoColor,
                       child: const Icon(Icons.edit),
                     ),
                   ),
