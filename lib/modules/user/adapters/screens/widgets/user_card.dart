@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/user/adapters/screens/user_management.dart';
 import 'package:geco_mobile/modules/user/entities/user.dart';
 
 class UserCard extends StatefulWidget {
@@ -73,11 +74,7 @@ class _UserCardState extends State<UserCard> {
                     margin: const EdgeInsets.all(1),
                     child: MaterialButton(
                       onPressed: () {
-                        //  Navigator.pushNamed(
-                        //       context,
-                        //       'user/changeStatusUser',
-                        //       arguments: {'data': widget.user.idUser},
-                        //     );
+                        cambiarEstadoUser(context, widget.user);
                       },
                       minWidth: 50.0,
                       color: widget.user.status! > 0

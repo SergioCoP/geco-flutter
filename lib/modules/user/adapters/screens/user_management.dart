@@ -17,6 +17,7 @@ class _UserManagementState extends State<UserManagement> {
   final double brCards = 50.0;
   final path = 'http://192.168.1.75:8080';
   Future<List<User>>? _listUsuarios;
+  Future<List<User>>? _listUsuariosRespaldo;
 
   Future<List<User>> obtenerUsuariosFetch() async {
     List<User> usuarios = [];
@@ -48,11 +49,28 @@ class _UserManagementState extends State<UserManagement> {
   void initState() {
     super.initState();
     _listUsuarios = obtenerUsuariosFetch();
+    _listUsuariosRespaldo = _listUsuarios;
   }
 
   void filtrarUsuario(String query) {
     query = query.toLowerCase();
-
+    List<User> usuariosFiltrados = [];
+    if (query.isEmpty) {
+      _listUsuarios = _listUsuariosRespaldo;
+    }
+    if (_listUsuarios != null) {
+      _listUsuarios!.then((usuarios) {
+        usuariosFiltrados = usuarios.where((user) {
+          final fullName =
+              "${user.person?.name} ${user.person?.lastname} ${user.person?.surname}"
+                  .toLowerCase();
+          return fullName.contains(query);
+        }).toList();
+        setState(() {
+          _listUsuarios = Future.value(usuariosFiltrados);
+        });
+      });
+    }
   }
 
   @override
@@ -77,6 +95,8 @@ class _UserManagementState extends State<UserManagement> {
                       crossAxisCount: 2,
                       children: crearCards(snapshot.data),
                     );
+                  } else if (!snapshot.hasData) {
+                    return const IsEmpty();
                   } else if (snapshot.hasError) {
                     return const Text("Ha sucedido un error maquiavelico.");
                   }
@@ -128,8 +148,8 @@ class _UserManagementState extends State<UserManagement> {
                         filtrarUsuario(text.toString());
                       },
                       decoration: const InputDecoration(
-                        labelText: 'Buscar',
-                        hintText: 'Escribe aquí para buscar',
+                        labelText: 'Buscar usuario',
+                        hintText: 'Escribe aquí para buscar a un usuario',
                       ),
                     ),
                   ),
@@ -148,6 +168,35 @@ class IsEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text('No hay ningun usuario registrado Actualmente :)');
+    return const Center(
+        child: Text('No hay ningun usuario registrado Actualmente :)'));
   }
+}
+
+cambiarEstadoUser(context, User user) {
+  showDialog(
+    context: context,
+    builder: (_) => AlertDialog(
+      title: const Text("Dar de baja a un usuario"),
+      content: Text(
+          '¿Está seguro de cambiar de activo a desactivado al usuario ${user.person!.name} ?'),
+      actions: [
+        MaterialButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          color: ColorsApp.buttonPrimaryColor,
+          child: const Text('Cancelar'),
+        ),
+        MaterialButton(
+          onPressed: () {
+            print(user.person!.name);
+            Navigator.pop(context);
+          },
+          color: ColorsApp.buttonCancelColor,
+          child: const Text('Dar de baja', style: TextStyle(color: Colors.white),),
+        )
+      ],
+    ),
+  );
 }
