@@ -15,14 +15,14 @@ class UserManagement extends StatefulWidget {
 class _UserManagementState extends State<UserManagement> {
   final double heightOfFirstContainer = 200.0;
   final double brCards = 50.0;
-  final path = 'http://192.168.1.75:8080';
+  final path = 'http://192.168.109.117:8080';
   Future<List<User>>? _listUsuarios;
   Future<List<User>>? _listUsuariosRespaldo;
 
   Future<List<User>> obtenerUsuariosFetch() async {
     List<User> usuarios = [];
     final dio = Dio();
-    final response = await dio.get('$path/getUsers');
+    final response = await dio.get('$path/user/getUsers');
     if (response.statusCode == 200) {
       for (var user in response.data) {
         usuarios.add(User(
@@ -136,7 +136,9 @@ class _UserManagementState extends State<UserManagement> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: ColorsApp.buttonPrimaryColor,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).pushNamed('/users/register');
+                            },
                             child: const Icon(Icons.add)),
                       ),
                     ],
@@ -194,9 +196,13 @@ cambiarEstadoUser(context, User user) {
             Navigator.pop(context);
           },
           color: ColorsApp.buttonCancelColor,
-          child: const Text('Dar de baja', style: TextStyle(color: Colors.white),),
+          child: const Text(
+            'Dar de baja',
+            style: TextStyle(color: Colors.white),
+          ),
         )
       ],
     ),
   );
 }
+

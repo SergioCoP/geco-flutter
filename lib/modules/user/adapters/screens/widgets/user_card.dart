@@ -16,7 +16,7 @@ class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 5.0,
+      elevation: 2.0,
       shadowColor: const Color.fromARGB(118, 0, 0, 0),
       shape: const RoundedRectangleBorder(
         side: BorderSide(
@@ -87,11 +87,7 @@ class _UserCardState extends State<UserCard> {
                     margin: const EdgeInsets.all(1),
                     child: MaterialButton(
                       onPressed: () {
-                        // Navigator.pushNamed(
-                        //   context,
-                        //   '/updateUser',
-                        //   arguments: {'data': widget.user.idUser},
-                        // );
+                        Navigator.of(context).pushNamed('/users/update');
                       },
                       minWidth: 50.0,
                       color: ColorsApp.infoColor,

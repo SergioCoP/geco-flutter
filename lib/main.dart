@@ -3,6 +3,8 @@ import 'package:geco_mobile/kernel/widgets/splash/splash.dart';
 import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
 import 'package:geco_mobile/modules/register/adapters/screens/register_user.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/user_management.dart';
+import 'package:geco_mobile/modules/user/adapters/screens/user_register.dart';
+import 'package:geco_mobile/modules/user/adapters/screens/user_update.dart';
 
 void main() {
   runApp(const MainApp());
@@ -22,6 +24,8 @@ class MainApp extends StatelessWidget {
       '/login': (context) => const Login(),
       '/registerUser': (context) =>  RegisterUser(),
       '/users': (context) => const UserManagement(),
+      '/users/register': (context) => const UserRegister(),
+      '/users/update': (context) => const UserUpdate(),
      },
     );
   }
