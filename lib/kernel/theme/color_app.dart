@@ -7,4 +7,10 @@ class ColorsApp{
   static const infoColor = Color(0xFF6085BB);
   static const buttonCancelColor = Color(0xFFA33F3F);
   static const buttonPrimaryColor = Color(0xFF589F56);
+
+  static const estadoEnVenta = Color(0xFFC3EDC2 );
+  static const estadoEnUso = Color(0xFFD9D9D9);
+  static const estadoSinRevisar = Color(0xFFCDDEF6);
+  static const estadoConIncidencias = Color(0xFFFFF2C5);
+  static const estadoSucio  = Color(0xFFC3EDC2);
 }
