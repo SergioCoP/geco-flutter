@@ -15,29 +15,30 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     //Image.asset('assets/images/geco_logo.png',width: 150,height: 150,),
     return Scaffold(
         body: Column(
       children: <Widget>[
+        // ignore: avoid_unnecessary_containers
         Container(
-            child: Container(
-          alignment: Alignment.center,
-          height: 150,
-          color: ColorsApp.primaryColor,
           child: Container(
             alignment: Alignment.center,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: SizedBox.fromSize(
-                size: const Size.fromRadius(48),
-                child: Image.asset(
-                  'assets/images/geco_logo.png',
+            height: 150,
+            color: ColorsApp.primaryColor,
+            child: Container(
+              alignment: Alignment.center,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: SizedBox.fromSize(
+                  size: const Size.fromRadius(48),
+                  child: Image.asset(
+                    'assets/images/geco_logo.png',
+                  ),
                 ),
               ),
             ),
           ),
-        )),
+        ),
         Expanded(
           child: Container(
               alignment: Alignment.center,
@@ -60,6 +61,7 @@ class _FormCard extends StatefulWidget {
 class _FormCardState extends State<_FormCard> {
   final _formKey = GlobalKey<FormState>();
 
+  // ignore: unused_field, prefer_final_fields
   bool _isButtonDisabled = true;
   bool passVisible = true;
 
@@ -70,6 +72,7 @@ class _FormCardState extends State<_FormCard> {
 
   @override
   Widget build(BuildContext context) {
+
     // TODO: implement build
     return SingleChildScrollView(
       child: Column(

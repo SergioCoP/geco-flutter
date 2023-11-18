@@ -4,6 +4,7 @@ import 'package:geco_mobile/kernel/widgets/splash/splash.dart';
 import 'package:geco_mobile/modules/controlpanel/adapters/screens/control_panel.dart';
 import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
 import 'package:geco_mobile/modules/register/adapters/screens/register_user.dart';
+import 'package:geco_mobile/modules/user/adapters/screens/user_management.dart';
 
 void main() {
   runApp(const MainApp());
@@ -23,7 +24,8 @@ class MainApp extends StatelessWidget {
       '/': (context) => const Splash(legend: 'Cargando...'),
       '/login': (context) => const Login(),
       '/registerUser': (context) =>  RegisterUser(),
-      '/controlPanel': (context) =>  const ControlPanel()
+      '/controlPanel': (context) =>  const ControlPanel(),
+      '/users': (context) => const UserManagement()
      },
     );
   }
