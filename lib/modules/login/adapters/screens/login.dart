@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -72,7 +74,6 @@ class _FormCardState extends State<_FormCard> {
 
   @override
   Widget build(BuildContext context) {
-
     // TODO: implement build
     return SingleChildScrollView(
       child: Column(
@@ -208,19 +209,23 @@ class _FormCardState extends State<_FormCard> {
                                             Response response;
                                             try {
                                               response = await dio.request(
-                                                  'http://192.168.52.240:8080/login',
+                                                  'http://192.168.0.163:8080/user/login',
                                                   queryParameters: {
                                                     "email": _email.text,
                                                     "password": _password.text
                                                   },
                                                   options:
                                                       Options(method: 'GET'));
-
-                                              if (response.data) {
-                                              Toasts.showSuccessToast('Bienvenido');
-                                                Navigator.of(context).pushNamed('/controlPanel');
+                                              print(response.data['msg']);
+                                              if (response.data['msg'] ==
+                                                  'Loged') {
+                                                Toasts.showSuccessToast(
+                                                    'Bienvenido');
+                                                Navigator.of(context)
+                                                    .pushNamed('/controlPanel');
                                               } else {
-                                                   Toasts.showWarningToast('Contraseña o correo incorrectos');
+                                                Toasts.showWarningToast(
+                                                    'Contraseña o correo incorrectos');
                                               }
                                             } catch (e) {
                                               print(e);
@@ -239,9 +244,9 @@ class _FormCardState extends State<_FormCard> {
                                   margin: const EdgeInsets.all(10),
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                        textStyle:
-                                            const TextStyle(fontSize: 15),
-                                        foregroundColor: Colors.black),
+                                      textStyle: const TextStyle(
+                                          fontSize: 15, color: Colors.black),
+                                    ),
                                     onPressed: () {
                                       Navigator.of(context)
                                           .pushNamed('/registerUser');
