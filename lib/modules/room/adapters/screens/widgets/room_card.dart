@@ -149,7 +149,8 @@ class _RoomCardState extends State<RoomCard> {
             actions: [
               TextButton(
                 onPressed: () async {
-                  final dio = Dio();
+                  try {
+                    final dio = Dio();
                   final response = await dio.put('$path/updateRoom', data: {
                     'idRoom': room.idRoom,
                     'identifier': room.identifier,
@@ -163,6 +164,9 @@ class _RoomCardState extends State<RoomCard> {
                         builder: (context) => const RoomRent(),
                       ),
                     );
+                  }
+                  } catch (e) {
+                    
                   }
                 },
                 style: TextButton.styleFrom(

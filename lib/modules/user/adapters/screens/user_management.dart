@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/widgets/user_card.dart';
-import 'package:geco_mobile/modules/user/entities/person.dart';
 import 'package:geco_mobile/modules/user/entities/user.dart';
 
 class UserManagement extends StatefulWidget {
@@ -15,26 +14,24 @@ class UserManagement extends StatefulWidget {
 class _UserManagementState extends State<UserManagement> {
   final double heightOfFirstContainer = 200.0;
   final double brCards = 50.0;
-  final path = 'http://192.168.1.75:8080';
+  final path = 'http://192.168.1.76:8080/user';
   Future<List<User>>? _listUsuarios;
   Future<List<User>>? _listUsuariosRespaldo;
 
   Future<List<User>> obtenerUsuariosFetch() async {
     List<User> usuarios = [];
-    final dio = Dio();
-    final response = await dio.get('$path/getUsers');
-    if (response.statusCode == 200) {
-      for (var user in response.data) {
-        usuarios.add(User(
-            user["idUser"],
-            user["status"],
-            Person(user["idPerson"]["name"], user["idPerson"]["lastname"],
-                user["idPerson"]["surname"])));
+      final dio = Dio();
+      final response = await dio.get('$path/getUsers');
+      if (response.data['msg'] == 'OK') {
+        for (var i = 0; i < response.data['data'].length; i++) {
+          print('ciclo $i del nuevo FOR');
+          final data = response.data['data'][i];
+          print(data);
+        }
+        return usuarios;
+      } else {
+        throw Exception("Fallà la peticiòn");
       }
-      return usuarios;
-    } else {
-      throw Exception("Fallà la peticiòn");
-    }
   }
 
   List<Widget> crearCards(List<User> data) {
@@ -62,7 +59,7 @@ class _UserManagementState extends State<UserManagement> {
       _listUsuarios!.then((usuarios) {
         usuariosFiltrados = usuarios.where((user) {
           final fullName =
-              "${user.person?.name} ${user.person?.lastname} ${user.person?.surname}"
+              "${user.person.name} ${user.person.lastname} ${user.person.surname}"
                   .toLowerCase();
           return fullName.contains(query);
         }).toList();
@@ -179,7 +176,7 @@ cambiarEstadoUser(context, User user) {
     builder: (_) => AlertDialog(
       title: const Text("Dar de baja a un usuario"),
       content: Text(
-          '¿Está seguro de cambiar de activo a desactivado al usuario ${user.person!.name} ?'),
+          '¿Está seguro de cambiar de activo a desactivado al usuario ${user.person.name} ?'),
       actions: [
         MaterialButton(
           onPressed: () {
@@ -190,11 +187,14 @@ cambiarEstadoUser(context, User user) {
         ),
         MaterialButton(
           onPressed: () {
-            print(user.person!.name);
+            print(user.person.name);
             Navigator.pop(context);
           },
           color: ColorsApp.buttonCancelColor,
-          child: const Text('Dar de baja', style: TextStyle(color: Colors.white),),
+          child: const Text(
+            'Dar de baja',
+            style: TextStyle(color: Colors.white),
+          ),
         )
       ],
     ),

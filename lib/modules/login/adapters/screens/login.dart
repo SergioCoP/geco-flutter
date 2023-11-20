@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+// import 'package:geco_mobile/kernel/widgets/navigation/menu_manager.dart';
+// import 'package:geco_mobile/modules/room/adapters/screens/room_dashboard.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -163,7 +165,9 @@ class _FormCardState extends State<_FormCard> {
                                       backgroundColor:
                                           ColorsApp.secondaryColor),
                                   onPressed: () {
-                                    Navigator.of(context).pushNamed('/users');
+                                     Navigator.pushReplacementNamed(context, '/personal_cleaner');
+                                    // Navigator.of(context).pushNamed('/rooms');
+                                    // Navigator.pushReplacementNamed(context, '/manager');
                                   },
                                   child: const Text('Iniciar'),
                                 ),

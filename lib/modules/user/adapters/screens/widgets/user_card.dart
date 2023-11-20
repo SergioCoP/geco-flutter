@@ -33,7 +33,7 @@ class _UserCardState extends State<UserCard> {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.user.status! == 1
+                  backgroundColor: widget.user.status == 1
                       ? ColorsApp.buttonPrimaryColor
                       : ColorsApp.buttonCancelColor,
                 ),
@@ -48,7 +48,7 @@ class _UserCardState extends State<UserCard> {
               height: 80,
               padding: const EdgeInsets.all(7),
               child: Text(
-                '${widget.user.person!.name} ${widget.user.person!.lastname} ${widget.user.person!.surname}',
+                '${widget.user.person.name} ${widget.user.person.lastname} ${widget.user.person.surname}',
                 textAlign: TextAlign.center,
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
@@ -77,7 +77,7 @@ class _UserCardState extends State<UserCard> {
                         cambiarEstadoUser(context, widget.user);
                       },
                       minWidth: 50.0,
-                      color: widget.user.status! > 0
+                      color: widget.user.status > 0
                           ? ColorsApp.buttonCancelColor
                           : ColorsApp.buttonPrimaryColor,
                       child: const Icon(Icons.swap_horizontal_circle),
