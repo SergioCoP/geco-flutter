@@ -206,6 +206,9 @@ class _FormCardState extends State<_FormCard> {
                                     onPressed: _isButtonDisabled
                                         ? null
                                         : () async {
+                                          Navigator.pushReplacementNamed(context, '/personal_cleaner');
+                                    // Navigator.of(context).pushNamed('/rooms');
+                                    // Navigator.pushReplacementNamed(context, '/manager');
                                             Response response;
                                             try {
                                               response = await dio.request(

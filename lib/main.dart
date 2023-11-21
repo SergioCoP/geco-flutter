@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:geco_mobile/kernel/widgets/navigation/menu_manager.dart';
+import 'package:geco_mobile/kernel/widgets/navigation/menu_personal_cleaner.dart';
+import 'package:geco_mobile/kernel/widgets/navigation/menu_recepcionist.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/widgets/splash/splash.dart';
 import 'package:geco_mobile/modules/controlpanel/adapters/screens/control_panel.dart';
@@ -19,16 +22,20 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       builder: FToastBuilder(),
       debugShowCheckedModeBanner: false,
-      //Generar splash screen
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const Splash(legend: 'Cargando...'),
-        '/login': (context) => const Login(),
-        '/registerUser': (context) => const RegisterUser(),
-        '/registerUserHotel': (context) => const RegisterHotel(),
-        '/controlPanel': (context) => const ControlPanel(),
-        '/users': (context) => const UserManagement()
-      },
+     //Generar splash screen
+     initialRoute: '/',
+     routes: {
+      '/': (context) => const Splash(legend: 'Cargando...'),
+      '/login': (context) => const Login(),
+      '/registerUser': (context) =>  RegisterUser(),
+      '/users': (context) => const UserManagement(),
+      '/manager': (context) => const MenuManager(),
+      '/personal_cleaner': (context) => const MenuPersonalCleaner(),
+      '/recepcionist/rooms': (context) => const MenuRecepcionist(),
+      // '/recepcionist/rooms': (context) => const RoomRent(),
+      // '/manager/dashboard': (context) => const RoomsDashboard(),
+      // '/manager/checkRooms': (context) => const RoomManagement(),
+     },
     );
   }
 }
