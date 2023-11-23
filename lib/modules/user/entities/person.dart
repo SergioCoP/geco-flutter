@@ -1,9 +1,10 @@
 class Person {
-  String idPerson;
+  int idPerson;
   String name;
+  String? surname;
   String lastname;
-  String surname;
+  String? turn;
   int idUser;
 
-  Person(this.idPerson,this.name,this.lastname,this.surname,this.idUser);
+  Person(this.idPerson,this.name,this.surname,this.lastname,this.turn,this.idUser);
 }

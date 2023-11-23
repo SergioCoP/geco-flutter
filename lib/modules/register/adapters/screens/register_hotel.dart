@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/kernel/toasts/toasts.dart';
 
@@ -158,7 +159,7 @@ class _RegisterHotelState extends State<RegisterHotel> {
                                                   Response response;
                                                   try {
                                                     response = await dio.request(
-                                                        'http://192.168.0.163:8080/user/registerUser',
+                                                        '${GlobalData.pathUserUri}/registerUser',
                                                         data: {
                                                           'email': arguments[
                                                                   'correoUs'] ??
@@ -185,7 +186,7 @@ class _RegisterHotelState extends State<RegisterHotel> {
                                                     if (response.data['msg'] ==
                                                         'Register') {
                                                       response = await dio.request(
-                                                          'http://192.168.0.163:8080/hotel/saveHotel',
+                                                          '${GlobalData.pathUri}/hotel/saveHotel',
                                                           data: {
                                                             'name': _nombreHotel
                                                                 .text

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/modules/room/adapters/screens/widgets/room_card.dart';
 import 'package:geco_mobile/modules/room/entities/room.dart';
 
@@ -14,7 +15,7 @@ class RoomRent extends StatefulWidget {
 
 class _RoomRentState extends State<RoomRent> {
   final double heightOfFirstContainer = 200.0;
-  static const String _path = 'http://192.168.1.75:8080/room';
+  static const String _path = GlobalData.pathRoomUri;
   Future<List<Room>>? _listaHabitaciones;
   Future<List<Room>>? _listaHabitacionesRespaldo;
 

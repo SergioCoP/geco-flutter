@@ -9,34 +9,26 @@ class RoomCardDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Color? buttonColor;
-    String? estado;
     switch (roomIncidences.status) {
       case 0: //eliminada o deshabilitada
-        estado = 'No disponible';
         buttonColor = Colors.red;
         break;
       case 1: //Estado: disponible para rentar
-        estado = 'En venta';
         buttonColor = ColorsApp.estadoEnVenta;
         break;
       case 2: //Estado: en uso
-        estado = 'En uso';
         buttonColor = ColorsApp.estadoEnUso;
         break;
       case 3: //Estado: sucio
-        estado = 'Sucia';
         buttonColor = ColorsApp.estadoSucio;
         break;
       case 4: //Estado: Lista para ser revisada
-        estado = 'Para revisar';
         buttonColor = ColorsApp.estadoSinRevisar;
         break;
       case 5: //Estado con incidencias
-        estado = 'Con incidencias';
         buttonColor = ColorsApp.estadoConIncidencias;
         break;
       default:
-        estado = 'Sin definir';
         buttonColor = Colors.grey;
         break;
     }
@@ -49,50 +41,75 @@ class RoomCardDashboard extends StatelessWidget {
         ),
         borderRadius: BorderRadius.all(Radius.circular(15)),
       ),
-      child: InkWell(
-        onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: buttonColor,
+            Container(
+              width: 100,
+              height: 50,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                color: buttonColor,
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                estado,
-                style: const TextStyle(fontSize: 15, color: Colors.black),
+                roomIncidences.identifier,
+                style: const TextStyle(fontSize: 20, color: Colors.black),
               ),
             ),
-            const Spacer(),
-            Text(
-              roomIncidences.identifier,
-              style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-            ),
-            const Spacer(),
-            if (roomIncidences.status == 5) //Si Tiene incidencias
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ElevatedButton(
-                        //Si hay incidencias
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('/dashboard/checkIncindences');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 255, 200, 2),
-                        ),
-                        child: const Icon(Icons.warning),
-                      ),
-                    ),
-                  ],
-                )
+            const SizedBox(height: 25.0),
+            botonPorEstado(context, roomIncidences.status),
           ],
         ),
       ),
     );
+  }
+}
+
+Widget botonPorEstado(BuildContext context, int estado) {
+  switch (estado) {
+    case 0:
+      return const Text('Deshabilitada');
+    case 1: //En venta
+      return const Text('Disponible');
+    case 2: //En uso
+      return const Text('En uso');
+    case 3: //Sucia
+      return const Text('Desocupada');
+    case 4: //Para revisar
+      return ElevatedButton(
+        //Si hay incidencias
+        onPressed: () {
+          Navigator.of(context).pushNamed('/manager/dashboard/checkRevision');
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorsApp.estadoSinRevisar,
+        ),
+        child: const Row(
+          children: [
+            Text('Verificar'),
+            Icon(Icons.read_more),
+          ],
+        ),
+      );
+    case 5: //Con incidencias
+      return ElevatedButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/manager/dashboard/checkRevision');
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorsApp.estadoSinRevisar,
+        ),
+        child: const Row(
+          children: [
+            Text('Revisar'),
+            Icon(Icons.warning),
+          ],
+        ),
+      );
+    default:
+      return const Text('Estado no válido');
   }
 }

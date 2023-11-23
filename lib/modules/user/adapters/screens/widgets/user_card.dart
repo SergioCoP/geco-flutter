@@ -16,7 +16,7 @@ class _UserCardState extends State<UserCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 5.0,
+      elevation: 2.0,
       shadowColor: const Color.fromARGB(118, 0, 0, 0),
       shape: const RoundedRectangleBorder(
         side: BorderSide(
@@ -33,9 +33,11 @@ class _UserCardState extends State<UserCard> {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: widget.user.status == 1
-                      ? ColorsApp.buttonPrimaryColor
-                      : ColorsApp.buttonCancelColor,
+                  backgroundColor: 
+                  // widget.user.status == 1
+                  //     ? 
+                      ColorsApp.buttonPrimaryColor
+                      // : ColorsApp.buttonCancelColor,
                 ),
                 child: Text(
                   '# ${widget.user.idUser}',
@@ -48,7 +50,7 @@ class _UserCardState extends State<UserCard> {
               height: 80,
               padding: const EdgeInsets.all(7),
               child: Text(
-                '${widget.user.person.name} ${widget.user.person.lastname} ${widget.user.person.surname}',
+                widget.user.userName,
                 textAlign: TextAlign.center,
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
@@ -64,7 +66,9 @@ class _UserCardState extends State<UserCard> {
                   Container( //Bton de info
                     margin: const EdgeInsets.all(1),
                     child: MaterialButton(
-                      onPressed: () {},
+                      onPressed: () {
+                         Navigator.of(context).pushNamed('/manager/users/update',arguments: {'idUser':widget.user.idUser});
+                      },
                       minWidth: 50.0,
                       color: ColorsApp.infoColor,
                       child: const Icon(Icons.edit_document),
@@ -77,25 +81,12 @@ class _UserCardState extends State<UserCard> {
                         cambiarEstadoUser(context, widget.user);
                       },
                       minWidth: 50.0,
-                      color: widget.user.status > 0
-                          ? ColorsApp.buttonCancelColor
-                          : ColorsApp.buttonPrimaryColor,
+                      color:
+                      //  widget.user.status > 0
+                          // ? ColorsApp.buttonCancelColor
+                          // :
+                           ColorsApp.buttonPrimaryColor,
                       child: const Icon(Icons.swap_horizontal_circle),
-                    ),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.all(1),
-                    child: MaterialButton(
-                      onPressed: () {
-                        // Navigator.pushNamed(
-                        //   context,
-                        //   '/updateUser',
-                        //   arguments: {'data': widget.user.idUser},
-                        // );
-                      },
-                      minWidth: 50.0,
-                      color: ColorsApp.infoColor,
-                      child: const Icon(Icons.edit),
                     ),
                   ),
                 ],

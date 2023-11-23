@@ -1,11 +1,16 @@
-import 'package:geco_mobile/modules/user/entities/person.dart';
-
 class User {
   int idUser;
   int status;
+  String userName;
+  String? lastname;
+  String? surname;
+  String? name;
   String email;
   String password;
-  Person person;
+  String turn;
+  String rolName;
+  int idRol;
+  int idHotel;
 
-  User(this.idUser,this.status,this.email,this.password,this.person); 
+  User(this.idUser,this.status,this.userName,this.email,this.password,this.turn,this.rolName,this.idRol,this.idHotel); 
 }

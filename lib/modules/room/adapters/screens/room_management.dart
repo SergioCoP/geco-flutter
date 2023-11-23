@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/room/adapters/screens/edit_room.dart';
 import 'package:geco_mobile/modules/room/adapters/screens/widgets/room_card_management.dart';
+import 'package:geco_mobile/modules/room/adapters/screens/widgets/room_register.dart';
 import 'package:geco_mobile/modules/room/entities/room.dart';
 
 class RoomManagement extends StatefulWidget {
@@ -13,8 +15,10 @@ class RoomManagement extends StatefulWidget {
 }
 
 class _RoomManagementState extends State<RoomManagement> {
-  final double heightOfFirstContainer = 200.0;
+  final double heightOfFirstContainer = 100.0;
   final _path = GlobalData.pathRoomUri;
+  late bool hasChange = false;
+
   Future<List<Room>>? _listaHabitaciones;
   Future<List<Room>>? _listaHabitacionesRespaldo;
   // ignore: unused_field
@@ -26,7 +30,10 @@ class _RoomManagementState extends State<RoomManagement> {
     try {
       _listaHabitaciones = obtenerCuartosFetch();
       _listaHabitacionesRespaldo = _listaHabitaciones;
-    } catch (e){}
+    } catch (e) {
+      _listaHabitaciones = [] as Future<List<Room>>?;
+      _listaHabitacionesRespaldo = _listaHabitaciones;
+    }
   }
 
   Future<List<Room>> obtenerCuartosFetch() async {
@@ -36,8 +43,8 @@ class _RoomManagementState extends State<RoomManagement> {
       final response = await dio.get('$_path/getAllRooms');
       if (response.data['msg'] == 'OK') {
         for (var habitacion in response.data['data']) {
-          habitaciones.add(Room(habitacion['idRoom'],
-              habitacion['identifier'], habitacion['status']));
+          habitaciones.add(Room(habitacion['idRoom'], habitacion['identifier'],
+              habitacion['status']));
         }
       }
       return habitaciones;
@@ -84,16 +91,18 @@ class _RoomManagementState extends State<RoomManagement> {
 
   @override
   Widget build(BuildContext context) {
-    final dynamic rawArgs = ModalRoute.of(context)!.settings.arguments;
-    final Map<String, dynamic> arguments =
-        (rawArgs as Map<String, dynamic>?) ?? {};
-    bool retryFetch = arguments['hasData'] ?? false;
-    if (retryFetch) {
-      retryFetch = false;
-      obtenerCuartosFetch();
+    
+    if (hasChange) {
+      hasChange = false;
+      // obtenerCuartosFetch();
+      _listaHabitaciones = obtenerCuartosFetch();
+      _listaHabitacionesRespaldo = _listaHabitaciones;
     }
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Gestión de habitaciones'),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
         backgroundColor: ColorsApp.primaryColor,
       ),
       body: Stack(
@@ -101,29 +110,30 @@ class _RoomManagementState extends State<RoomManagement> {
           Scaffold(
             body: Container(
               margin: const EdgeInsets.only(
-                top: 160,
+                top: 100,
               ),
               child: FutureBuilder(
                 future: _listaHabitaciones,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  try {
-                    if (snapshot.hasData) {
+                  if (snapshot.hasData) {
+                    List<Room> sapoRoom = snapshot.data;
+                    if (sapoRoom.isNotEmpty) {
                       return GridView.count(
                         mainAxisSpacing: 2,
                         crossAxisCount: 2,
                         children: crearCards(snapshot.data),
                       );
-                    } else if (!snapshot.hasData) {
+                    } else {
                       return const IsEmptyRooms();
-                    } else if (snapshot.hasError) {
-                      return const Text("Ha sucedido un error maquiavélico.");
                     }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } catch (e) {
+                  } else if (!snapshot.hasData) {
                     return const IsEmptyRooms();
+                  } else if (snapshot.hasError) {
+                    return const Text("Ha sucedido un error maquiavélico.");
                   }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 },
               ),
             ),
@@ -136,46 +146,38 @@ class _RoomManagementState extends State<RoomManagement> {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.all(8),
-                        child: const Text(
-                          "Habitaciones",
-                          style: TextStyle(fontSize: 30.0),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            onChanged: (text) {
+                              filtrarHabitacion(text.toString());
+                            },
+                            decoration: const InputDecoration(
+                              suffixIcon: Icon(Icons.search),
+                              labelText: 'Buscar habitación',
+                              hintText:
+                                  'Escribe aquí para buscar una habitación',
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 30.0,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.all(8),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.buttonPrimaryColor,
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/manager/check_rooms/register',arguments: {'path' : _path});
-                            },
-                            child: const Icon(Icons.add)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorsApp.buttonPrimaryColor,
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, '/manager/check_rooms/register',
+                                arguments: {'path': _path});
+                          },
+                          child: const Icon(Icons.add),
+                        ),
                       ),
                     ],
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      onChanged: (text) {
-                        filtrarHabitacion(text.toString());
-                      },
-                      decoration: const InputDecoration(
-                        suffixIcon: Icon(Icons.search),
-                        labelText: 'Buscar habitación',
-                        hintText: 'Escribe aquí para buscar una habitación',
-                      ),
-                    ),
                   ),
                 ],
               ),

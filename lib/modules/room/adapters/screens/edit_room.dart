@@ -1,18 +1,21 @@
-// ignore_for_file: library_private_types_in_public_api, avoid_print, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, avoid_print, prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, unused_local_variable
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
+import 'package:geco_mobile/kernel/theme/color_app.dart';
 // import 'package:geco_mobile/kernel/theme/color_app.dart';
 
 class RoomEdit {
   String identifier;
   int status;
+  int idRoom;
   String description;
-  String supervisor1;
-  String supervisor2;
+  int supervisor1;
+  int supervisor2;
 
   RoomEdit({
+    required this.idRoom,
     required this.identifier,
     required this.status,
     required this.description,
@@ -31,12 +34,15 @@ class EditRoom extends StatefulWidget {
 
 class _EditRoomState extends State<EditRoom> {
   late RoomEdit room;
+  late RoomEdit room2;
   late bool hasData = false;
 
   final _formKeyUpdateRoom = GlobalKey<FormState>();
   bool _isButtonDisabled = false;
 
-  late List<Map<String, dynamic>> supervisors = [];
+  late List<Map<String, dynamic>> supervisors = [
+    {'id': 0, 'name': 'Seleccione un usuario'}
+  ];
   List<Map<String, dynamic>> listaEstados = [
     {'status': 0, 'text': 'Deshabilitada'},
     {'status': 1, 'text': 'En venta'},
@@ -45,7 +51,7 @@ class _EditRoomState extends State<EditRoom> {
     {'status': 4, 'text': 'Para revisar'},
     {'status': 5, 'text': 'Con incidencias'},
   ];
-  int EstadoActual = 0;
+  int estadoActual = 0;
   String estadoSeleccionado = '0';
   @override
   void initState() {
@@ -59,29 +65,44 @@ class _EditRoomState extends State<EditRoom> {
     try {
       final response =
           await dio.get('${GlobalData.pathRoomUri}/getRoom?idRoom=$idRoom');
-      final responseUsers = await dio.get('${GlobalData.pathUserUri}/getUsers');
+      final responseUsers = await dio
+          .get('${GlobalData.pathUserUri}/getUsersByRol?rolName=Role_Limpieza');
       if (response.data['msg'] == 'OK') {
         final roomData = response.data['data'];
         print(roomData);
-        setState(() {
-          room = RoomEdit(
-            identifier: roomData['identifier'],
-            status: roomData['status'],
-            description: roomData['description'] ?? 'Sin descripción',
-            supervisor1: roomData['supervisor1'] ?? '0',
-            supervisor2: roomData['supervisor2'] ?? '1',
-          );
-          supervisors = <Map<String, dynamic>>[
-            {'id': '0', 'name': 'Sergio'},
-            {'id': '1', 'name': 'Alberto'},
-            {'id': '2', 'name': 'Angel'},
-          ]; // Reemplaza con tus datos reales
-          hasData = true;
-        });
+         int sup1 = 0;
+         int sup2 = 0;
+        if (roomData['idUser'] != null) {
+          for(int i = 0; i < roomData['iseUser'].length; i++){
+            sup1 = roomData['idUser'][i]['idUser'];
+            sup2 = roomData['idUser'][i+1]['idUser'];
+          }
+        }
+        room = RoomEdit(
+          idRoom: roomData['idRoom'],
+          identifier: roomData['identifier'],
+          status: roomData['status'],
+          description: roomData['description'] ?? 'Sin descripción',
+          supervisor1: sup1,
+          supervisor2: sup2
+        );
+        room2 = room;
+        hasData = true;
       }
       if (responseUsers.data['msg'] == 'OK') {
         print(responseUsers.data['data']);
+        final usuariosLimpieza = responseUsers.data['data'];
+        for (var user in usuariosLimpieza) {
+          supervisors.add({'id': user['idUser'], 'name': user['userName']});
+        }
+      } else {
+        supervisors = <Map<String, dynamic>>[
+          {'id': 0, 'name': 'Selecciona in usuario'},
+        ]; // Reempl
       }
+      setState(() {
+        hasData = true;
+      });
     } catch (error) {
       print(error);
       // Manejar el error de alguna manera
@@ -89,24 +110,41 @@ class _EditRoomState extends State<EditRoom> {
   }
 
   void actualizarDatos(RoomEdit room) async {
+    print(room.idRoom);
     print(room.identifier);
     print(room.description);
     print(room.status);
     print(room.supervisor1);
     print(room.supervisor2);
-    // final dio = Dio();
-    // final request =
-    //     await dio.get('${GlobalData.pathRoomUri}/updateRoom', data: {});
-    // if (request.data['msg' == 'Update']) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('Actualización completada exitosamente.')),
-    //   );
-    //   Navigator.of(context).pop();
-    // } else {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('No se pudo actualizar los datos. Por favor, verifique la información.')),
-    //   );
-    // }
+    final dio = Dio();
+      final request =
+          await dio.put('${GlobalData.pathRoomUri}/updateRoom', data: {
+        'idRoom': room.idRoom,
+        'description': room.description,
+        'status': room.status,
+        'identifier': room.identifier
+      });
+      if (request.data['msg' == 'Update']) {
+        if (room.supervisor1 != room2.supervisor1 && room.supervisor2 != room2.supervisor2) {
+          //Si hay modificacion en algun usuarios
+          if(room.supervisor1 != room2.supervisor1){
+            final rsup1 = dio.post('${GlobalData.pathRoomUri}/assignUserRoom?idUser=${room.supervisor1}&idRoom=${room.idRoom}');
+            final rsup2 = dio.post('${GlobalData.pathRoomUri}/assignUserRoom?idUser=${room.supervisor2}&idRoom=${room.idRoom}');
+
+          }
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Actualización completada exitosamente.')),
+        );
+        Navigator.of(context).popAndPushNamed('/manager/check_rooms');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text(
+                  'No se pudo actualizar los datos. Por favor, verifique la información.')),
+        );
+      }
   }
 
   @override
@@ -121,6 +159,8 @@ class _EditRoomState extends State<EditRoom> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editar Habitación'),
+        centerTitle: true,
+        backgroundColor: ColorsApp.primaryColor,
       ),
       body: hasData
           ? SingleChildScrollView(
@@ -198,10 +238,10 @@ class _EditRoomState extends State<EditRoom> {
                             ),
                           ),
                           SizedBox(height: 15),
-                          DropdownButtonFormField<String>(
+                          DropdownButtonFormField<int>(
                             value: room.supervisor1,
                             items: supervisors.map((user1) {
-                              return DropdownMenuItem<String>(
+                              return DropdownMenuItem<int>(
                                   value: user1['id'],
                                   child: Text(user1['name']));
                             }).toList(),
@@ -218,10 +258,10 @@ class _EditRoomState extends State<EditRoom> {
                             ),
                           ),
                           SizedBox(height: 30),
-                          DropdownButtonFormField<String>(
+                          DropdownButtonFormField<int>(
                             value: room.supervisor2,
                             items: supervisors
-                                .map((user2) => DropdownMenuItem<String>(
+                                .map((user2) => DropdownMenuItem<int>(
                                     value: user2['id'],
                                     child: Text(user2['name'])))
                                 .toList(),
@@ -239,11 +279,12 @@ class _EditRoomState extends State<EditRoom> {
                           ),
                           SizedBox(height: 30),
                           ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ColorsApp.secondaryColor,
+                            ),
                             onPressed: _isButtonDisabled
                                 ? null
                                 : () {
-                                    // Lógica para enviar los datos actualizados a la API
-                                    // Puedes utilizar un paquete de manejo de estado o una función de callback según tus necesidades
                                     actualizarDatos(room);
                                   },
                             child: Text('Guardar Cambios'),
