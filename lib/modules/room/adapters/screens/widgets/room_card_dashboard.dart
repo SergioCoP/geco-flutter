@@ -54,9 +54,11 @@ class RoomCardDashboard extends StatelessWidget {
                 color: buttonColor,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                roomIncidences.identifier,
-                style: const TextStyle(fontSize: 20, color: Colors.black),
+              child: SizedBox(
+                child: Text(
+                  roomIncidences.identifier,
+                  style: const TextStyle(fontSize: 15, color: Colors.black),
+                ),
               ),
             ),
             const SizedBox(height: 25.0),
@@ -82,30 +84,35 @@ Widget botonPorEstado(BuildContext context, int estado) {
       return ElevatedButton(
         //Si hay incidencias
         onPressed: () {
-          Navigator.of(context).pushNamed('/manager/dashboard/checkRevision');
+          Navigator.of(context).pushNamed('/dashboard/checkIncindences');
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorsApp.estadoSinRevisar,
+          backgroundColor: ColorsApp.estadoConIncidencias,
         ),
         child: const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Verificar'),
             Icon(Icons.read_more),
+            Text(
+              'Verificar',
+              style: TextStyle(color: Colors.black),
+            ),
           ],
         ),
       );
     case 5: //Con incidencias
       return ElevatedButton(
         onPressed: () {
-          Navigator.of(context).pushNamed('/manager/dashboard/checkRevision');
+          Navigator.of(context).pushNamed('/dashboard/checkRevision');
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorsApp.estadoSinRevisar,
         ),
         child: const Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Revisar'),
             Icon(Icons.warning),
+            Text('Revisar', style: TextStyle( color: Colors.black),),
           ],
         ),
       );

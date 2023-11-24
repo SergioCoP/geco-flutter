@@ -15,7 +15,6 @@ class RoomCardManagement extends StatefulWidget {
 class _RoomCardManagementState extends State<RoomCardManagement> {
   @override
   Widget build(BuildContext context) {
-  
     Color? buttonColor;
     String? estado;
     switch (widget.room.status) {
@@ -112,8 +111,9 @@ class _RoomCardManagementState extends State<RoomCardManagement> {
                       child: ElevatedButton(
                         //Si hay incidencias
                         onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed('/manager/check_rooms/edit_room');
+                          Navigator.of(context).pushNamed(
+                              '/manager/check_rooms/edit_room',
+                              arguments: {'idRoom': widget.room.idRoom});
                         },
                         child: const Icon(Icons.edit_document),
                       ),
@@ -126,9 +126,8 @@ class _RoomCardManagementState extends State<RoomCardManagement> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.of(context).pushNamed(
-                        '/manager/check_rooms/edit_room',
-                        arguments: {'idRoom': widget.room.idRoom}
-                        );
+                          '/manager/check_rooms/edit_room',
+                          arguments: {'idRoom': widget.room.idRoom});
                     },
                     child: const Icon(Icons.edit_document),
                   ),

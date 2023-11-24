@@ -3,6 +3,7 @@ import 'package:geco_mobile/config/navigation/manager_dashboard_stack.dart';
 import 'package:geco_mobile/config/navigation/manager_stack.dart';
 import 'package:geco_mobile/config/navigation/manager_user_stack.dart';
 import 'package:geco_mobile/kernel/widgets/navigation/bottom_navigation_tab_gerente.dart';
+import 'package:geco_mobile/modules/rubros/adapters/screens/rubros_management.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/profile.dart';
 
 class MenuManager extends StatefulWidget {
@@ -24,7 +25,7 @@ class _MenuManagerState extends State<MenuManager> {
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
-        children: const [ManagerDashboardStack(),ManagerStack(),ManagerUserStack(),Profile()],
+        children: const [ManagerDashboardStack(),ManagerStack(),ManagerUserStack(),RubrosManagement(),Profile()],
       ),
       bottomNavigationBar: BottomNavigationTabGerente(selectedIndex: _selectedIndex, onItemTapped: _onItemTapped),
     );

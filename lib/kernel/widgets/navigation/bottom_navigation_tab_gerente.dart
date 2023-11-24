@@ -14,6 +14,7 @@ class BottomNavigationTabGerente extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
         BottomNavigationBarItem(icon: Icon(Icons.meeting_room_outlined), label: 'Habitaciones'),
         BottomNavigationBarItem(icon: Icon(Icons.person_search_rounded), label: 'Usuarios'),
+        BottomNavigationBarItem(icon: Icon(Icons.check_box_rounded), label: 'Rubros'),
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
       ],
       currentIndex: selectedIndex,

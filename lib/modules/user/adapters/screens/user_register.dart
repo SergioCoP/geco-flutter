@@ -35,7 +35,17 @@ class _UserRegisterState extends State<UserRegister> {
     {'idRol': 2, 'description': 'Recepcionista'},
     {'idRol': 3, 'description': 'Personal de limpieza'},
   ];
+  List<Map<String, dynamic>> listaRolesName = [
+    {'idRol': 2, 'description': 'Recepcionista'},
+    {'idRol': 3, 'description': 'Personal de limpieza'},
+  ];
   int _rolSeleccionado = 3;
+
+  final rolNames = {
+    1: "Role_Gerente",
+    2: "Role_Recepcionista",
+    3: "Role_Limpieza"
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -200,7 +210,11 @@ class _UserRegisterState extends State<UserRegister> {
                                             'surname':
                                                 _apellidoMaternoController.text
                                           },
-                                          'idRol': {'idRol': _rolSeleccionado},
+                                          'idRol': _rolSeleccionado
+                                          // {
+                                          //   "idRol": _rolSeleccionado,
+                                          //   "rolName": rolNames[_rolSeleccionado],
+                                          // },
                                         },
                                       );
                                       if (response.data['msg'] == 'Register') {

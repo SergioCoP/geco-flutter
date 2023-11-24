@@ -6,10 +6,7 @@ import 'package:geco_mobile/kernel/theme/color_app.dart';
 // ignore: must_be_immutable
 class RoomIncidencesCheck extends StatelessWidget {
   RoomIncidencesCheck({super.key});
-  TextStyle textoLabel = TextStyle(
-    fontSize: 26.0,
-    fontWeight: FontWeight.bold 
-  );
+  TextStyle textoLabel = TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +25,9 @@ class RoomIncidencesCheck extends StatelessWidget {
                 textDirection: TextDirection.ltr,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom: 25.0,),
+                    margin: EdgeInsets.only(
+                      bottom: 25.0,
+                    ),
                     child: Row(
                       children: [
                         Text(
@@ -42,7 +41,8 @@ class RoomIncidencesCheck extends StatelessWidget {
                           height: 32,
                           decoration: BoxDecoration(
                               color: Colors.amberAccent,
-                              border: Border.all(color: Colors.red, width: 1.0)),
+                              border:
+                                  Border.all(color: Colors.red, width: 1.0)),
                           child: SizedBox(
                             child: Center(
                               child: Text(
@@ -62,7 +62,8 @@ class RoomIncidencesCheck extends StatelessWidget {
                     margin: EdgeInsets.all(8.0),
                     child: Column(
                       children: [
-                        Text('Limpieza realizada por:',),
+                        Text('Limpieza realizada por:',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         Text('Mario Alberto Quiñonez Bahena:'),
                       ],
                     ),
@@ -72,8 +73,10 @@ class RoomIncidencesCheck extends StatelessWidget {
                       margin: EdgeInsets.all(8.0),
                       child: Column(
                         children: [
-                          Text('Limpieza por:'),
-                          Text('Mario Alberto Quiñonez Bahena:'),
+                          Text('Detalles de la incidencia:',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                              '"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."'),
                         ],
                       ),
                     ),
@@ -83,14 +86,16 @@ class RoomIncidencesCheck extends StatelessWidget {
                     padding: EdgeInsets.all(5.0),
                     child: Column(
                       children: [
-                        Text('Evidencia:'),
+                        Text('Evidencia:',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         Image.asset('assets/images/miku.jpg'),
                       ],
                     ),
                   ),
                   Center(
                     child: ElevatedButton(
-                        onPressed: () {}, child: Text('Marcar como completada')),
+                        onPressed: () {},
+                        child: Text('Marcar como completada')),
                   )
                 ],
               ),

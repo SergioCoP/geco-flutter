@@ -18,24 +18,16 @@ class _UserUpdateState extends State<UserUpdate> {
   bool _passVisible = false;
   final _formKey = GlobalKey<FormState>();
   bool _isButtonDisabled = true;
-
-  final TextEditingController _nombresController =
-      TextEditingController(text: '');
-  final TextEditingController _apellidoPaternoController =
-      TextEditingController(text: '');
-  final TextEditingController _apellidoMaternoController =
-      TextEditingController(text: '');
-  final TextEditingController _contraseniaController =
-      TextEditingController(text: '');
-  final TextEditingController _contraseniaConfirmController =
-      TextEditingController(text: '');
-  final TextEditingController _correoController =
-      TextEditingController(text: '');
   int _rolSeleccionado = 3;
   List<Map<String, dynamic>> listaRoles = [
     {'idRol': 2, 'description': 'Recepcionista'},
     {'idRol': 3, 'description': 'Personal de limpieza'},
   ];
+  final rolNames = {
+    1: "Role_Gerente",
+    2: "Role_Recepcionista",
+    3: "Role_Limpieza"
+  };
   SizedBox sizedBox = const SizedBox(
     height: 25.0,
   );
@@ -227,46 +219,66 @@ class _UserUpdateState extends State<UserUpdate> {
                                     alignment: Alignment.topCenter,
                                     child: ElevatedButton(
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: ColorsApp.thirColor,
+                                        backgroundColor:
+                                            ColorsApp.secondaryColor,
                                       ),
                                       onPressed: _isButtonDisabled
                                           ? null
                                           : () async {
+                                              print('name: ${user.name}');
                                               print(
-                                                  'userName: ${user.userName}');
-
-                                              // const path = GlobalData.pathUri;
-                                              // final dio = Dio();
-                                              // final response = await dio.post('$path/registerUser', data: {
-                                              //   'nombres': _nombresController.text,
-                                              //   'apellido_paterno': _apellidoPaternoController.text,
-                                              //   'apellido_materno': _apellidoMaternoController.text,
-                                              //   'correo': _correoController.text,
-                                              //   'contrasenia': _contraseniaController.text,
-                                              //   'rol': _rolSeleccionado,
-                                              // });
-                                              // if (response.statusCode == 200) {
-                                              //   // Mostrar un toast de registro exitoso
-                                              //   Fluttertoast.showToast(
-                                              //     msg: 'Registro exitoso',
-                                              //     toastLength: Toast.LENGTH_SHORT,
-                                              //     gravity: ToastGravity.CENTER,
-                                              //     backgroundColor: Color(0xFF589F56),
-                                              //     textColor: Colors.white,
-                                              //     fontSize: 16.0,
-                                              //   );
-                                              // } else {
-                                              //   Fluttertoast.showToast(
-                                              //     msg: 'Error en el registro',
-                                              //     toastLength: Toast.LENGTH_SHORT,
-                                              //     gravity: ToastGravity.CENTER,
-                                              //     backgroundColor: Colors.red,
-                                              //     textColor: Colors.white,
-                                              //     fontSize: 16.0,
-                                              //   );
-                                              // }
-                                              Navigator.of(context).pushNamed(
-                                                  '/manager/check_rooms');
+                                                  'lastname: ${user.lastname}');
+                                              print('surname: ${user.surname}');
+                                              print('email: ${user.email}');
+                                              print(
+                                                  'password: ${user.password}');
+                                              print(
+                                                  'id del Rol: $_rolSeleccionado');
+                                              try {
+                                                final dio = Dio();
+                                                const path =
+                                                    '${GlobalData.pathUserUri}/registerUser';
+                                                final response = await dio.post(
+                                                  path,
+                                                  data: {
+                                                    'idUser': user.idUser,
+                                                    'email': user.email,
+                                                    'password': user.password,
+                                                    'status': user.status,
+                                                    'idPerson': {
+                                                      'name': user.name,
+                                                      'lastname': user.lastname,
+                                                      'surname': user.surname
+                                                    },
+                                                    'idRol': _rolSeleccionado
+                                                    // {
+                                                    //   "idRol": _rolSeleccionado,
+                                                    //   "rolName": rolNames[
+                                                    //       _rolSeleccionado],
+                                                    // },
+                                                  },
+                                                );
+                                                if (response.data['msg'] ==
+                                                    'Register') {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Usuario registrado exitosamente.')),
+                                                  );
+                                                  Navigator.of(context)
+                                                      .pushNamed(
+                                                          '/manager/users');
+                                                }
+                                              } catch (e) {
+                                                print(e);
+                                                ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                        content: Text(
+                                                            'Ha sucedido un error al actualizar. Intente más tarde.')),
+                                                  );
+                                              }
                                             },
                                       child: const Text('Modificar'),
                                     ),

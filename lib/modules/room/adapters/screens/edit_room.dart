@@ -62,33 +62,39 @@ class _EditRoomState extends State<EditRoom> {
   Future<void> fetchData(final idRoom) async {
     print(idRoom);
     final dio = Dio();
-    try {
+    // try {
       final response =
-          await dio.get('${GlobalData.pathRoomUri}/getRoom?idRoom=$idRoom');
-      final responseUsers = await dio
-          .get('${GlobalData.pathUserUri}/getUsersByRol?rolName=Role_Limpieza');
+          await dio.get('${GlobalData.pathRoomUri}/getRoomWithUserById?idRoom=$idRoom');
       if (response.data['msg'] == 'OK') {
         final roomData = response.data['data'];
         print(roomData);
-         int sup1 = 0;
-         int sup2 = 0;
-        if (roomData['idUser'] != null) {
-          for(int i = 0; i < roomData['iseUser'].length; i++){
-            sup1 = roomData['idUser'][i]['idUser'];
-            sup2 = roomData['idUser'][i+1]['idUser'];
+        int sup1 = 0;
+        int sup2 = 0;
+        int contSups = 0;
+        if (roomData['users'] != null) {
+          for (var user in roomData['users']) {
+            contSups++;
+            if (contSups == 1) {
+              sup1 = user['idUser'];
+            } else if (contSups == 2) {
+              sup2 = user['idUser'];
+            } else {
+              break;
+            }
           }
         }
         room = RoomEdit(
-          idRoom: roomData['idRoom'],
-          identifier: roomData['identifier'],
-          status: roomData['status'],
-          description: roomData['description'] ?? 'Sin descripción',
-          supervisor1: sup1,
-          supervisor2: sup2
-        );
+            idRoom: roomData['idRoom'],
+            identifier: roomData['identifier'],
+            status: roomData['status']??0,
+            description: roomData['description'] ?? 'Sin descripción',
+            supervisor1: sup1,
+            supervisor2: sup2);
         room2 = room;
         hasData = true;
       }
+      final responseUsers = await dio
+          .get('${GlobalData.pathUserUri}/getUsersByRol?rolName=Role_Limpieza');
       if (responseUsers.data['msg'] == 'OK') {
         print(responseUsers.data['data']);
         final usuariosLimpieza = responseUsers.data['data'];
@@ -103,10 +109,10 @@ class _EditRoomState extends State<EditRoom> {
       setState(() {
         hasData = true;
       });
-    } catch (error) {
-      print(error);
-      // Manejar el error de alguna manera
-    }
+    // } catch (error) {
+    //   print(error);
+    //   // Manejar el error de alguna manera
+    // }
   }
 
   void actualizarDatos(RoomEdit room) async {
@@ -117,34 +123,35 @@ class _EditRoomState extends State<EditRoom> {
     print(room.supervisor1);
     print(room.supervisor2);
     final dio = Dio();
-      final request =
-          await dio.put('${GlobalData.pathRoomUri}/updateRoom', data: {
-        'idRoom': room.idRoom,
-        'description': room.description,
-        'status': room.status,
-        'identifier': room.identifier
-      });
-      if (request.data['msg' == 'Update']) {
-        if (room.supervisor1 != room2.supervisor1 && room.supervisor2 != room2.supervisor2) {
-          //Si hay modificacion en algun usuarios
-          if(room.supervisor1 != room2.supervisor1){
-            final rsup1 = dio.post('${GlobalData.pathRoomUri}/assignUserRoom?idUser=${room.supervisor1}&idRoom=${room.idRoom}');
-            final rsup2 = dio.post('${GlobalData.pathRoomUri}/assignUserRoom?idUser=${room.supervisor2}&idRoom=${room.idRoom}');
-
-          }
+    final request =
+        await dio.put('${GlobalData.pathRoomUri}/updateRoom', data: {
+      'idRoom': room.idRoom,
+      'description': room.description,
+      'status': room.status,
+      'identifier': room.identifier
+    });
+    if (request.data['msg'] == 'Update') {
+      if (room.supervisor1 != room2.supervisor1 &&
+          room.supervisor2 != room2.supervisor2) {
+        //Si hay modificacion en algun usuarios
+        if (room.supervisor1 != room2.supervisor1) {
+          final rsup1 = dio.post(
+              '${GlobalData.pathRoomUri}/assignUserRoom?idUser=${room.supervisor1}&idRoom=${room.idRoom}');
+          final rsup2 = dio.post(
+              '${GlobalData.pathRoomUri}/assignUserRoom?idUser=${room.supervisor2}&idRoom=${room.idRoom}');
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Actualización completada exitosamente.')),
-        );
-        Navigator.of(context).popAndPushNamed('/manager/check_rooms');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'No se pudo actualizar los datos. Por favor, verifique la información.')),
-        );
       }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Actualización completada exitosamente.')),
+      );
+      Navigator.of(context).popAndPushNamed('/manager/check_rooms');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text(
+                'No se pudo actualizar los datos. Por favor, verifique la información.')),
+      );
+    }
   }
 
   @override
