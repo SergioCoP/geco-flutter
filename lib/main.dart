@@ -27,7 +27,7 @@ class MainApp extends StatelessWidget {
      routes: {
       '/': (context) => const Splash(legend: 'Cargando...'),
       '/login': (context) => const Login(),
-      '/registerUser': (context) =>  RegisterUser(),
+      '/registerUser': (context) =>  const RegisterUser(),
       '/users': (context) => const UserManagement(),
       '/manager': (context) => const MenuManager(),
       '/personal_cleaner': (context) => const MenuPersonalCleaner(),

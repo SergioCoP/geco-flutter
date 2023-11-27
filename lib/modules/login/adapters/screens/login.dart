@@ -65,7 +65,7 @@ class _FormCardState extends State<_FormCard> {
   final _formKey = GlobalKey<FormState>();
 
   // ignore: unused_field, prefer_final_fields
-  bool _isButtonDisabled = true;
+  bool _isButtonDisabled = false;
   bool passVisible = true;
 
   final TextEditingController _email = TextEditingController(text: '');
