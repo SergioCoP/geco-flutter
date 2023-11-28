@@ -53,28 +53,20 @@ class _UserManagementState extends State<UserManagement> {
     // }
   }
 
-  List<Widget> crearCards(List<User> data) {
-    List<Widget> userCards = [];
-    for (var user in data) {
-      userCards.add(UserCard(user: user));
-    }
-    return userCards;
-  }
-
   void filtrarUsuario(String query) {
     query = query.toLowerCase();
-    List<User> usuariosFiltrados = [];
-    if (query.isEmpty) {
-      _listUsuarios = _listUsuariosRespaldo;
-    }
-    if (_listUsuarios != null) {
-      _listUsuarios!.then((usuarios) {
-        usuariosFiltrados = usuarios.where((user) {
-          return user.userName.toLowerCase().contains(query);
-        }).toList();
+    if (query.isNotEmpty) {
+      _listUsuarios?.then((data) {
         setState(() {
+          List<User> usuariosFiltrados = data.where((user) {
+            return user.userName.toLowerCase().contains(query);
+          }).toList();
           _listUsuarios = Future.value(usuariosFiltrados);
         });
+      });
+    } else {
+      setState(() {
+        _listUsuarios = _listUsuariosRespaldo;
       });
     }
   }
@@ -84,8 +76,29 @@ class _UserManagementState extends State<UserManagement> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestión de usuarios'),
-        centerTitle: true,
         backgroundColor: ColorsApp.primaryColor,
+        foregroundColor: Colors.white,
+        actions: [
+          InkWell(
+            onTap: () {
+              print('Boton de deslogueo asies jaja');
+              // Navigator.pushNamed(context, '/login');
+            },
+            child: Container(
+              width: 50,
+              height: 60,
+              margin: const EdgeInsets.all(16.0),
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -97,25 +110,25 @@ class _UserManagementState extends State<UserManagement> {
               child: FutureBuilder(
                 future: _listUsuarios,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Text("Ha sucedido un error maquiavelico.");
+                  } else {
                     List<User> sapoUser = snapshot.data;
                     if (sapoUser.isNotEmpty) {
-                      return GridView.count(
-                        mainAxisSpacing: 2,
-                        crossAxisCount: 2,
-                        children: crearCards(snapshot.data),
+                      return ListView.builder(
+                        itemCount: sapoUser.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return UserCard(user: sapoUser[index]);
+                        },
                       );
                     } else {
                       return const IsEmpty();
                     }
-                  } else if (!snapshot.hasData) {
-                    return const IsEmpty();
-                  } else if (snapshot.hasError) {
-                    return const Text("Ha sucedido un error maquiavelico.");
                   }
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
                 },
               ),
             ),
@@ -124,38 +137,39 @@ class _UserManagementState extends State<UserManagement> {
           Positioned(
             child: SizedBox(
               height: heightOfFirstContainer,
-              child: Column(
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            onChanged: (text) {
-                              filtrarUsuario(text.toString());
-                            },
-                            decoration: const InputDecoration(
-                              suffixIcon: Icon(Icons.search),
-                              labelText: 'Buscar usuario',
-                              hintText: 'Escribe aquí para buscar a un usuario',
-                            ),
-                          ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextField(
+                        onChanged: (text) {
+                          filtrarUsuario(text);
+                        },
+                        decoration: const InputDecoration(
+                          suffixIcon: Icon(Icons.search, color: Colors.blue),
+                          labelText: 'Buscar usuario',
+                          hintText: 'Escribe aquí para buscar a un usuario',
+                          border: OutlineInputBorder(),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.buttonPrimaryColor,
-                            ),
-                            onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed('/manager/users/register');
-                            },
-                            child: const Icon(Icons.add)),
-                      ),
-                    ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorsApp.buttonPrimaryColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushNamed('/manager/users/register');
+                        },
+                        child: const Icon(Icons.add)),
                   ),
                 ],
               ),

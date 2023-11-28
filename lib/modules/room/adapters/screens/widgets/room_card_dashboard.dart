@@ -33,36 +33,42 @@ class RoomCardDashboard extends StatelessWidget {
         break;
     }
     return Card(
-      elevation: 5.0,
-      shadowColor: Colors.black,
-      shape: const RoundedRectangleBorder(
-        side: BorderSide(
-          color: Color.fromARGB(50, 0, 0, 0),
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(15)),
+      margin: const EdgeInsets.all(12.0),
+      elevation: 2.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+            5.0), // Ajusta el radio del borde de la tarjeta
+        side: const BorderSide(
+            color: Colors.black, width: 0.5), // Añade un borde más marcado
       ),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+        padding: const EdgeInsets.all(18.0),
+        child: Row(
           children: [
+            Column(
+              children: [
+                SizedBox(
+                  child: Text(
+                    roomIncidences.identifier,
+                    style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
+                  ),
+                ),
+                const SizedBox(height: 20.0),
+                botonPorEstado(context, roomIncidences.status),
+              ],
+            ),
+            const Spacer(),
             Container(
-              width: 100,
-              height: 50,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.all(10.0),
+              width: 30,
+              height: 31,
               decoration: BoxDecoration(
                 color: buttonColor,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(15.0),
               ),
-              child: SizedBox(
-                child: Text(
-                  roomIncidences.identifier,
-                  style: const TextStyle(fontSize: 15, color: Colors.black),
-                ),
-              ),
-            ),
-            const SizedBox(height: 25.0),
-            botonPorEstado(context, roomIncidences.status),
+            )
           ],
         ),
       ),
@@ -112,7 +118,10 @@ Widget botonPorEstado(BuildContext context, int estado) {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.warning),
-            Text('Revisar', style: TextStyle( color: Colors.black),),
+            Text(
+              'Revisar',
+              style: TextStyle(color: Colors.black),
+            ),
           ],
         ),
       );

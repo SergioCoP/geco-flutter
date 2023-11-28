@@ -1,7 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/room/adapters/screens/room_rent.dart';
 import 'package:geco_mobile/modules/room/entities/room.dart';
 
 class RoomCard extends StatefulWidget {
@@ -48,75 +46,83 @@ class _RoomCardState extends State<RoomCard> {
         buttonColor = Colors.grey;
         break;
     }
-
     return Card(
-      elevation: 5.0,
-      shadowColor: const Color.fromARGB(118, 0, 0, 0),
-      shape: const RoundedRectangleBorder(
-        side: BorderSide(
-          color: Color.fromARGB(50, 0, 0, 0),
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(15)),
+      margin: const EdgeInsets.all(12.0),
+      elevation: 2.0,
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+            5.0), // Ajusta el radio del borde de la tarjeta
+        side: const BorderSide(
+            color: Colors.black, width: 0.5), // Añade un borde más marcado
       ),
-      child: InkWell(
-        onTap: () {
-          cambiarEstado(context, widget.room, widget.path);
-        },
-        child: SizedBox(
-          child: Column(
-            children: [
-              ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: buttonColor,
-                ),
-                child: Text(
-                  estado,
-                  style: const TextStyle(fontSize: 15, color: Colors.black),
-                ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(12.0),
+        title: Text(
+          widget.room.identifier,
+          style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          estado,
+          style: const TextStyle(fontSize: 16.0),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 30.0,
+              height: 20.0,
+              decoration: BoxDecoration(
+                color: buttonColor,
+                borderRadius: BorderRadius.circular(15.0),
               ),
-              const Spacer(),
-              Text(
-                widget.room.identifier,
-                style:
-                    const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(
+              width: 10.0,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                color: Colors.blue,
+                shape: BoxShape.circle,
               ),
-              const Spacer(),
-              if (widget.room.status == 1)
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // Text(
-                      //   'Rentar',
-                      //   style: TextStyle(
-                      //     fontSize: 20,
-                      //     color: Color.fromARGB(255, 149, 33, 243),
-                      //     fontWeight: FontWeight.bold),
-                      // ),
-                      Icon(
-                        Icons.swap_horizontal_circle,
-                        color: Colors.red,
-                        size: 50.0,
-                      )
-                    ],
-                  ),
-                )
-              else
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    '',
-                    style: TextStyle(
-                        fontSize: 50,
-                        color: Color.fromARGB(255, 149, 33, 243),
-                        fontWeight: FontWeight.bold),
-                  ),
-                )
-            ],
-          ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/manager/check_rooms/edit_room',
+                    arguments: {'idRoom': widget.room.idRoom},
+                  );
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10.0,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: widget.room.status == 0 ? Colors.green : Colors.red,
+                // color: Colors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.change_circle,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  cambiarEstado(context, widget.room, widget.path);
+                },
+              ),
+            ),
+            // IconButton(
+            //   icon: const Icon(Icons.delete),
+            //   onPressed: () {},
+            // ),
+          ],
         ),
       ),
     );
@@ -129,85 +135,73 @@ class _RoomCardState extends State<RoomCard> {
         BuildContext context,
       ) {
         bool flagEstado = room.status == 1 ? true : false;
-        if (flagEstado) {
-          return AlertDialog(
-            title: const Text('Rentar habitación'),
-            content: RichText(
-              text: TextSpan(
-                  text: '¿Quieres rentar la habitación ',
-                  style: DefaultTextStyle.of(context).style,
-                  children: [
-                    TextSpan(
-                      text: room.identifier,
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    const TextSpan(
-                      text: '?',
-                    )
-                  ]),
+        final estadoMessage = flagEstado == true
+            ? {
+                'title': 'Deshabilitar Habitación',
+                'desc': '¿Quieres deshabilitar la habitación '
+              }
+            : {
+                'title': 'Habilitar Habitación',
+                'desc': '¿Quieres volver a activar la habitación '
+              };
+        return AlertDialog(
+          title: Text(estadoMessage['title']!),
+          content: RichText(
+            text: TextSpan(
+                text: estadoMessage['desc'],
+                style: DefaultTextStyle.of(context).style,
+                children: [
+                  TextSpan(
+                    text: room.identifier,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(
+                    text: '?',
+                  )
+                ]),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                print('Estado: ' + room.identifier);
+                // try {
+                //   final dio = Dio();
+                //   final response = await dio.put('$path/updateRoom', data: {
+                //     'idRoom': room.idRoom,
+                //     'identifier': room.identifier,
+                //     'status': 2
+                //   });
+                //   if (response.statusCode == 200) {
+                //     // ignore: use_build_context_synchronously
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => const RoomRent(),
+                //       ),
+                //     );
+                //   }
+                // } catch (e) {}
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.green,
+                padding: const EdgeInsets.all(8.0),
+                textStyle: const TextStyle(fontSize: 20),
+              ),
+              child: const Text('Aceptar'),
             ),
-            actions: [
-              TextButton(
-                onPressed: () async {
-                  try {
-                    final dio = Dio();
-                  final response = await dio.put('$path/updateRoom', data: {
-                    'idRoom': room.idRoom,
-                    'identifier': room.identifier,
-                    'status': 2
-                  });
-                  if (response.statusCode == 200) {
-                    // ignore: use_build_context_synchronously
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RoomRent(),
-                      ),
-                    );
-                  }
-                  } catch (e) {
-                    
-                  }
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.green,
-                  padding: const EdgeInsets.all(16.0),
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text('Cambiar estado'),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+                padding: const EdgeInsets.all(8.0),
+                textStyle: const TextStyle(fontSize: 20),
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Cerrar el diálogo
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.red,
-                  padding: const EdgeInsets.all(16.0),
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text('Cancelar'),
-              ),
-            ],
-          );
-        } else {
-          return AlertDialog(
-            title: const Text('Lo sentimos'),
-            content: const Text(
-                'No puedes rentar una habitacion que no esté en venta.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Cerrar el diálogo
-                },
-                style: TextButton.styleFrom(
-                  foregroundColor: const Color.fromARGB(255, 196, 34, 34),
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                child: const Text('Cerrar'),
-              ),
-            ],
-          );
-        }
+              child: const Text('Cancelar'),
+            ),
+          ],
+        );
       },
     );
   }

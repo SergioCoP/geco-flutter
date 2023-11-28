@@ -63,52 +63,52 @@ class _EditRoomState extends State<EditRoom> {
     print(idRoom);
     final dio = Dio();
     // try {
-      final response =
-          await dio.get('${GlobalData.pathRoomUri}/getRoomWithUserById?idRoom=$idRoom');
-      if (response.data['msg'] == 'OK') {
-        final roomData = response.data['data'];
-        print(roomData);
-        int sup1 = 0;
-        int sup2 = 0;
-        int contSups = 0;
-        if (roomData['users'] != null) {
-          for (var user in roomData['users']) {
-            contSups++;
-            if (contSups == 1) {
-              sup1 = user['idUser'];
-            } else if (contSups == 2) {
-              sup2 = user['idUser'];
-            } else {
-              break;
-            }
+    final response = await dio
+        .get('${GlobalData.pathRoomUri}/getRoomWithUserById?idRoom=$idRoom');
+    if (response.data['msg'] == 'OK') {
+      final roomData = response.data['data'];
+      print(roomData);
+      int sup1 = 0;
+      int sup2 = 0;
+      int contSups = 0;
+      if (roomData['users'] != null) {
+        for (var user in roomData['users']) {
+          contSups++;
+          if (contSups == 1) {
+            sup1 = user['idUser'];
+          } else if (contSups == 2) {
+            sup2 = user['idUser'];
+          } else {
+            break;
           }
         }
-        room = RoomEdit(
-            idRoom: roomData['idRoom'],
-            identifier: roomData['identifier'],
-            status: roomData['status']??0,
-            description: roomData['description'] ?? 'Sin descripción',
-            supervisor1: sup1,
-            supervisor2: sup2);
-        room2 = room;
-        hasData = true;
       }
-      final responseUsers = await dio
-          .get('${GlobalData.pathUserUri}/getUsersByRol?rolName=Role_Limpieza');
-      if (responseUsers.data['msg'] == 'OK') {
-        print(responseUsers.data['data']);
-        final usuariosLimpieza = responseUsers.data['data'];
-        for (var user in usuariosLimpieza) {
-          supervisors.add({'id': user['idUser'], 'name': user['userName']});
-        }
-      } else {
-        supervisors = <Map<String, dynamic>>[
-          {'id': 0, 'name': 'Selecciona in usuario'},
-        ]; // Reempl
+      room = RoomEdit(
+          idRoom: roomData['idRoom'],
+          identifier: roomData['identifier'],
+          status: roomData['status'] ?? 0,
+          description: roomData['description'] ?? 'Sin descripción',
+          supervisor1: sup1,
+          supervisor2: sup2);
+      room2 = room;
+      hasData = true;
+    }
+    final responseUsers = await dio
+        .get('${GlobalData.pathUserUri}/getUsersByRol?rolName=Role_Limpieza');
+    if (responseUsers.data['msg'] == 'OK') {
+      print(responseUsers.data['data']);
+      final usuariosLimpieza = responseUsers.data['data'];
+      for (var user in usuariosLimpieza) {
+        supervisors.add({'id': user['idUser'], 'name': user['userName']});
       }
-      setState(() {
-        hasData = true;
-      });
+    } else {
+      supervisors = <Map<String, dynamic>>[
+        {'id': 0, 'name': 'Selecciona in usuario'},
+      ]; // Reempl
+    }
+    setState(() {
+      hasData = true;
+    });
     // } catch (error) {
     //   print(error);
     //   // Manejar el error de alguna manera
@@ -168,135 +168,146 @@ class _EditRoomState extends State<EditRoom> {
         title: const Text('Editar Habitación'),
         centerTitle: true,
         backgroundColor: ColorsApp.primaryColor,
+        foregroundColor: Colors.white,
       ),
       body: hasData
-          ? SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKeyUpdateRoom,
-                  onChanged: () {
-                    setState(() {
-                      _isButtonDisabled =
-                          !_formKeyUpdateRoom.currentState!.validate();
-                    });
-                  },
-                  child: Card(
-                    elevation: 4.0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          TextFormField(
-                            initialValue: room.identifier,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor asigna un identificador';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Identificador',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+          ? Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKeyUpdateRoom,
+                    onChanged: () {
+                      setState(() {
+                        _isButtonDisabled =
+                            !_formKeyUpdateRoom.currentState!.validate();
+                      });
+                    },
+                    child: Card(
+                      elevation: 4.0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            5.0), // Ajusta el radio del borde de la tarjeta
+                        side: const BorderSide(
+                            color: Colors.black,
+                            width: 1.0), // Añade un borde más marcado
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextFormField(
+                              initialValue: room.identifier,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor asigna un identificador';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Identificador',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 30),
-                          DropdownButtonFormField<int>(
-                            value: room.status,
-                            items: listaEstados
-                                .map(
-                                  (estado) => DropdownMenuItem<int>(
-                                      value: estado['status'],
-                                      child: Text(estado['text'])),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                room.status = value!;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Estado',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+                            SizedBox(height: 30),
+                            // DropdownButtonFormField<int>(
+                            //   value: room.status,
+                            //   items: listaEstados
+                            //       .map(
+                            //         (estado) => DropdownMenuItem<int>(
+                            //             value: estado['status'],
+                            //             child: Text(estado['text'])),
+                            //       )
+                            //       .toList(),
+                            //   onChanged: (value) {
+                            //     setState(() {
+                            //       room.status = value!;
+                            //     });
+                            //   },
+                            //   decoration: InputDecoration(
+                            //     labelText: 'Estado',
+                            //     border: OutlineInputBorder(
+                            //       borderRadius: BorderRadius.circular(10),
+                            //     ),
+                            //   ),
+                            // ),
+                            // SizedBox(height: 30),
+                            // TextFormField(
+                            //   initialValue: room.description,
+                            //   maxLines: 5,
+                            //   decoration: InputDecoration(
+                            //     labelText: 'Descripción',
+                            //     border: OutlineInputBorder(
+                            //       borderRadius: BorderRadius.circular(10),
+                            //     ),
+                            //   ),
+                            // ),
+                            // SizedBox(height: 30),
+                            Text(
+                              'Encargados de limpieza',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
                               ),
                             ),
-                          ),
-                          SizedBox(height: 30),
-                          TextFormField(
-                            initialValue: room.description,
-                            maxLines: 5,
-                            decoration: InputDecoration(
-                              labelText: 'Descripción',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+                            SizedBox(height: 15),
+                            DropdownButtonFormField<int>(
+                              value: room.supervisor1,
+                              items: supervisors.map((user1) {
+                                return DropdownMenuItem<int>(
+                                    value: user1['id'],
+                                    child: Text(user1['name']));
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  room.supervisor1 = value!;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Turno matutino',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 30),
-                          Text(
-                            'Encargados de limpieza',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18.0,
-                            ),
-                          ),
-                          SizedBox(height: 15),
-                          DropdownButtonFormField<int>(
-                            value: room.supervisor1,
-                            items: supervisors.map((user1) {
-                              return DropdownMenuItem<int>(
-                                  value: user1['id'],
-                                  child: Text(user1['name']));
-                            }).toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                room.supervisor1 = value!;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Turno matutino',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+                            SizedBox(height: 30),
+                            DropdownButtonFormField<int>(
+                              value: room.supervisor2,
+                              items: supervisors
+                                  .map((user2) => DropdownMenuItem<int>(
+                                      value: user2['id'],
+                                      child: Text(user2['name'])))
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  room.supervisor2 = value!;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                labelText: 'Turno vespertino',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 30),
-                          DropdownButtonFormField<int>(
-                            value: room.supervisor2,
-                            items: supervisors
-                                .map((user2) => DropdownMenuItem<int>(
-                                    value: user2['id'],
-                                    child: Text(user2['name'])))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                room.supervisor2 = value!;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'Turno vespertino',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                            SizedBox(height: 30),
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: ColorsApp.secondaryColor,
+                                  foregroundColor: Colors.white),
+                              onPressed: _isButtonDisabled
+                                  ? null
+                                  : () {
+                                      actualizarDatos(room);
+                                    },
+                              child: Text('Guardar Cambios'),
                             ),
-                          ),
-                          SizedBox(height: 30),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.secondaryColor,
-                            ),
-                            onPressed: _isButtonDisabled
-                                ? null
-                                : () {
-                                    actualizarDatos(room);
-                                  },
-                            child: Text('Guardar Cambios'),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),

@@ -16,7 +16,7 @@ class RoomsDashboard extends StatefulWidget {
 
 class _RoomsDashboardState extends State<RoomsDashboard> {
   late List<RoomIncidences> listaHabitaciones;
-  final double heightOfFirstContainer = 190.0;
+  final double heightOfFirstContainer = 220.0;
   late bool hasFetch = false;
   late int totalCuartos = 0;
   late int totalEnVenta = 0;
@@ -90,21 +90,38 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final deviceWidth = MediaQuery.of(context).size.width - 16.0;
-    var size = MediaQuery.of(context).size;
+    final deviceWidth = MediaQuery.of(context).size.width - 40.5;
+    // var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
-    final double itemHeight = (size.height - kToolbarHeight - 24) / 4;
-    final double itemWidth = size.width / 2;
+    // final double itemHeight = (size.height - kToolbarHeight - 24) / 4;
+    // final double itemWidth = size.width / 2;
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          "Panel de control",
-          textAlign: TextAlign.center,
-        ),
-        centerTitle: true,
+        title: const Text("Panel de control"),
         backgroundColor: ColorsApp.primaryColor,
         foregroundColor: Colors.white,
+        actions: [
+          InkWell(
+            onTap: () {
+              print('Boton de deslogueo asies jaja');
+              // Navigator.pushNamed(context, '/login');
+            },
+            child: Container(
+              width: 50,
+              height: 60,
+              margin: const EdgeInsets.all(16.0),
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ],
       ),
       body: hasFetch
           ? listaHabitaciones.isNotEmpty
@@ -117,174 +134,253 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                         Scaffold(
                           body: Container(
                             margin: const EdgeInsets.only(
-                              top: 190,
+                              top: 235,
                             ),
-                            child: GridView.count(
-                              crossAxisCount: 2,
-                              mainAxisSpacing: 2,
-                              childAspectRatio: (itemWidth / itemHeight),
-                              children: listaHabitaciones.map((room) {
-                                return RoomCardDashboard(roomIncidences: room);
-                              }).toList(),
+                            child: ListView.builder(
+                              itemCount: listaHabitaciones.length,
+                              itemBuilder: (context, index) {
+                                return RoomCardDashboard(
+                                    roomIncidences: listaHabitaciones[index]);
+                              },
                             ),
                           ),
                         ),
                         Positioned(
-                            child: SizedBox(
-                          height: heightOfFirstContainer,
-                          child: Column(
-                            children: [
-                              //CUADRO DONDE ESTA EL TOTAL DE CUARTOS
-                              Container(
-                                padding: const EdgeInsets.all(0.0),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: deviceWidth / 2,
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            'Total de Cuartos',
-                                            style: TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            '$totalCuartos',
-                                            style: TextStyle(
-                                                fontSize: 35.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // const Spacer(),
-                                    Container(
-                                        width: deviceWidth / 2,
-                                        decoration: BoxDecoration(
-                                          color: ColorsApp.estadoEnVenta,
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Text(
-                                              'En renta',
-                                              style: TextStyle(
-                                                  fontSize: 20.0,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Text(
-                                              '$totalEnVenta',
-                                              style: TextStyle(
-                                                  fontSize: 30.0,
-                                                  fontWeight:
-                                                      FontWeight.normal),
-                                            ),
-                                          ],
-                                        )),
-                                  ],
-                                ),
-                              ),
-                              //AQUI ESTARAN LOS CONTAINER DE EN VENTA Y EN USO
-                              Row(
+                            child: Card(
+                          elevation: 5.0,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            side: const BorderSide(
+                                color: Colors.black, width: 0.1),
+                          ),
+                          child: SizedBox(
+                            height: heightOfFirstContainer,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
                                 children: [
+                                  //CUADRO DONDE ESTA EL TOTAL DE CUARTOS
                                   Container(
-                                      width: deviceWidth / 2,
-                                      decoration: BoxDecoration(
-                                        color: ColorsApp.estadoEnUso,
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Text(
-                                            'En uso',
-                                            style: TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          Text(
-                                            '$totalEnUso',
-                                            style: TextStyle(
-                                                fontSize: 30.0,
-                                                fontWeight: FontWeight.normal),
-                                          ),
-                                        ],
-                                      )),
-                                  Container(
-                                    width: deviceWidth / 2,
-                                    decoration: BoxDecoration(
-                                      color: ColorsApp.estadoSucio,
-                                    ),
+                                    padding: const EdgeInsets.all(0.0),
                                     child: Column(
                                       children: [
-                                        Text(
-                                          'Sucias',
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold),
+                                        SizedBox(
+                                          width: deviceWidth / 2,
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'Total de habitaciones',
+                                                style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                '$totalCuartos',
+                                                style: TextStyle(
+                                                    fontSize: 35.0,
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        Text(
-                                          '$totalSucio',
-                                          style: TextStyle(
-                                              fontSize: 30.0,
-                                              fontWeight: FontWeight.normal),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  //AQUI ESTARAN LOS CONTAINER DE EN VENTA Y EN USO
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          10.0), // Ajusta el valor según sea necesario
+                                      border: Border.all(
+                                          color: Colors.black, width: 0.1),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10.0),
+                                            bottomLeft: Radius.circular(10.0),
+                                            topRight: Radius.circular(0.0),
+                                            bottomRight: Radius.circular(0.0),
+                                          ),
+                                          child: SizedBox(
+                                            width: deviceWidth / 2,
+                                            child: Container(
+                                              color: ColorsApp.estadoEnUso,
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    'En uso',
+                                                    style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    '$totalEnUso',
+                                                    style: TextStyle(
+                                                        fontSize: 30.0,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(0.0),
+                                            bottomLeft: Radius.circular(0.0),
+                                            topRight: Radius.circular(10.0),
+                                            bottomRight: Radius.circular(10.0),
+                                          ),
+                                          child: SizedBox(
+                                            width: deviceWidth / 2,
+                                            child: Container(
+                                              color: ColorsApp.estadoEnVenta,
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    'En renta',
+                                                    style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    '$totalEnVenta',
+                                                    style: TextStyle(
+                                                        fontSize: 30.0,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5.0,
+                                  ),
+                                  //AQUI ESTARAN LOS CONTAINER DE EN REVISION Y CON INCIDENCIAS
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(
+                                          10.0), // Ajusta el valor según sea necesario
+                                      border: Border.all(
+                                          color: Colors.black, width: 0.1),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10.0),
+                                            bottomLeft: Radius.circular(10.0),
+                                            topRight: Radius.circular(0.0),
+                                            bottomRight: Radius.circular(0.0),
+                                          ),
+                                          child: SizedBox(
+                                            width: deviceWidth / 3,
+                                            child: Container(
+                                              color: ColorsApp.estadoSucio,
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    'Sucias',
+                                                    style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    '$totalSucio',
+                                                    style: TextStyle(
+                                                        fontSize: 30.0,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: deviceWidth / 3,
+                                          decoration: BoxDecoration(
+                                            color: ColorsApp.estadoSinRevisar,
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                'En revisión',
+                                                style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              Text(
+                                                '$totalEnRevision',
+                                                style: TextStyle(
+                                                    fontSize: 30.0,
+                                                    fontWeight:
+                                                        FontWeight.normal),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(0.0),
+                                            bottomLeft: Radius.circular(0.0),
+                                            topRight: Radius.circular(10.0),
+                                            bottomRight: Radius.circular(10.0),
+                                          ),
+                                          child: SizedBox(
+                                            width: deviceWidth / 3,
+                                            child: Container(
+                                              color: ColorsApp
+                                                  .estadoConIncidencias,
+                                              child: Column(
+                                                children: [
+                                                  Text(
+                                                    'Con detalles',
+                                                    style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                  Text(
+                                                    '$totalIncidencias',
+                                                    style: TextStyle(
+                                                        fontSize: 30.0,
+                                                        fontWeight:
+                                                            FontWeight.normal),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
                                   ),
                                 ],
                               ),
-                              //AQUI ESTARAN LOS CONTAINER DE EN REVISION Y CON INCIDENCIAS
-                              Row(
-                                children: [
-                                  Container(
-                                    width: deviceWidth / 2,
-                                    decoration: BoxDecoration(
-                                      color: ColorsApp.estadoSinRevisar,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'En revisión',
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          '$totalEnRevision',
-                                          style: TextStyle(
-                                              fontSize: 30.0,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    width: deviceWidth / 2,
-                                    decoration: BoxDecoration(
-                                      color: ColorsApp.estadoConIncidencias,
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Text(
-                                          'Con incidencias',
-                                          style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          '$totalIncidencias',
-                                          style: TextStyle(
-                                              fontSize: 30.0,
-                                              fontWeight: FontWeight.normal),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Divider(
-                                color: Colors.black,
-                              ),
-                            ],
+                            ),
                           ),
                         ))
                       ],
@@ -296,11 +392,11 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                       'No se encontraron habitaciones registradas en este hotel. :)'),
                 )
           : RefreshIndicator(
-            onRefresh: fetchRooms,
-            child: const Center(
+              onRefresh: fetchRooms,
+              child: const Center(
                 child: CircularProgressIndicator(),
               ),
-          ),
+            ),
     );
   }
 }
