@@ -191,7 +191,7 @@ class _EditRoomState extends State<EditRoom> {
                             5.0), // Ajusta el radio del borde de la tarjeta
                         side: const BorderSide(
                             color: Colors.black,
-                            width: 1.0), // Añade un borde más marcado
+                            width: 0.5), // Añade un borde más marcado
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -235,18 +235,18 @@ class _EditRoomState extends State<EditRoom> {
                             //     ),
                             //   ),
                             // ),
-                            // SizedBox(height: 30),
-                            // TextFormField(
-                            //   initialValue: room.description,
-                            //   maxLines: 5,
-                            //   decoration: InputDecoration(
-                            //     labelText: 'Descripción',
-                            //     border: OutlineInputBorder(
-                            //       borderRadius: BorderRadius.circular(10),
-                            //     ),
-                            //   ),
-                            // ),
-                            // SizedBox(height: 30),
+                            SizedBox(height: 30),
+                            TextFormField(
+                              initialValue: room.description,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                labelText: 'Descripción',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 30),
                             Text(
                               'Encargados de limpieza',
                               style: TextStyle(

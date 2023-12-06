@@ -59,7 +59,8 @@ class _UserManagementState extends State<UserManagement> {
       _listUsuarios?.then((data) {
         setState(() {
           List<User> usuariosFiltrados = data.where((user) {
-            return user.userName.toLowerCase().contains(query);
+            return user.userName.toLowerCase().contains(query) ||
+                user.rolName.toLowerCase().contains(query);
           }).toList();
           _listUsuarios = Future.value(usuariosFiltrados);
         });
@@ -156,7 +157,7 @@ class _UserManagementState extends State<UserManagement> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.only(right: 10.0),
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: ColorsApp.buttonPrimaryColor,

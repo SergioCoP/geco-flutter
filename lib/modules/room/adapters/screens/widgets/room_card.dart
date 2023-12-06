@@ -12,8 +12,12 @@ class RoomCard extends StatefulWidget {
 }
 
 class _RoomCardState extends State<RoomCard> {
+  List<String> switches = [];
+  bool stvalue = false;
+  bool statusSw = false;
   @override
   Widget build(BuildContext context) {
+    statusSw = widget.room.status == 1 ? true : false;
     Color? buttonColor;
     String? estado;
     switch (widget.room.status) {
@@ -46,17 +50,135 @@ class _RoomCardState extends State<RoomCard> {
         buttonColor = Colors.grey;
         break;
     }
+    void selectRubros(Room room) {
+      bool switchStatus = false;
+      AlertDialog(
+          title: const Text('Selecciona un rubro'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: [
+                Text('Esta es la habitación $room.name'),
+                const Text('Esta sería la lista de rubros disponibles'),
+                Switch(
+                  value: switchStatus,
+                  onChanged: (bool value) {
+                    setState(() {
+                      switchStatus = value;
+                    });
+                  },
+                  activeColor: Colors.green,
+                  inactiveTrackColor: Colors.red,
+                  inactiveThumbColor: Colors.red.shade100,
+                  materialTapTargetSize: MaterialTapTargetSize.padded,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Establecer'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ]);
+    }
+
     return Card(
-      margin: const EdgeInsets.all(12.0),
-      elevation: 2.0,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(
-            5.0), // Ajusta el radio del borde de la tarjeta
-        side: const BorderSide(
-            color: Colors.black, width: 0.5), // Añade un borde más marcado
-      ),
-      child: ListTile(
+        margin: const EdgeInsets.all(12.0),
+        elevation: 2.0,
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0),
+          side: const BorderSide(color: Colors.black, width: 0.5),
+        ),
+        child: SizedBox(
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                Row(
+                  // SE MUESTRA EL IDENTIFICADOR Y SUS BOTONES
+                  children: [
+                    Text(
+                      widget.room.identifier,
+                      style: const TextStyle(
+                          fontSize: 18.0, fontWeight: FontWeight.bold),
+                    ),
+                    const Spacer(),
+                    Container(
+                      height: 30.0,
+                      width: 30.0,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: buttonColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 25.0,
+                ),
+                Row(
+                  // SE MUESTRA EL ESTADO DE LA HABITACIÓN
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        // AQUI VAN LOS BOTONES
+                        Ink(
+                          decoration: ShapeDecoration(
+                            color: Colors.lightBlue,
+                            shape: ContinuousRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/manager/check_rooms/edit_room',
+                                arguments: {'idRoom': widget.room.idRoom},
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5.0,
+                        ),
+                        Ink(
+                          decoration: ShapeDecoration(
+                            color: Colors.lightBlue,
+                            shape: ContinuousRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.info,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              mostrarInfo(context, widget.room, estado!);
+                            },
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                )
+              ],
+            ),
+          ),
+        ));
+  }
+
+  /**
+   * ListTile(
         contentPadding: const EdgeInsets.all(12.0),
         title: Text(
           widget.room.identifier,
@@ -80,10 +202,12 @@ class _RoomCardState extends State<RoomCard> {
             const SizedBox(
               width: 10.0,
             ),
-            Container(
-              decoration: const BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
+            Ink(
+              decoration: ShapeDecoration(
+                color: Colors.lightBlue,
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               child: IconButton(
                 icon: const Icon(
@@ -102,11 +226,32 @@ class _RoomCardState extends State<RoomCard> {
             const SizedBox(
               width: 10.0,
             ),
-            Container(
-              decoration: BoxDecoration(
+            Ink(
+              decoration: ShapeDecoration(
                 color: widget.room.status == 0 ? Colors.green : Colors.red,
-                // color: Colors.blue,
-                shape: BoxShape.circle,
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.check_box_rounded,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  // Navigator.pushNamed(context, 'manager/rooms/rubros');
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10.0,
+            ),
+            Ink(
+              decoration: ShapeDecoration(
+                color: Colors.green,
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
               child: IconButton(
                 icon: const Icon(
@@ -118,13 +263,72 @@ class _RoomCardState extends State<RoomCard> {
                 },
               ),
             ),
-            // IconButton(
-            //   icon: const Icon(Icons.delete),
-            //   onPressed: () {},
-            // ),
           ],
         ),
       ),
+    
+   */
+
+  void mostrarInfo(context, Room room, String estado) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Informacion del usuario"),
+          content: SizedBox(
+            height: 200.0,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    text: 'Identificador de la habitación: \n',
+                    style: const TextStyle(color: Colors.black),
+                    children: [
+                      TextSpan(
+                        text: widget.room.identifier,
+                        style: const TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+
+                ///---------------------------
+                RichText(
+                  text: TextSpan(
+                    text: 'Estado de la habitación: \n',
+                    style: const TextStyle(color: Colors.black),
+                    children: [
+                      TextSpan(
+                        text: estado,
+                        style: const TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10.0,
+                ),
+
+                ///---------------------------
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cerrar'),
+            ),
+          ],
+        );
+      },
     );
   }
 

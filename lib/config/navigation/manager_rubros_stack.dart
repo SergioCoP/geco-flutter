@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/modules/rubros/adapters/screens/rubros_management.dart';
+import 'package:geco_mobile/modules/rubros/adapters/screens/rubros_register.dart';
+import 'package:geco_mobile/modules/rubros/adapters/screens/rubros_update.dart';
 
 class ManagerRubrosStack extends StatelessWidget {
   const ManagerRubrosStack({super.key});
@@ -11,6 +13,8 @@ class ManagerRubrosStack extends StatelessWidget {
       initialRoute: '/manager/rubros',
       routes: {
         '/manager/rubros': (context) => const RubrosManagement(),
+        '/manager/rubros/register': (context) => const RubroRegister(),
+        '/manager/rubros/update': (context) => const RubroUpdate(),
       },
     );
   }

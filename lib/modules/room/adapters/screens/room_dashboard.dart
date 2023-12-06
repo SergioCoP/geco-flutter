@@ -387,9 +387,12 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                     ),
                   ),
                 )
-              : Center(
-                  child: Text(
-                      'No se encontraron habitaciones registradas en este hotel. :)'),
+              : RefreshIndicator(
+                  onRefresh: fetchRooms,
+                  child: Center(
+                    child: Text(
+                        'No se encontraron habitaciones registradas en este hotel. :)'),
+                  ),
                 )
           : RefreshIndicator(
               onRefresh: fetchRooms,

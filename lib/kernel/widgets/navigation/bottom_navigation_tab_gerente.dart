@@ -11,11 +11,14 @@ class BottomNavigationTabGerente extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Dashboard'),
-        BottomNavigationBarItem(icon: Icon(Icons.meeting_room_outlined), label: 'Habitaciones'),
-        BottomNavigationBarItem(icon: Icon(Icons.person_search_rounded), label: 'Usuarios'),
-        BottomNavigationBarItem(icon: Icon(Icons.check_box_rounded), label: 'Rubros'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.home_rounded), label: 'Dashboard'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.meeting_room_rounded), label: 'Habitaciones'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person_search_rounded), label: 'Usuarios'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.assignment_turned_in_rounded), label: 'Rubros'),
       ],
       currentIndex: selectedIndex,
       selectedItemColor: ColorsApp.secondaryColor,

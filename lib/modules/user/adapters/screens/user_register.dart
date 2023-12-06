@@ -195,44 +195,46 @@ class _UserRegisterState extends State<UserRegister> {
                                   const path =
                                       '${GlobalData.pathUserUri}/registerUser';
                                   print(path);
-                                  try {
-                                    final response = await dio.post(
-                                      path,
-                                      data: {
-                                        'email': _correoController.text,
-                                        'password': _contraseniaController.text,
-                                        'status': 1,
-                                        'idPerson': {
-                                          'name': _nombresController.text,
-                                          'lastname':
-                                              _apellidoPaternoController.text,
-                                          'surname':
-                                              _apellidoMaternoController.text
-                                        },
-                                        'idRol': obtenerIdRol(
-                                            rolNames[_rolSeleccionado]!),
+                                  // try {
+                                  final response = await dio.post(
+                                    path,
+                                    data: {
+                                      'idUser': null,
+                                      'email': _correoController.text,
+                                      'password': _contraseniaController.text,
+                                      'status': 1,
+                                      'idPerson': {
+                                        'idPerson': null,
+                                        'name': _nombresController.text,
+                                        'lastname':
+                                            _apellidoPaternoController.text,
+                                        'surname':
+                                            _apellidoMaternoController.text,
+                                        'turn': null,
                                       },
-                                    );
-                                    if (response.data['msg'] == 'Register') {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text(
-                                              'Usuario registrado exitosamente.'),
-                                        ),
-                                      );
-                                      Navigator.of(context)
-                                          .pushNamed('/manager/users');
-                                    }
-                                  } catch (e) {
-                                    print(e);
+                                      'idRol': obtenerIdRol(
+                                          rolNames[_rolSeleccionado]!),
+                                    },
+                                  );
+                                  if (response.data['msg'] == 'Register') {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                            'No se pudo registrar al usuario. Intente de nuevo.'),
+                                            'Usuario registrado exitosamente.'),
                                       ),
                                     );
+                                    Navigator.of(context)
+                                        .pushNamed('/manager/users');
                                   }
+                                  // } catch (e) {
+                                  //   print(e);
+                                  //   ScaffoldMessenger.of(context).showSnackBar(
+                                  //     const SnackBar(
+                                  //       content: Text(
+                                  //           'No se pudo registrar al usuario. Intente de nuevo.'),
+                                  //     ),
+                                  //   );
+                                  // }
                                 },
                           child: const Text('Registrar usuario'),
                         ),
@@ -248,8 +250,13 @@ class _UserRegisterState extends State<UserRegister> {
     );
   }
 
-  int obtenerIdRol(String descripcion) {
-    return listaRoles
-        .firstWhere((rol) => rol['description'] == descripcion)['idRol'];
+  Map obtenerIdRol(String descripcion) {
+    for (var i = 0; i < listaRoles.length; i++) {
+      var role = listaRoles[i];
+      if (role['description'] == descripcion) {
+        return role;
+      }
+    }
+    return {};
   }
 }
