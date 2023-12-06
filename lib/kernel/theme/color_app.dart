@@ -12,5 +12,5 @@ class ColorsApp{
   static const estadoEnUso = Color(0xFFD9D9D9);
   static const estadoSinRevisar = Color(0xFFCDDEF6);
   static const estadoConIncidencias = Color(0xFFFFF2C5);
-  static const estadoSucio  = Color(0xFFC3EDC2);
+  static const estadoSucio  = Color.fromARGB(255, 233, 208, 238);
 }

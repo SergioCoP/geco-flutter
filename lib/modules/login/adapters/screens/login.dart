@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/kernel/toasts/toasts.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
@@ -64,7 +65,7 @@ class _FormCardState extends State<_FormCard> {
   final _formKey = GlobalKey<FormState>();
 
   // ignore: unused_field, prefer_final_fields
-  bool _isButtonDisabled = true;
+  bool _isButtonDisabled = false;
   bool passVisible = true;
 
   final TextEditingController _email = TextEditingController(text: '');
@@ -206,33 +207,34 @@ class _FormCardState extends State<_FormCard> {
                                     onPressed: _isButtonDisabled
                                         ? null
                                         : () async {
-                                          Navigator.pushReplacementNamed(context, '/personal_cleaner');
-                                    // Navigator.of(context).pushNamed('/rooms');
-                                    // Navigator.pushReplacementNamed(context, '/manager');
-                                            Response response;
-                                            try {
-                                              response = await dio.request(
-                                                  'http://192.168.0.163:8080/user/login',
-                                                  queryParameters: {
-                                                    "email": _email.text,
-                                                    "password": _password.text
-                                                  },
-                                                  options:
-                                                      Options(method: 'GET'));
-                                              print(response.data['msg']);
-                                              if (response.data['msg'] ==
-                                                  'Loged') {
-                                                Toasts.showSuccessToast(
-                                                    'Bienvenido');
-                                                Navigator.of(context)
-                                                    .pushNamed('/controlPanel');
-                                              } else {
-                                                Toasts.showWarningToast(
-                                                    'Contraseña o correo incorrectos');
-                                              }
-                                            } catch (e) {
-                                              print(e);
-                                            }
+                                            // Navigator.pushReplacementNamed(context, '/personal_cleaner');
+                                            // Navigator.of(context).pushNamed('/rooms');
+                                            Navigator.pushReplacementNamed(
+                                                context, '/manager'); 
+                                            // Response response;
+                                            // try {
+                                            //   response = await dio.request(
+                                                  // '${GlobalData.pathUserUri}/login',
+                                            //       queryParameters: {
+                                            //         "email": _email.text,
+                                            //         "password": _password.text
+                                            //       },
+                                            //       options:
+                                            //           Options(method: 'GET'));
+                                            //   print(response.data['msg']);
+                                            //   if (response.data['msg'] ==
+                                            //       'Loged') {
+                                            //     Toasts.showSuccessToast(
+                                            //         'Bienvenido');
+                                            //     Navigator.of(context)
+                                            //         .pushNamed('/controlPanel');
+                                            //   } else {
+                                            //     Toasts.showWarningToast(
+                                            //         'Contraseña o correo incorrectos');
+                                            //   }
+                                            // } catch (e) {
+                                            //   print(e);
+                                            // }
                                           },
                                     child: const Text('Iniciar'),
                                   ),

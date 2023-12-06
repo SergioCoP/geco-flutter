@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/room/adapters/screens/widgets/room_card_management.dart';
+import 'package:geco_mobile/modules/room/adapters/screens/widgets/room_card.dart';
 import 'package:geco_mobile/modules/room/entities/room.dart';
 
 class RoomManagement extends StatefulWidget {
@@ -13,10 +13,12 @@ class RoomManagement extends StatefulWidget {
 }
 
 class _RoomManagementState extends State<RoomManagement> {
-  final double heightOfFirstContainer = 200.0;
+  final double heightOfFirstContainer = 100.0;
   final _path = GlobalData.pathRoomUri;
-  Future<List<Room>>? _listaHabitaciones;
-  Future<List<Room>>? _listaHabitacionesRespaldo;
+  late bool hasChange = false;
+
+  late Future<List<Room>>? _listaHabitaciones;
+  late Future<List<Room>>? _listaHabitacionesRespaldo;
   // ignore: unused_field
   Future<List<dynamic>>? _listaHabitacionesTienenIncidencias;
 
@@ -26,7 +28,10 @@ class _RoomManagementState extends State<RoomManagement> {
     try {
       _listaHabitaciones = obtenerCuartosFetch();
       _listaHabitacionesRespaldo = _listaHabitaciones;
-    } catch (e){}
+    } catch (e) {
+      _listaHabitaciones = [] as Future<List<Room>>?;
+      _listaHabitacionesRespaldo = _listaHabitaciones;
+    }
   }
 
   Future<List<Room>> obtenerCuartosFetch() async {
@@ -36,8 +41,12 @@ class _RoomManagementState extends State<RoomManagement> {
       final response = await dio.get('$_path/getAllRooms');
       if (response.data['msg'] == 'OK') {
         for (var habitacion in response.data['data']) {
-          habitaciones.add(Room(habitacion['idRoom'],
-              habitacion['identifier'], habitacion['status']));
+          habitaciones.add(Room(
+            habitacion['idRoom'],
+            habitacion['identifier'],
+            habitacion['status'],
+            habitacion['description'],
+          ));
         }
       }
       return habitaciones;
@@ -47,135 +56,121 @@ class _RoomManagementState extends State<RoomManagement> {
     }
   }
 
-  List<Widget> crearCards(List<dynamic> data) {
-    List<RoomCardManagement> roomsCards = [];
-    if (data.isNotEmpty) {
-      for (var room in data) {
-        roomsCards.add(RoomCardManagement(
-          room: room,
-          path: _path,
-        ));
-      }
-    }
-    return roomsCards;
-  }
-
-  void filtrarHabitacion(String query) {
+  void filterCards(String query) {
     query = query.toLowerCase();
-    try {
-      List<Room> habitacionesFiltradas = [];
-      if (query.isEmpty) {
-        _listaHabitaciones = _listaHabitacionesRespaldo;
-      }
-      if (_listaHabitaciones != null) {
-        _listaHabitaciones!.then((habitaciones) {
-          habitacionesFiltradas = habitaciones.where((habitacion) {
-            return habitacion.identifier.toLowerCase().contains(query);
+    if (query.isNotEmpty) {
+      _listaHabitaciones?.then((data) {
+        setState(() {
+          List<Room> filteredData = data.where((card) {
+            return card.identifier.toLowerCase().contains(query.toLowerCase());
           }).toList();
-          setState(() {
-            _listaHabitaciones = Future.value(habitacionesFiltradas);
-          });
+          _listaHabitaciones = Future.value(filteredData);
         });
-      }
-    } catch (e) {
-      throw (Exception(e));
+      });
+    } else {
+      setState(() {
+        _listaHabitaciones = _listaHabitacionesRespaldo;
+      });
     }
   }
 
+  // ignore: prefer_final_fields
+  // TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final dynamic rawArgs = ModalRoute.of(context)!.settings.arguments;
-    final Map<String, dynamic> arguments =
-        (rawArgs as Map<String, dynamic>?) ?? {};
-    bool retryFetch = arguments['hasData'] ?? false;
-    if (retryFetch) {
-      retryFetch = false;
-      obtenerCuartosFetch();
-    }
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Gestión de habitaciones'),
         backgroundColor: ColorsApp.primaryColor,
+        foregroundColor: Colors.white,
+        actions: [
+          InkWell(
+            onTap: () {
+              print('Boton de deslogueo asies jaja');
+              // Navigator.pushNamed(context, '/login');
+            },
+            child: Container(
+              width: 50,
+              height: 60,
+              margin: const EdgeInsets.all(16.0),
+              decoration: const BoxDecoration(
+                color: Colors.transparent,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.logout,
+                color: Colors.red,
+              ),
+            ),
+          ),
+        ],
       ),
       body: Stack(
         children: [
           Scaffold(
             body: Container(
               margin: const EdgeInsets.only(
-                top: 160,
+                top: 100,
               ),
-              child: FutureBuilder(
+              child: FutureBuilder<List<Room>>(
                 future: _listaHabitaciones,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  try {
-                    if (snapshot.hasData) {
-                      return GridView.count(
-                        mainAxisSpacing: 2,
-                        crossAxisCount: 2,
-                        children: crearCards(snapshot.data),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else {
+                    List<Room> data = snapshot.data!;
+                    if (data.isNotEmpty) {
+                      return ListView.builder(
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return RoomCard(room: data[index], path: _path);
+                        },
                       );
-                    } else if (!snapshot.hasData) {
+                    } else {
                       return const IsEmptyRooms();
-                    } else if (snapshot.hasError) {
-                      return const Text("Ha sucedido un error maquiavélico.");
                     }
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } catch (e) {
-                    return const IsEmptyRooms();
                   }
                 },
               ),
             ),
           ),
-
-          //Aqui va para registrar un usuario, buscar usuarios
           Positioned(
             child: SizedBox(
               height: heightOfFirstContainer,
-              child: Column(
+              child: Row(
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.all(8),
-                        child: const Text(
-                          "Habitaciones",
-                          style: TextStyle(fontSize: 30.0),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: TextField(
+                        onChanged: (value) {
+                          filterCards(value);
+                        },
+                        decoration: const InputDecoration(
+                          labelText: 'Buscar por Identificador',
+                          hintText: 'Buscar habitación',
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.search, color: Colors.blue),
                         ),
                       ),
-                      const SizedBox(
-                        width: 30.0,
-                      ),
-                      Container(
-                        margin: const EdgeInsets.only(right: 12),
-                        padding: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.buttonPrimaryColor,
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/manager/check_rooms/register',arguments: {'path' : _path});
-                            },
-                            child: const Icon(Icons.add)),
-                      ),
-                    ],
+                    ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      onChanged: (text) {
-                        filtrarHabitacion(text.toString());
-                      },
-                      decoration: const InputDecoration(
-                        suffixIcon: Icon(Icons.search),
-                        labelText: 'Buscar habitación',
-                        hintText: 'Escribe aquí para buscar una habitación',
-                      ),
-                    ),
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorsApp.buttonPrimaryColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            )),
+                        onPressed: () {
+                          Navigator.of(context)
+                              .pushNamed('/manager/check_rooms/register');
+                        },
+                        child: const Icon(Icons.add)),
                   ),
                 ],
               ),
@@ -185,6 +180,8 @@ class _RoomManagementState extends State<RoomManagement> {
       ),
     );
   }
+
+  
 }
 
 class IsEmptyRooms extends StatelessWidget {
@@ -194,6 +191,6 @@ class IsEmptyRooms extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
         child:
-            Text('No hay ningun Cuarto/Habitación registrado Actualmente :)'));
+            Text('No hay ningun Cuarto/Habitación registrado Actualmente. :)'));
   }
 }

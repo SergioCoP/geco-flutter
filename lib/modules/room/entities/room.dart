@@ -14,6 +14,7 @@ class Room {
   int idRoom;
   String identifier;
   int status;
+  String description;
   // User user;
-  Room(this.idRoom,this.identifier,this.status);
+  Room(this.idRoom, this.identifier, this.status, this.description);
 }

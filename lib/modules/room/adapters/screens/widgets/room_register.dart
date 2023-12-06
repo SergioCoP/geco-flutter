@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 
 class RoomRegister extends StatefulWidget {
@@ -12,6 +13,7 @@ class RoomRegister extends StatefulWidget {
 }
 
 class _RoomRegisterState extends State<RoomRegister> {
+  final path = GlobalData.pathRoomUri;
   final _formKeyRoomRegister = GlobalKey<FormState>();
 
   final TextStyle textStyle =
@@ -30,11 +32,6 @@ class _RoomRegisterState extends State<RoomRegister> {
 
   @override
   Widget build(BuildContext context) {
-    final dynamic rawArgs = ModalRoute.of(context)!.settings.arguments;
-    final Map<String, dynamic> arguments =
-        (rawArgs as Map<String, dynamic>?) ?? {};
-    final path = arguments['path'] ?? 'http://192.168.1.76:8080/room';
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Registrar habitación"),
@@ -43,21 +40,21 @@ class _RoomRegisterState extends State<RoomRegister> {
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Card(
-              elevation: 4.0,
-              child: Form(
-                key: _formKeyRoomRegister,
-                onChanged: () {
-                  setState(() {
-                    _isButtonDisabled =
-                        !_formKeyRoomRegister.currentState!.validate();
-                  });
-                },
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _formKeyRoomRegister,
+              onChanged: () {
+                setState(() {
+                  _isButtonDisabled =
+                      !_formKeyRoomRegister.currentState!.validate();
+                });
+              },
+              child: Card(
+                elevation: 4.0,
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         'Identificador',
@@ -170,13 +167,16 @@ class _RoomRegisterState extends State<RoomRegister> {
                         //Aqui esta el fokin boton
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorsApp.secondaryColor,
+                          ),
                           onPressed: _isButtonDisabled
                               ? null
                               : () async {
                                   if (_formKeyRoomRegister.currentState!
                                       .validate()) {
                                     String identificador = _identificador.text;
-                                    String numInit =_cantidadInicial.text;
+                                    String numInit = _cantidadInicial.text;
                                     String numHab = _cantidad.text;
                                     try {
                                       final dio = Dio();
@@ -188,14 +188,15 @@ class _RoomRegisterState extends State<RoomRegister> {
                                             'description': _descripcion.text,
                                             "status": 1,
                                           });
-                                      if (response.data['msg']  == 'Register') {
+                                      if (response.data['msg'] == 'Register') {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
                                               content: Text(
                                                   'Registro completado exitosamente.')),
                                         );
-                                        Navigator.of(context).pushNamed('/manager/check_rooms');
+                                        Navigator.of(context).popAndPushNamed(
+                                            '/manager/check_rooms');
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
