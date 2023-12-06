@@ -2,10 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/kernel/toasts/toasts.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
 
 class Login extends StatefulWidget {
@@ -34,9 +31,7 @@ class _Login extends State<Login> {
                 borderRadius: BorderRadius.circular(15),
                 child: SizedBox.fromSize(
                   size: const Size.fromRadius(48),
-                  child: Image.asset(
-                    'assets/images/geco_logo.png',
-                  ),
+                  child: Image.asset('assets/images/geco_logo.png')
                 ),
               ),
             ),
@@ -210,11 +205,11 @@ class _FormCardState extends State<_FormCard> {
                                             // Navigator.pushReplacementNamed(context, '/personal_cleaner');
                                             // Navigator.of(context).pushNamed('/rooms');
                                             Navigator.pushReplacementNamed(
-                                                context, '/manager'); 
+                                                context, '/manager');
                                             // Response response;
                                             // try {
                                             //   response = await dio.request(
-                                                  // '${GlobalData.pathUserUri}/login',
+                                            // '${GlobalData.pathUserUri}/login',
                                             //       queryParameters: {
                                             //         "email": _email.text,
                                             //         "password": _password.text

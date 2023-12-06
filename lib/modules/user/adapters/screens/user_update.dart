@@ -242,7 +242,6 @@ class _UserUpdateState extends State<UserUpdate> {
                                                   path,
                                                   data: {
                                                     'idUser': user.idUser,
-                                                    
                                                     'email': user.email,
                                                     'password': user.password,
                                                     'status': user.status,
@@ -251,12 +250,9 @@ class _UserUpdateState extends State<UserUpdate> {
                                                       'lastname': user.lastname,
                                                       'surname': user.surname
                                                     },
-                                                    'idRol': _rolSeleccionado
-                                                    // {
-                                                    //   "idRol": _rolSeleccionado,
-                                                    //   "rolName": rolNames[
-                                                    //       _rolSeleccionado],
-                                                    // },
+                                                    "idRol": _rolSeleccionado,
+                                                    "rolName": rolNames[
+                                                        _rolSeleccionado],
                                                   },
                                                 );
                                                 if (response.data['msg'] ==
@@ -274,11 +270,11 @@ class _UserUpdateState extends State<UserUpdate> {
                                               } catch (e) {
                                                 print(e);
                                                 ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                        content: Text(
-                                                            'Ha sucedido un error al actualizar. Intente más tarde.')),
-                                                  );
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Ha sucedido un error al actualizar. Intente más tarde.')),
+                                                );
                                               }
                                             },
                                       child: const Text('Modificar'),

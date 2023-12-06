@@ -193,7 +193,7 @@ class _UserRegisterState extends State<UserRegister> {
                               : () async {
                                   final dio = Dio();
                                   const path =
-                                      '${GlobalData.pathUserUri}/registerUser';
+                                      '${GlobalData.pathUserUri}/api/user';
                                   print(path);
                                   try {
                                     final response = await dio.post(
@@ -209,8 +209,8 @@ class _UserRegisterState extends State<UserRegister> {
                                           'surname':
                                               _apellidoMaternoController.text
                                         },
-                                        'idRol': obtenerIdRol(
-                                            rolNames[_rolSeleccionado]!),
+                                        // 'idRol': obtenerIdRol(
+                                        //     rolNames[_rolSeleccionado]!),
                                       },
                                     );
                                     if (response.data['msg'] == 'Register') {

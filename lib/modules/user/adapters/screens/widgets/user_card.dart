@@ -33,12 +33,12 @@ class _UserCardState extends State<UserCard> {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: 
-                  // widget.user.status == 1
-                  //     ? 
-                      ColorsApp.buttonPrimaryColor
-                      // : ColorsApp.buttonCancelColor,
-                ),
+                    backgroundColor:
+                        // widget.user.status == 1
+                        //     ?
+                        ColorsApp.buttonPrimaryColor
+                    // : ColorsApp.buttonCancelColor,
+                    ),
                 child: Text(
                   '# ${widget.user.idUser}',
                   style: const TextStyle(fontSize: 15),
@@ -63,18 +63,21 @@ class _UserCardState extends State<UserCard> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container( //Bton de info
+                  Container(
+                    //Bton de info
                     margin: const EdgeInsets.all(1),
                     child: MaterialButton(
                       onPressed: () {
-                         Navigator.of(context).pushNamed('/manager/users/update',arguments: {'idUser':widget.user.idUser});
+                        Navigator.of(context).pushNamed('/manager/users/update',
+                            arguments: {'idUser': widget.user.idUser});
                       },
                       minWidth: 50.0,
                       color: ColorsApp.infoColor,
                       child: const Icon(Icons.edit_document),
                     ),
                   ),
-                  Container( //Bton de cambiar estado
+                  Container(
+                    //Bton de cambiar estado
                     margin: const EdgeInsets.all(1),
                     child: MaterialButton(
                       onPressed: () {
@@ -82,11 +85,25 @@ class _UserCardState extends State<UserCard> {
                       },
                       minWidth: 50.0,
                       color:
-                      //  widget.user.status > 0
+                          //  widget.user.status > 0
                           // ? ColorsApp.buttonCancelColor
                           // :
-                           ColorsApp.buttonPrimaryColor,
+                          ColorsApp.buttonPrimaryColor,
                       child: const Icon(Icons.swap_horizontal_circle),
+                    ),
+                  ),
+                  Container(
+                    // Tercer botón con el icono de una habitación
+                    margin: const EdgeInsets.all(1),
+                    child: MaterialButton(
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/manager/users/rooms',
+                            arguments: {'idUser': widget.user.idUser});
+                      },
+                      minWidth: 50.0,
+                      color:
+                          Colors.blue, // Cambia el color según tus necesidades
+                      child: const Icon(Icons.bedroom_parent_outlined),
                     ),
                   ),
                 ],

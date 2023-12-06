@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/user_management.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/user_register.dart';
+import 'package:geco_mobile/modules/user/adapters/screens/user_rooms.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/user_update.dart';
 
 class ManagerUserStack extends StatelessWidget {
@@ -15,7 +16,8 @@ class ManagerUserStack extends StatelessWidget {
         '/manager/users': (context) => const UserManagement(),
         '/manager/users/register': (context) => const UserRegister(),
         '/manager/users/update': (context) => const UserUpdate(),
+        '/manager/users/rooms': (context) => const UserRoom(),
       }
     );
   }
-}
+} 
