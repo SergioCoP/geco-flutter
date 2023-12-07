@@ -50,7 +50,7 @@ class _UserCardState extends State<UserCard> {
                         height: 105.0,
                         child: Text(
                           //Nombre del usuario
-                          widget.user.userName,
+                          widget.user.username,
                           maxLines: 3,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
@@ -65,7 +65,7 @@ class _UserCardState extends State<UserCard> {
                       ),
                       Text(
                         ///EL ROL DEL USUARIO
-                        '${roles[widget.user.idRol] ?? 'Sin definir'}',
+                        '${roles[widget.user.idRol.idRol] ?? 'Sin definir'}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w300,
@@ -165,7 +165,7 @@ class _UserCardState extends State<UserCard> {
                                                   children: [
                                                     TextSpan(
                                                       text:
-                                                          widget.user.userName,
+                                                          widget.user.username,
                                                       style: const TextStyle(
                                                           color: Colors.black,
                                                           fontWeight:
@@ -208,7 +208,7 @@ class _UserCardState extends State<UserCard> {
                                                       color: Colors.black),
                                                   children: [
                                                     TextSpan(
-                                                      text: widget.user.rolName,
+                                                      text: widget.user.idRol.name,
                                                       style: const TextStyle(
                                                           color: Colors.black,
                                                           fontWeight:

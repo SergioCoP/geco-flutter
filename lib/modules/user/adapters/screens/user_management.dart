@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+// import 'package:geco_mobile/modules/cleaning_staff/entities/person.dart';
+// import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
+// import 'package:geco_mobile/modules/roles/entities/Rol.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/widgets/user_card.dart';
 import 'package:geco_mobile/modules/user/entities/user.dart';
 
@@ -30,20 +33,10 @@ class _UserManagementState extends State<UserManagement> {
     List<User> usuariost = [];
     // try {
     final dio = Dio();
-    final response = await dio.get('$path/getUsers');
-    if (response.data['msg'] == 'OK') {
+    final response = await dio.get(path);
+    if (response.data['status'] == 'OK') {
       for (var usuario in response.data['data']) {
-        User user = User(
-            usuario['idUser'],
-            usuario['status'] ?? 0,
-            usuario['userName'],
-            usuario['userEmail'],
-            usuario['password'] ?? '',
-            usuario['turn'] ?? '',
-            usuario['userRol'] ?? 'Role_Limpieza',
-            usuario['idRol'] ?? 3,
-            usuario['idHotel'] ?? 0);
-        usuariost.add(user);
+        usuariost.add(User.fromJson(usuario));
       }
     }
     return usuariost;
@@ -59,8 +52,11 @@ class _UserManagementState extends State<UserManagement> {
       _listUsuarios?.then((data) {
         setState(() {
           List<User> usuariosFiltrados = data.where((user) {
-            return user.userName.toLowerCase().contains(query) ||
-                user.rolName.toLowerCase().contains(query);
+            String fullname =
+                '${user.idPerson.name} ${user.idPerson.lastname} ${user.idPerson.surname}';
+            return user.username.toLowerCase().contains(query) ||
+                user.idRol.name.toLowerCase().contains(query) ||
+                fullname.toLowerCase().contains(query);
           }).toList();
           _listUsuarios = Future.value(usuariosFiltrados);
         });
@@ -79,6 +75,7 @@ class _UserManagementState extends State<UserManagement> {
         title: const Text('Gestión de usuarios'),
         backgroundColor: ColorsApp.primaryColor,
         foregroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         actions: [
           InkWell(
             onTap: () {
@@ -116,6 +113,7 @@ class _UserManagementState extends State<UserManagement> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (snapshot.hasError) {
+                    print(snapshot.error);
                     return const Text("Ha sucedido un error maquiavelico.");
                   } else {
                     List<User> sapoUser = snapshot.data;
@@ -200,7 +198,7 @@ Future<void> cambiarEstadoUser(BuildContext context, User user) async {
       content:
           // Text('¿Está seguro de cambiar de activo a desactivado al usuario ${user.person.name} ?'),
           Text(
-              '¿Está seguro de cambiar de activo a desactivado al usuario ${user.userName} ?'),
+              '¿Está seguro de cambiar de activo a desactivado al usuario ${user.idPerson.name} ?'),
       actions: <Widget>[
         MaterialButton(
           onPressed: () {

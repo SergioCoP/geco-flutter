@@ -23,6 +23,8 @@ class _UserRegisterState extends State<UserRegister> {
 
   final TextEditingController _nombresController =
       TextEditingController(text: '');
+  final TextEditingController _usernameController =
+      TextEditingController(text: '');
   final TextEditingController _apellidoPaternoController =
       TextEditingController(text: '');
   final TextEditingController _apellidoMaternoController =
@@ -53,6 +55,7 @@ class _UserRegisterState extends State<UserRegister> {
       appBar: AppBar(
         title: const Text('Registrar un usuario'),
         backgroundColor: ColorsApp.primaryColor,
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -113,6 +116,22 @@ class _UserRegisterState extends State<UserRegister> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
+                      ),
+                      sizedBox,
+                      TextFormField(
+                        controller: _usernameController,
+                        decoration: InputDecoration(
+                          labelText: 'Nombre de usuario',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Este campo es requerido';
+                          }
+                          return null;
+                        },
                       ),
                       sizedBox,
                       TextFormField(
@@ -192,31 +211,32 @@ class _UserRegisterState extends State<UserRegister> {
                               ? null
                               : () async {
                                   final dio = Dio();
-                                  const path =
-                                      '${GlobalData.pathUserUri}/registerUser';
+                                  const path = GlobalData.pathUserUri;
                                   print(path);
                                   // try {
                                   final response = await dio.post(
                                     path,
                                     data: {
-                                      'idUser': null,
                                       'email': _correoController.text,
                                       'password': _contraseniaController.text,
-                                      'status': 1,
+                                      'username': _usernameController.text,
                                       'idPerson': {
-                                        'idPerson': null,
                                         'name': _nombresController.text,
-                                        'lastname':
-                                            _apellidoPaternoController.text,
                                         'surname':
                                             _apellidoMaternoController.text,
-                                        'turn': null,
+                                        'lastname':
+                                            _apellidoPaternoController.text,
                                       },
-                                      'idRol': obtenerIdRol(
-                                          rolNames[_rolSeleccionado]!),
+                                      'idHotel': {
+                                        'idHotel': 1,
+                                      },
+                                      'idRol': {
+                                        'idRol': obtenerIdRol(
+                                            rolNames[_rolSeleccionado]!)
+                                      },
                                     },
                                   );
-                                  if (response.data['msg'] == 'Register') {
+                                  if (response.data['status'] == 'CREATED') {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
@@ -250,13 +270,13 @@ class _UserRegisterState extends State<UserRegister> {
     );
   }
 
-  Map obtenerIdRol(String descripcion) {
+  int obtenerIdRol(String descripcion) {
     for (var i = 0; i < listaRoles.length; i++) {
       var role = listaRoles[i];
       if (role['description'] == descripcion) {
-        return role;
+        return role['idRol'];
       }
     }
-    return {};
+    return 3;
   }
 }

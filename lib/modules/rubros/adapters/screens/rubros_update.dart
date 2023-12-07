@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
 import 'package:geco_mobile/modules/rubros/entities/rubro.dart';
 
 class RubroUpdate extends StatefulWidget {
@@ -37,8 +38,11 @@ class _RubroUpdateState extends State<RubroUpdate> {
           .get('$_path/getRubro', queryParameters: {"idRubro": idRubro});
       if (response.data['msg'] == 'OK') {
         final data = response.data['data'];
-        rubro = Rubro(data['idRubro'] ?? idRubro,
-            data['description'] ?? 'Sin nombre', data['status'] ?? 0);
+        rubro = Rubro(data['idEvaluationItem'] ?? idRubro,
+            data['name'] ?? 'Sin nombre', 
+            data['status'] ?? 0,
+            data['idHotel'] as Hotel
+            );
         setState(() {
           hasData = true;
         });
@@ -52,11 +56,11 @@ class _RubroUpdateState extends State<RubroUpdate> {
   void updateRubro(Rubro rubro) async {
     try {
       final dio = Dio();
-      final response = await dio.post(
-        '$_path/updateRubro',
+      final response = await dio.put(
+        _path,
         data: {
-          'idRubro': rubro.idRubro,
-          'description': rubro.description,
+          'idEvaluationItem': rubro.idEvaluationItem,
+          'name': rubro.name,
           // 'status': rubro.status,
         },
       );
@@ -127,7 +131,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
                               style: textStyle,
                             ),
                             TextFormField(
-                              initialValue: rubro.description,
+                              initialValue: rubro.name,
                               decoration: const InputDecoration(
                                 labelText: "Descripcion del rubro",
                                 hintText: "Descripcion del rubro",
@@ -139,7 +143,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
                                 return null;
                               },
                               onSaved: (value) {
-                                rubro.description = value!;
+                                rubro.name = value!;
                               },
                             ),
                             Padding(

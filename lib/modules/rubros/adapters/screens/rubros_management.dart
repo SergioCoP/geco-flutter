@@ -26,19 +26,18 @@ class _RubrosManagementState extends State<RubrosManagement> {
   }
 
   Future<List<Rubro>> obtenerRubrosFetch() async {
-    List<Rubro> _listaRubrosFetch = [];
+    List<Rubro> listaRubrosFetch = [];
     try {
       final dio = Dio();
-      final response = await dio.get('$_path/getAllRubros');
-      if (response.data['msg'] == 'OK') {
+      final response = await dio.get(_path);
+      if (response.data['status'] == 'OK') {
         for (var rubro in response.data['data']) {
-          _listaRubrosFetch.add(Rubro(rubro['idRubro'] ?? 0,
-              rubro['description'] ?? 'Sin nombre', rubro['status'] ?? 0));
+          listaRubrosFetch.add(Rubro.fromJson(rubro));
         }
       }
-      return _listaRubrosFetch;
+      return listaRubrosFetch;
     } catch (e) {
-      return _listaRubrosFetch;
+      return listaRubrosFetch;
     }
   }
 
@@ -48,7 +47,7 @@ class _RubrosManagementState extends State<RubrosManagement> {
       _listaRubros.then((data) {
         setState(() {
           List<Rubro> datosFiltrados = data.where((rubro) {
-            return rubro.description.toLowerCase().contains(query);
+            return rubro.name.toLowerCase().contains(query);
           }).toList();
           _listaRubros = Future.value(datosFiltrados);
         });

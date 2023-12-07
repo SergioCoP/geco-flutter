@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
@@ -15,19 +17,20 @@ class UserUpdate extends StatefulWidget {
 class _UserUpdateState extends State<UserUpdate> {
   late User user;
   late bool hasData = false;
-  bool _passVisible = false;
+  // bool _passVisible = false;
   final _formKey = GlobalKey<FormState>();
   bool _isButtonDisabled = true;
   int _rolSeleccionado = 3;
+  int _turnoSeleccionado = 0;
   List<Map<String, dynamic>> listaRoles = [
     {'idRol': 2, 'description': 'Recepcionista'},
     {'idRol': 3, 'description': 'Personal de limpieza'},
   ];
-  final rolNames = {
-    1: "Role_Gerente",
-    2: "Role_Recepcionista",
-    3: "Role_Limpieza"
-  };
+  List<Map<String, dynamic>> turnos = [
+    {'turn': 0, 'description': 'Sin asignar'},
+    {'turn': 1, 'description': 'Matutino'},
+    {'turn': 2, 'description': 'Vespertino'},
+  ];
   SizedBox sizedBox = const SizedBox(
     height: 25.0,
   );
@@ -39,28 +42,15 @@ class _UserUpdateState extends State<UserUpdate> {
 
   Future<void> fetchData(final idUser) async {
     final dio = Dio();
-    print('${GlobalData.pathUserUri}/getUserById?idUser=$idUser');
     try {
-      final response =
-          await dio.get('${GlobalData.pathUserUri}/getUserById?idUser=$idUser');
+      final response = await dio.get('${GlobalData.pathUserUri}/$idUser');
 
-      if (response.data['msg'] == 'OK') {
+      if (response.data['status'] == 'OK') {
         final userData = response.data['data'];
         setState(() {
-          user = User(
-            userData['idUser'] ?? idUser,
-            userData['status'] ?? 0,
-            userData['userName'] ?? '',
-            userData['email'] ?? '',
-            userData['password'] ?? '',
-            userData['turn'] ?? '',
-            userData['rolName'] ?? '',
-            userData['idRol'],
-            userData['idHotel'] ?? 0,
-          );
-          user.name = userData['name'];
-          user.lastname = userData['lastname'];
-          user.surname = userData['surname'];
+          user = User.fromJson(userData);
+          _rolSeleccionado = user.idRol.idRol;
+          _turnoSeleccionado = user.turn;
           hasData = true;
         });
       }
@@ -80,216 +70,192 @@ class _UserUpdateState extends State<UserUpdate> {
     }
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Editar usuario'),
           backgroundColor: ColorsApp.primaryColor,
+          foregroundColor: Colors.white,
         ),
         body: hasData
             ? SingleChildScrollView(
                 child: Padding(
                     padding: const EdgeInsets.all(6),
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        child: Card(
-                          color: Colors.white,
-                          child: Form(
-                            key: _formKey,
-                            onChanged: () {
-                              setState(() {
-                                _isButtonDisabled =
-                                    !_formKey.currentState!.validate();
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: <Widget>[
-                                  TextFormField(
-                                    initialValue: user.name,
-                                    // controller: _nombresController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Nombres',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        const Text(
+                          'Actualizar usuario',
+                          style: TextStyle(
+                              fontSize: 26.0, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            child: Card(
+                              color: Colors.white,
+                              child: Form(
+                                key: _formKey,
+                                onChanged: () {
+                                  setState(() {
+                                    _isButtonDisabled =
+                                        !_formKey.currentState!.validate();
+                                  });
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      TextFormField(
+                                        initialValue: user.username,
+                                        // controller: _nombresController,
+                                        decoration: InputDecoration(
+                                          labelText: 'Nombre de usuario',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'Este campo es requerido';
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Este campo es requerido';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  sizedBox,
-                                  TextFormField(
-                                    initialValue: user.lastname,
-                                    decoration: InputDecoration(
-                                      labelText: 'Apellido Paterno',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
+                                      sizedBox,
+                                      TextFormField(
+                                        initialValue: user.email,
+                                        // controller: _correoController,
+                                        decoration: InputDecoration(
+                                          labelText: 'Correo electronico',
+                                          border: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        validator: (value) {
+                                          RegExp regex =
+                                              RegExp(ValidationsApp.email);
+                                          if (value == null || value.isEmpty) {
+                                            return 'Este campo es requerido';
+                                          } else if (!regex.hasMatch(value)) {
+                                            return 'Correo invalido';
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                    ),
-                                  ),
-                                  sizedBox,
-                                  TextFormField(
-                                    initialValue: user.surname,
-                                    decoration: InputDecoration(
-                                      labelText: 'Apellido Materno',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Este campo es requerido';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  sizedBox,
-                                  TextFormField(
-                                    initialValue: user.email,
-                                    // controller: _correoController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Correo',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      RegExp regex =
-                                          RegExp(ValidationsApp.email);
-                                      if (value == null || value.isEmpty) {
-                                        return 'Este campo es requerido';
-                                      } else if (!regex.hasMatch(value)) {
-                                        return 'Correo invalido';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  sizedBox,
-                                  TextFormField(
-                                    initialValue: user.password,
-                                    // controller: _contraseniaController,
-                                    decoration: InputDecoration(
-                                      labelText: 'Contraseña',
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(_passVisible
-                                            ? Icons.visibility
-                                            : Icons.visibility_off),
-                                        onPressed: () {
+                                      sizedBox,
+                                      DropdownButtonFormField<int>(
+                                        decoration: const InputDecoration(
+                                            labelText:
+                                                'Selecciona el rol del usuario'),
+                                        value: _rolSeleccionado,
+                                        items: listaRoles
+                                            .map((rol) => DropdownMenuItem<int>(
+                                                  value: rol['idRol'],
+                                                  child:
+                                                      Text(rol['description']),
+                                                ))
+                                            .toList(),
+                                        onChanged: (newValue) {
                                           setState(() {
-                                            _passVisible = !_passVisible;
+                                            _rolSeleccionado = newValue!;
                                           });
                                         },
                                       ),
-                                    ),
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return 'Campo obligatorio';
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  sizedBox,
-                                  DropdownButtonFormField<int>(
-                                    decoration: const InputDecoration(
-                                        labelText: 'Tipo de usuario'),
-                                    value: _rolSeleccionado,
-                                    items: listaRoles
-                                        .map((rol) => DropdownMenuItem<int>(
-                                              value: rol['idRol'],
-                                              child: Text(rol['description']),
-                                            ))
-                                        .toList(),
-                                    onChanged: (newValue) {
-                                      setState(() {
-                                        _rolSeleccionado = newValue!;
-                                      });
-                                    },
-                                  ),
-                                  sizedBox,
-                                  Align(
-                                    alignment: Alignment.topCenter,
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor:
-                                            ColorsApp.secondaryColor,
+                                      sizedBox,
+                                      DropdownButtonFormField<int>(
+                                        decoration: const InputDecoration(
+                                            labelText:
+                                                'Selecciona el turno del usuario'),
+                                        value: _turnoSeleccionado,
+                                        items: turnos
+                                            .map((turno) =>
+                                                DropdownMenuItem<int>(
+                                                  value: turno['turn'],
+                                                  child: Text(
+                                                      turno['description']),
+                                                ))
+                                            .toList(),
+                                        onChanged: (newValue) {
+                                          setState(() {
+                                            _turnoSeleccionado = newValue!;
+                                          });
+                                        },
                                       ),
-                                      onPressed: _isButtonDisabled
-                                          ? null
-                                          : () async {
-                                              print('name: ${user.name}');
-                                              print(
-                                                  'lastname: ${user.lastname}');
-                                              print('surname: ${user.surname}');
-                                              print('email: ${user.email}');
-                                              print(
-                                                  'password: ${user.password}');
-                                              print(
-                                                  'id del Rol: $_rolSeleccionado');
-                                              try {
-                                                final dio = Dio();
-                                                const path =
-                                                    '${GlobalData.pathUserUri}/registerUser';
-                                                final response = await dio.post(
-                                                  path,
-                                                  data: {
-                                                    'idUser': user.idUser,
-                                                    
-                                                    'email': user.email,
-                                                    'password': user.password,
-                                                    'status': user.status,
-                                                    'idPerson': {
-                                                      'name': user.name,
-                                                      'lastname': user.lastname,
-                                                      'surname': user.surname
-                                                    },
-                                                    'idRol': _rolSeleccionado
-                                                    // {
-                                                    //   "idRol": _rolSeleccionado,
-                                                    //   "rolName": rolNames[
-                                                    //       _rolSeleccionado],
-                                                    // },
-                                                  },
-                                                );
-                                                if (response.data['msg'] ==
-                                                    'Register') {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                        content: Text(
-                                                            'Usuario registrado exitosamente.')),
-                                                  );
-                                                  Navigator.of(context)
-                                                      .pushNamed(
-                                                          '/manager/users');
-                                                }
-                                              } catch (e) {
-                                                print(e);
-                                                ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                        content: Text(
-                                                            'Ha sucedido un error al actualizar. Intente más tarde.')),
-                                                  );
-                                              }
-                                            },
-                                      child: const Text('Modificar'),
-                                    ),
-                                  )
-                                ],
+                                      sizedBox,
+                                      Align(
+                                        alignment: Alignment.topCenter,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  ColorsApp.secondaryColor,
+                                              foregroundColor: Colors.white),
+                                          onPressed: _isButtonDisabled
+                                              ? null
+                                              : () async {
+                                                  try {
+                                                    final dio = Dio();
+                                                    const path =
+                                                        GlobalData.pathUserUri;
+                                                    final response =
+                                                        await dio.put(
+                                                      path,
+                                                      data: {
+                                                        'idUser': user.idUser,
+                                                        'email': user.email,
+                                                        'username':
+                                                            user.username,
+                                                        'turn':
+                                                            _turnoSeleccionado,
+                                                        'idRol': {
+                                                          "idRol":
+                                                              _rolSeleccionado,
+                                                        },
+                                                      },
+                                                    );
+                                                    if (response
+                                                            .data['status'] ==
+                                                        'OK') {
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                        const SnackBar(
+                                                            content: Text(
+                                                                'Usuario Actualizado exitosamente.')),
+                                                      );
+                                                      Navigator.of(context)
+                                                          .popAndPushNamed(
+                                                              '/manager/users');
+                                                    }
+                                                  } catch (e) {
+                                                    print(e);
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                      const SnackBar(
+                                                          content: Text(
+                                                              'Ha sucedido un error al actualizar. Intente más tarde.')),
+                                                    );
+                                                  }
+                                                },
+                                          child: const Text('Modificar'),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     )),
               )
             : const Center(

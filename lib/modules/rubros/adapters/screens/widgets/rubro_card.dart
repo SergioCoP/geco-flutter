@@ -36,8 +36,12 @@ class _RubroCardState extends State<RubroCard> {
           Row(
             children: [
               SizedBox(
+                width: 200.0,
+                height: 65.0,
                 child: Text(
-                  widget.rubro.description,
+                  widget.rubro.name,
+                  maxLines: 3,
+                  overflow: TextOverflow.clip,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 26.0,
@@ -48,17 +52,17 @@ class _RubroCardState extends State<RubroCard> {
               Switch(
                 value: switchStatus,
                 onChanged: (bool value) async {
-                  // final dio = Dio();
-                  // final _path = GlobalData.pathRubroUri;
-                  // Response response;
-                  // response = await dio.put('$_path/status',
-                  //     data: {'idRubro': widget.rubro.idRubro});
-                  // if (response.data['msg'] == 'update') {
-                  //   setState(() {
-                  //     widget.rubro.status = switchStatus ? 1 : 0;
-                  //     switchStatus = value;
-                  //   });
-                  // }
+                  final dio = Dio();
+                  final path =
+                      '${GlobalData.pathRubroUri}/status/${widget.rubro.idEvaluationItem}';
+                  Response response;
+                  response = await dio.put(path);
+                  if (response.data['status'] == 'UPDATED') {
+                    setState(() {
+                      widget.rubro.status = switchStatus ? 1 : 0;
+                      switchStatus = value;
+                    });
+                  }
                   setState(() {
                     switchStatus = value;
                     widget.rubro.status = switchStatus ? 1 : 0;
@@ -89,7 +93,7 @@ class _RubroCardState extends State<RubroCard> {
                     Navigator.pushNamed(
                       context,
                       '/manager/rubros/update',
-                      arguments: {'idRubro': widget.rubro.idRubro},
+                      arguments: {'idRubro': widget.rubro.idEvaluationItem},
                     );
                   },
                   icon: const Icon(Icons.edit),
@@ -124,7 +128,7 @@ class _RubroCardState extends State<RubroCard> {
                                         style: TextStyle(color: Colors.black),
                                         children: [
                                           TextSpan(
-                                            text: widget.rubro.description,
+                                            text: widget.rubro.name,
                                             style: TextStyle(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.bold),

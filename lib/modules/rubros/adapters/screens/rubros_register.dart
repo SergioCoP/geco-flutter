@@ -1,7 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
@@ -77,7 +75,7 @@ class _RubroRegisterState extends State<RubroRegister> {
                           return null;
                         },
                         onSaved: (value) {
-                          rubro.description = value!;
+                          rubro.name = value!;
                         },
                       ),
                       Padding(
@@ -87,16 +85,15 @@ class _RubroRegisterState extends State<RubroRegister> {
                                 ? null
                                 : () async {
                                     final data = {
-                                      'idRubro': null,
-                                      'description': _description.text,
+                                      'name': _description.text,
+                                      'idHotel': {'idHotel': 1}
                                     };
-                                    final dataJson = jsonEncode(data);
                                     try {
                                       final dio = Dio();
                                       Response response;
-                                      response = await dio
-                                          .post('$_path/saveRubro', data: data);
-                                      if (response.data['msg'] == 'Register') {
+                                      response =
+                                          await dio.post(_path, data: data);
+                                      if (response.data['status'] == 'CREATED') {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
                                           content: Text(

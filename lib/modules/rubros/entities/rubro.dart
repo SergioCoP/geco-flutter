@@ -1,7 +1,19 @@
-class Rubro {
-  int idRubro;
-  String description;
-  int status;
+import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
 
-  Rubro(this.idRubro, this.description,this.status);
+class Rubro {
+  int idEvaluationItem;
+  String name;
+  int status;
+  Hotel idHotel;
+
+  Rubro(this.idEvaluationItem, this.name, this.status, this.idHotel);
+
+  static Rubro fromJson(rubro){
+    return Rubro(
+      rubro['idEvaluationItem'],
+      rubro['name'],
+      rubro['status'],
+      Hotel.fromJson(rubro['idHotel'])
+    );
+  }
 }
