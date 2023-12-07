@@ -7,7 +7,7 @@ import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
 
 class UserRegister extends StatefulWidget {
-  const UserRegister({super.key});
+  const UserRegister({Key? key});
 
   @override
   State<UserRegister> createState() => _UserRegisterState();
@@ -32,10 +32,6 @@ class _UserRegisterState extends State<UserRegister> {
   final TextEditingController _correoController =
       TextEditingController(text: '');
   List<Map<String, dynamic>> listaRoles = [
-    {'idRol': 2, 'description': 'Recepcionista'},
-    {'idRol': 3, 'description': 'Personal de limpieza'},
-  ];
-  List<Map<String, dynamic>> listaRolesName = [
     {'idRol': 2, 'description': 'Recepcionista'},
     {'idRol': 3, 'description': 'Personal de limpieza'},
   ];
@@ -192,8 +188,7 @@ class _UserRegisterState extends State<UserRegister> {
                               ? null
                               : () async {
                                   final dio = Dio();
-                                  const path =
-                                      '${GlobalData.pathUserUri}/api/user';
+                                  const path = GlobalData.pathUserUri;
                                   print(path);
                                   try {
                                     final response = await dio.post(
@@ -201,19 +196,24 @@ class _UserRegisterState extends State<UserRegister> {
                                       data: {
                                         'email': _correoController.text,
                                         'password': _contraseniaController.text,
-                                        'status': 1,
+                                        'username': 'jsjsjsjsjs',
                                         'idPerson': {
                                           'name': _nombresController.text,
-                                          'lastname':
-                                              _apellidoPaternoController.text,
                                           'surname':
-                                              _apellidoMaternoController.text
+                                              _apellidoPaternoController.text,
+                                          'lastname':
+                                              _apellidoMaternoController.text,
                                         },
-                                        // 'idRol': obtenerIdRol(
-                                        //     rolNames[_rolSeleccionado]!),
+                                        'idHotel': {
+                                          'idHotel':
+                                              1, // Aquí debes proporcionar el ID correcto del hotel
+                                        },
+                                        'idRol': {
+                                          'idRol': _rolSeleccionado,
+                                        },
                                       },
                                     );
-                                    if (response.data['msg'] == 'Register') {
+                                    if (response.data['status'] == 'CREATED') {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
                                         const SnackBar(
@@ -246,10 +246,5 @@ class _UserRegisterState extends State<UserRegister> {
         ),
       ),
     );
-  }
-
-  int obtenerIdRol(String descripcion) {
-    return listaRoles
-        .firstWhere((rol) => rol['description'] == descripcion)['idRol'];
   }
 }

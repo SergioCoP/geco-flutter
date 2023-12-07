@@ -56,7 +56,7 @@ class _UserUpdateState extends State<UserUpdate> {
             userData['turn'] ?? '',
             userData['rolName'] ?? '',
             userData['idRol'],
-            userData['idHotel'] ?? 0,
+            // userData['idHotel'] ?? 0,
           );
           user.name = userData['name'];
           user.lastname = userData['lastname'];

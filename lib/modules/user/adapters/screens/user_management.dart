@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/widgets/user_card.dart';
+import 'package:geco_mobile/modules/user/entities/Role.dart';
+import 'package:geco_mobile/modules/user/entities/hotel.dart';
 import 'package:geco_mobile/modules/user/entities/user.dart';
 
 class UserManagement extends StatefulWidget {
@@ -28,29 +30,48 @@ class _UserManagementState extends State<UserManagement> {
 
   Future<List<User>> obtenerUsuariosFetch() async {
     List<User> usuariost = [];
-    // try {
-    final dio = Dio();
-    final response = await dio.get('$path/getUsers');
-    if (response.data['msg'] == 'OK') {
-      for (var usuario in response.data['data']) {
-        User user = User(
-            usuario['idUser'],
-            usuario['status'] ?? 0,
-            usuario['userName'],
-            usuario['userEmail'],
-            usuario['password'] ?? '',
-            usuario['turn'] ?? '',
-            usuario['userRol'] ?? 'Role_Limpieza',
-            usuario['idRol'] ?? 3,
-            usuario['idHotel'] ?? 0);
-        usuariost.add(user);
+
+    try {
+      final dio = Dio();
+      final response = await dio.get(path);
+
+      if (response.data['status'] == 'OK') {
+        for (var userData in response.data['data']) {
+          print(userData);
+          Rol rol = Rol(
+            userData['idRol']['idRol'],
+            userData['idRol']['name'],
+            userData['idRol']['description'],
+          );
+
+          Hotel hotel = Hotel(
+            userData['idHotel']['idHotel'],
+            userData['idHotel']['name'],
+            userData['idHotel']['primaryColor'],
+            userData['idHotel']['secondaryColor'],
+            userData['idHotel']['imageUrl'],
+          );
+
+          // Crea el objeto User con los objetos Rol e Hotel
+          User user = User(
+            userData['idUser'],
+            userData['status'],
+            userData['username'],
+            userData['email'],
+            userData['password'],
+            userData['turn'],
+            rol,
+            hotel,
+          );
+
+          usuariost.add(user);
+        }
       }
+    } catch (e) {
+      print(e);
     }
+    print(usuariost);
     return usuariost;
-    // } catch (e) {
-    //   print(e);
-    //   return usuarios;
-    // }
   }
 
   void filtrarUsuario(String query) {
@@ -115,7 +136,8 @@ class _UserManagementState extends State<UserManagement> {
                       child: CircularProgressIndicator(),
                     );
                   } else if (snapshot.hasError) {
-                    return const Text("Ha sucedido un error maquiavelico.");
+                    return Center(
+                        child: Text("Error maquiavelico: ${snapshot.error}"));
                   } else {
                     List<User> sapoUser = snapshot.data;
                     if (sapoUser.isNotEmpty) {
@@ -133,7 +155,7 @@ class _UserManagementState extends State<UserManagement> {
               ),
             ),
           ),
-          //Aqui va para registrar un usuario, buscar usuarios
+          // Aquí va para registrar un usuario, buscar usuarios
           Positioned(
             child: SizedBox(
               height: heightOfFirstContainer,
@@ -158,18 +180,19 @@ class _UserManagementState extends State<UserManagement> {
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorsApp.buttonPrimaryColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ColorsApp.buttonPrimaryColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed('/manager/users/register');
-                        },
-                        child: const Icon(Icons.add)),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed('/manager/users/register');
+                      },
+                      child: const Icon(Icons.add),
+                    ),
                   ),
                 ],
               ),
@@ -187,7 +210,7 @@ class IsEmpty extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Center(
-        child: Text('No hay ningun usuario registrado Actualmente :)'));
+        child: Text('No hay ningún usuario registrado actualmente :)'));
   }
 }
 
