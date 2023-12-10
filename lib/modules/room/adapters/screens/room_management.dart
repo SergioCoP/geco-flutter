@@ -17,21 +17,21 @@ class _RoomManagementState extends State<RoomManagement> {
   final _path = GlobalData.pathRoomUri;
   late bool hasChange = false;
 
-  late Future<List<Room>>? _listaHabitaciones;
-  late Future<List<Room>>? _listaHabitacionesRespaldo;
+  late List<Room>_listaHabitaciones;
+  late List<Room> _listaHabitacionesRespaldo;
   // ignore: unused_field
   Future<List<dynamic>>? _listaHabitacionesTienenIncidencias;
 
   @override
   void initState() {
     super.initState();
-    try {
-      _listaHabitaciones = obtenerCuartosFetch();
-      _listaHabitacionesRespaldo = _listaHabitaciones;
-    } catch (e) {
-      _listaHabitaciones = [] as Future<List<Room>>?;
-      _listaHabitacionesRespaldo = _listaHabitaciones;
-    }
+    // try {
+    //   _listaHabitaciones = obtenerCuartosFetch();
+    //   _listaHabitacionesRespaldo = _listaHabitaciones;
+    // } catch (e) {
+    _listaHabitaciones = [];
+    _listaHabitacionesRespaldo = _listaHabitaciones;
+    // }
   }
 
   Future<List<Room>> obtenerCuartosFetch() async {
@@ -56,23 +56,23 @@ class _RoomManagementState extends State<RoomManagement> {
     }
   }
 
-  void filterCards(String query) {
-    query = query.toLowerCase();
-    if (query.isNotEmpty) {
-      _listaHabitaciones?.then((data) {
-        setState(() {
-          List<Room> filteredData = data.where((card) {
-            return card.identifier.toLowerCase().contains(query.toLowerCase());
-          }).toList();
-          _listaHabitaciones = Future.value(filteredData);
-        });
-      });
-    } else {
-      setState(() {
-        _listaHabitaciones = _listaHabitacionesRespaldo;
-      });
-    }
-  }
+  // void filterCards(String query) {
+  //   query = query.toLowerCase();
+  //   if (query.isNotEmpty) {
+  //     _listaHabitaciones?.then((data) {
+  //       setState(() {
+  //         List<Room> filteredData = data.where((card) {
+  //           return card.identifier.toLowerCase().contains(query.toLowerCase());
+  //         }).toList();
+  //         _listaHabitaciones = Future.value(filteredData);
+  //       });
+  //     });
+  //   } else {
+  //     setState(() {
+  //       _listaHabitaciones = _listaHabitacionesRespaldo;
+  //     });
+  //   }
+  // }
 
   // ignore: prefer_final_fields
   // TextEditingController _searchController = TextEditingController();
@@ -112,28 +112,29 @@ class _RoomManagementState extends State<RoomManagement> {
               margin: const EdgeInsets.only(
                 top: 100,
               ),
-              child: FutureBuilder<List<Room>>(
-                future: _listaHabitaciones,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
-                  } else {
-                    List<Room> data = snapshot.data!;
-                    if (data.isNotEmpty) {
-                      return ListView.builder(
-                        itemCount: data.length,
-                        itemBuilder: (context, index) {
-                          return RoomCard(room: data[index], path: _path);
-                        },
-                      );
-                    } else {
-                      return const IsEmptyRooms();
-                    }
-                  }
-                },
-              ),
+              child:  Text('aQUI LAS ROOMS'),
+              // FutureBuilder<List<Room>>(
+              //   future: _listaHabitaciones,
+              //   builder: (context, snapshot) {
+              //     if (snapshot.connectionState == ConnectionState.waiting) {
+              //       return const Center(child: CircularProgressIndicator());
+              //     } else if (snapshot.hasError) {
+              //       return Center(child: Text('Error: ${snapshot.error}'));
+              //     } else {
+              //       List<Room> data = snapshot.data!;
+              //       if (data.isNotEmpty) {
+              //         return ListView.builder(
+              //           itemCount: data.length,
+              //           itemBuilder: (context, index) {
+              //             return RoomCard(room: data[index], path: _path);
+              //           },
+              //         );
+              //       } else {
+              //         return const IsEmptyRooms();
+              //       }
+              //     }
+              //   },
+              // ),
             ),
           ),
           Positioned(
@@ -146,7 +147,7 @@ class _RoomManagementState extends State<RoomManagement> {
                       padding: const EdgeInsets.all(10.0),
                       child: TextField(
                         onChanged: (value) {
-                          filterCards(value);
+                          //filterCards(value);
                         },
                         decoration: const InputDecoration(
                           labelText: 'Buscar por Identificador',
@@ -180,8 +181,6 @@ class _RoomManagementState extends State<RoomManagement> {
       ),
     );
   }
-
-  
 }
 
 class IsEmptyRooms extends StatelessWidget {

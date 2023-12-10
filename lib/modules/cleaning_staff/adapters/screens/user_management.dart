@@ -70,7 +70,7 @@ class _UserManagementState extends State<UserManagement> {
     if (_listUsuarios != null) {
       _listUsuarios!.then((usuarios) {
         usuariosFiltrados = usuarios.where((user) {
-          return user.userName.toLowerCase().contains(query);
+          return user.username.toLowerCase().contains(query);
         }).toList();
         setState(() {
           _listUsuarios = Future.value(usuariosFiltrados);
@@ -185,7 +185,7 @@ Future<void> cambiarEstadoUser(BuildContext context, User user) async {
       content:
           // Text('¿Está seguro de cambiar de activo a desactivado al usuario ${user.person.name} ?'),
           Text(
-              '¿Está seguro de cambiar de activo a desactivado al usuario ${user.userName} ?'),
+              '¿Está seguro de cambiar de activo a desactivado al usuario ${user.username} ?'),
       actions: <Widget>[
         MaterialButton(
           onPressed: () {

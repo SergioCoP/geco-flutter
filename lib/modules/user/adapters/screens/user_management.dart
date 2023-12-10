@@ -2,9 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-// import 'package:geco_mobile/modules/cleaning_staff/entities/person.dart';
-// import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
-// import 'package:geco_mobile/modules/roles/entities/Rol.dart';
 import 'package:geco_mobile/modules/user/adapters/screens/widgets/user_card.dart';
 import 'package:geco_mobile/modules/user/entities/user.dart';
 
@@ -79,8 +76,7 @@ class _UserManagementState extends State<UserManagement> {
         actions: [
           InkWell(
             onTap: () {
-              print('Boton de deslogueo asies jaja');
-              // Navigator.pushNamed(context, '/login');
+              Navigator.pushNamed(context, '/login');
             },
             child: Container(
               width: 50,
@@ -98,83 +94,92 @@ class _UserManagementState extends State<UserManagement> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          Scaffold(
-            body: Container(
-              margin: const EdgeInsets.only(
-                top: 100,
-              ),
-              child: FutureBuilder(
-                future: _listUsuarios,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    print(snapshot.error);
-                    return const Text("Ha sucedido un error maquiavelico.");
-                  } else {
-                    List<User> sapoUser = snapshot.data;
-                    if (sapoUser.isNotEmpty) {
-                      return ListView.builder(
-                        itemCount: sapoUser.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return UserCard(user: sapoUser[index]);
-                        },
+      body: RefreshIndicator(
+        onRefresh: () {
+          setState(() {
+            _listUsuarios = obtenerUsuariosFetch();
+            _listUsuariosRespaldo = _listUsuarios;
+          });
+          // ignore: void_checks
+          return Future.value(true);
+        },
+        child: Stack(
+          children: [
+            Scaffold(
+              body: Container(
+                margin: const EdgeInsets.only(
+                  top: 100,
+                ),
+                child: FutureBuilder(
+                  future: _listUsuarios,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
                       );
+                    } else if (snapshot.hasError) {
+                      return const Text("Ha sucedido un error maquiavelico.");
                     } else {
-                      return const IsEmpty();
+                      List<User> sapoUser = snapshot.data;
+                      if (sapoUser.isNotEmpty) {
+                        return ListView.builder(
+                          itemCount: sapoUser.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return UserCard(user: sapoUser[index]);
+                          },
+                        );
+                      } else {
+                        return const IsEmpty();
+                      }
                     }
-                  }
-                },
+                  },
+                ),
               ),
             ),
-          ),
-          //Aqui va para registrar un usuario, buscar usuarios
-          Positioned(
-            child: SizedBox(
-              height: heightOfFirstContainer,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: TextField(
-                        onChanged: (text) {
-                          filtrarUsuario(text);
-                        },
-                        decoration: const InputDecoration(
-                          suffixIcon: Icon(Icons.search, color: Colors.blue),
-                          labelText: 'Buscar usuario',
-                          hintText: 'Escribe aquí para buscar a un usuario',
-                          border: OutlineInputBorder(),
+            //Aqui va para registrar un usuario, buscar usuarios
+            Positioned(
+              child: SizedBox(
+                height: heightOfFirstContainer,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: TextField(
+                          onChanged: (text) {
+                            filtrarUsuario(text);
+                          },
+                          decoration: const InputDecoration(
+                            suffixIcon: Icon(Icons.search, color: Colors.blue),
+                            labelText: 'Buscar usuario',
+                            hintText: 'Escribe aquí para buscar a un usuario',
+                            border: OutlineInputBorder(),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorsApp.buttonPrimaryColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: ColorsApp.buttonPrimaryColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          Navigator.of(context)
-                              .pushNamed('/manager/users/register');
-                        },
-                        child: const Icon(Icons.add)),
-                  ),
-                ],
+                          onPressed: () {
+                            Navigator.of(context)
+                                .pushNamed('/manager/users/register');
+                          },
+                          child: const Icon(Icons.add)),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -209,8 +214,6 @@ Future<void> cambiarEstadoUser(BuildContext context, User user) async {
         ),
         MaterialButton(
           onPressed: () {
-            // print(user.person.idUser);
-            print(user.idUser);
             Navigator.pop(context);
           },
           color: ColorsApp.buttonCancelColor,

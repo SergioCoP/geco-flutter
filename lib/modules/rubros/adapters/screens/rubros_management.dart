@@ -23,6 +23,7 @@ class _RubrosManagementState extends State<RubrosManagement> {
   void initState() {
     super.initState();
     _listaRubros = obtenerRubrosFetch();
+    _listaRubrosRepaldo = _listaRubros;
   }
 
   Future<List<Rubro>> obtenerRubrosFetch() async {
@@ -70,8 +71,8 @@ class _RubrosManagementState extends State<RubrosManagement> {
           actions: [
             InkWell(
               onTap: () {
-                print("Boton para logot, asies");
-                // Navigator.pushNamed(context, '/login');
+                // print("Boton para logot, asies");
+                Navigator.pushNamed(context, '/login');
               },
               child: Container(
                 width: 50,
@@ -89,75 +90,86 @@ class _RubrosManagementState extends State<RubrosManagement> {
             )
           ],
         ),
-        body: Stack(
-          children: [
-            Scaffold(
-              body: Container(
-                  margin: const EdgeInsets.only(
-                    top: 100,
-                  ),
-                  child: FutureBuilder<List<Rubro>>(
-                      future: _listaRubros,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        } else {
-                          return ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (context, index) {
-                              return RubroCard(rubro: snapshot.data![index]);
+        body: RefreshIndicator(
+          onRefresh: () {
+            setState(() {
+              _listaRubros = obtenerRubrosFetch();
+              _listaRubrosRepaldo = _listaRubros;
+            });
+            // ignore: void_checks
+            return Future.value(true);
+          },
+          child: Stack(
+            children: [
+              Scaffold(
+                body: Container(
+                    margin: const EdgeInsets.only(
+                      top: 100,
+                    ),
+                    child: FutureBuilder<List<Rubro>>(
+                        future: _listaRubros,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
+                                child: Text('Error: ${snapshot.error}'));
+                          } else {
+                            return ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return RubroCard(rubro: snapshot.data![index]);
+                              },
+                            );
+                          }
+                        })),
+              ),
+              Positioned(
+                child: SizedBox(
+                  height: heightOfFirstContainer,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: TextField(
+                            onChanged: (text) {
+                              filtrarRubros(text.toString());
                             },
-                          );
-                        }
-                      })),
-            ),
-            Positioned(
-              child: SizedBox(
-                height: heightOfFirstContainer,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: TextField(
-                          onChanged: (text) {
-                            filtrarRubros(text.toString());
-                          },
-                          decoration: const InputDecoration(
-                            suffixIcon: Icon(Icons.search, color: Colors.blue),
-                            labelText: 'Buscar Rubro',
-                            hintText: 'Buscar por nombre de rubro',
-                            border: OutlineInputBorder(),
+                            decoration: const InputDecoration(
+                              suffixIcon:
+                                  Icon(Icons.search, color: Colors.blue),
+                              labelText: 'Buscar Rubro',
+                              hintText: 'Buscar por nombre de rubro',
+                              border: OutlineInputBorder(),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.buttonPrimaryColor,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              )),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed('/manager/rubros/register');
-                          },
-                          child: const Icon(Icons.add)),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorsApp.buttonPrimaryColor,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                )),
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed('/manager/rubros/register');
+                            },
+                            child: const Icon(Icons.add)),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 }

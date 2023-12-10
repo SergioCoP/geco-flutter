@@ -50,7 +50,7 @@ class _UserCardState extends State<UserCard> {
               height: 80,
               padding: const EdgeInsets.all(7),
               child: Text(
-                widget.user.userName,
+                widget.user.username,
                 textAlign: TextAlign.center,
                 style:
                     const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),

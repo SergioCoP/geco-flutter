@@ -16,4 +16,14 @@ class Hotel {
       idHotel['imageUrl'],
     );
   }
+
+  toJson() {
+    return {
+      'idHotel': idHotel,
+      'name': name,
+      'primaryColor': primaryColor,
+      'secondaryColor': secondaryColor,
+      'imageUrl': imageUrl,
+    };
+  }
 }

@@ -223,9 +223,9 @@ class _UserRegisterState extends State<UserRegister> {
                                       'idPerson': {
                                         'name': _nombresController.text,
                                         'surname':
-                                            _apellidoMaternoController.text,
-                                        'lastname':
                                             _apellidoPaternoController.text,
+                                        'lastname':
+                                            _apellidoMaternoController.text,
                                       },
                                       'idHotel': {
                                         'idHotel': 1,

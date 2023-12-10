@@ -64,7 +64,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
           // 'status': rubro.status,
         },
       );
-      if (response.data['msg'] == 'Update') {
+      if (response.data['status'] == 'UPDATED') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Rubro actualizado exitosamente.')),
         );

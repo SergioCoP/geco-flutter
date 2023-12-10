@@ -19,6 +19,8 @@ class BottomNavigationTabGerente extends StatelessWidget {
             icon: Icon(Icons.person_search_rounded), label: 'Usuarios'),
         BottomNavigationBarItem(
             icon: Icon(Icons.assignment_turned_in_rounded), label: 'Rubros'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.room_preferences_outlined), label: 'Tipo de cuarto'),
       ],
       currentIndex: selectedIndex,
       selectedItemColor: ColorsApp.secondaryColor,

@@ -3,8 +3,11 @@ class Person {
   String name;
   String? surname;
   String lastname;
-  String? turn;
-  int idUser;
 
-  Person(this.idPerson,this.name,this.surname,this.lastname,this.turn,this.idUser);
+  Person(this.idPerson, this.name, this.surname, this.lastname);
+
+  static Person fromJson(idPerson) {
+    return Person(idPerson['idPerson'] ?? 0, idPerson['name'], idPerson['surname'] ?? '',
+        idPerson['lastname'] ?? '');
+  }
 }

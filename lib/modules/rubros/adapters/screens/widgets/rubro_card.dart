@@ -37,15 +37,15 @@ class _RubroCardState extends State<RubroCard> {
             children: [
               SizedBox(
                 width: 200.0,
-                height: 65.0,
+                height: 50.0,
                 child: Text(
                   widget.rubro.name,
                   maxLines: 3,
                   overflow: TextOverflow.clip,
                   style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 26.0,
-                  ),
+                      color: Colors.black,
+                      fontSize: 23.0,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
               const Spacer(),

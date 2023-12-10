@@ -31,7 +31,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
   void initState() {
     super.initState();
     listaHabitaciones = [];
-    fetchRooms();
+    //fetchRooms();
   }
 
   Future<void> fetchRooms() async {
@@ -43,7 +43,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
       }
       final dio = Dio();
       const path = GlobalData.pathRoomUri;
-      final response = await dio.get('$path/getAllRooms');
+      final response = await dio.get(path);
       if (response.data['msg'] == 'OK') {
         final roomsData = response.data['data'];
         setState(

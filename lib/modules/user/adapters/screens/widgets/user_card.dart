@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/modules/user/entities/user.dart';
 
 class UserCard extends StatefulWidget {
@@ -12,7 +14,9 @@ class UserCard extends StatefulWidget {
 
 class _UserCardState extends State<UserCard> {
   bool status = false;
-
+  final dio = Dio();
+  final path = GlobalData.pathUserUri;
+  bool setOneTime = false;
   List roles = [
     "",
     "Gerente",
@@ -23,6 +27,17 @@ class _UserCardState extends State<UserCard> {
     "Sin definir",
     "Sin definir",
   ];
+
+  Future<void> cambiarEstado() async {
+    final response = await dio.put('$path/status/${widget.user.idUser}');
+    if (response.data['status'] == 'OK') {
+      print(response.data['status']);
+      setState(() {
+        widget.user.status = status ? 1 : 0;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     status = widget.user.status == 1 ? true : false;
@@ -50,7 +65,7 @@ class _UserCardState extends State<UserCard> {
                         height: 105.0,
                         child: Text(
                           //Nombre del usuario
-                          widget.user.username,
+                          '${widget.user.idPerson.name} ${widget.user.idPerson.surname} ${widget.user.idPerson.lastname}',
                           maxLines: 3,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
@@ -85,23 +100,8 @@ class _UserCardState extends State<UserCard> {
                           inactiveThumbColor: Colors.red.shade100,
                           materialTapTargetSize: MaterialTapTargetSize.padded,
                           onChanged: (value) {
-                            // setState(() async {
-                            // final dio = Dio();
-                            // final _path = GlobalData.pathUserUri;
-                            // Response response;
-                            // response = await dio.put('$_path/status',
-                            //     data: {'idUser': widget.user.idUser});
-                            // if (response.data['msg'] == 'update') {
-                            //   setState(() {
-                            //     widget.rubro.status = switchStatus ? 1 : 0;
-                            //     switchStatus = value;
-                            //   });
-                            // }
-                            // });
-                            setState(() {
-                              status = value;
-                              widget.user.status = status ? 1 : 0;
-                            });
+                            status = value;
+                            cambiarEstado();
                           }),
                       const SizedBox(
                         height: 40,
@@ -208,7 +208,8 @@ class _UserCardState extends State<UserCard> {
                                                       color: Colors.black),
                                                   children: [
                                                     TextSpan(
-                                                      text: widget.user.idRol.name,
+                                                      text: widget
+                                                          .user.idRol.name,
                                                       style: const TextStyle(
                                                           color: Colors.black,
                                                           fontWeight:

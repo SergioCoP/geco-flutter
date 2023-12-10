@@ -58,9 +58,9 @@ class _UserUpdateState extends State<UserUpdate> {
             userData['idRol'],
             userData['idHotel'] ?? 0,
           );
-          user.name = userData['name'];
-          user.lastname = userData['lastname'];
-          user.surname = userData['surname'];
+          user.idPerson.name = userData['name'];
+          user.idPerson.lastname = userData['lastname'];
+          user.idPerson.surname = userData['surname'];
           hasData = true;
         });
       }
@@ -108,7 +108,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   TextFormField(
-                                    initialValue: user.name,
+                                    initialValue: user.idPerson.name,
                                     // controller: _nombresController,
                                     decoration: InputDecoration(
                                       labelText: 'Nombres',
@@ -125,7 +125,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                   ),
                                   sizedBox,
                                   TextFormField(
-                                    initialValue: user.lastname,
+                                    initialValue: user.idPerson.lastname,
                                     decoration: InputDecoration(
                                       labelText: 'Apellido Paterno',
                                       border: OutlineInputBorder(
@@ -135,7 +135,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                   ),
                                   sizedBox,
                                   TextFormField(
-                                    initialValue: user.surname,
+                                    initialValue: user.idPerson.surname,
                                     decoration: InputDecoration(
                                       labelText: 'Apellido Materno',
                                       border: OutlineInputBorder(
@@ -225,10 +225,10 @@ class _UserUpdateState extends State<UserUpdate> {
                                       onPressed: _isButtonDisabled
                                           ? null
                                           : () async {
-                                              print('name: ${user.name}');
+                                              print('name: ${user.idPerson.name}');
                                               print(
-                                                  'lastname: ${user.lastname}');
-                                              print('surname: ${user.surname}');
+                                                  'lastname: ${user.idPerson.lastname}');
+                                              print('surname: ${user.idPerson.surname}');
                                               print('email: ${user.email}');
                                               print(
                                                   'password: ${user.password}');
@@ -247,9 +247,9 @@ class _UserUpdateState extends State<UserUpdate> {
                                                     'password': user.password,
                                                     'status': user.status,
                                                     'idPerson': {
-                                                      'name': user.name,
-                                                      'lastname': user.lastname,
-                                                      'surname': user.surname
+                                                      'name': user.idPerson.name,
+                                                      'lastname': user.idPerson.lastname,
+                                                      'surname': user.idPerson.surname
                                                     },
                                                     'idRol': _rolSeleccionado
                                                     // {
