@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:geco_mobile/modules/user/adapters/screens/user_management.dart';
-import 'package:geco_mobile/modules/user/adapters/screens/user_register.dart';
-import 'package:geco_mobile/modules/user/adapters/screens/user_update.dart';
+import 'package:geco_mobile/modules/gerente/user/adapters/screens/user_management.dart';
+import 'package:geco_mobile/modules/gerente/user/adapters/screens/user_register.dart';
+import 'package:geco_mobile/modules/gerente/user/adapters/screens/user_update.dart';
 
 class ManagerUserStack extends StatelessWidget {
   const ManagerUserStack({super.key});

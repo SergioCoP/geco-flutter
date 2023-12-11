@@ -46,7 +46,7 @@ class ControlPanel extends StatelessWidget{
                           Container(
                             margin: const EdgeInsets.only(top: 10,bottom: 10,left: 10,right: 130),
                             child: const Column(children: [
-                               Text('Total de cuartos',
+                               Text('Total de habitaciones',
                             style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                             Text('30',style: TextStyle(fontSize: 16),)
                             ]),

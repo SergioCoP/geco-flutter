@@ -15,12 +15,13 @@ class BottomNavigationTabGerente extends StatelessWidget {
             icon: Icon(Icons.home_rounded), label: 'Dashboard'),
         BottomNavigationBarItem(
             icon: Icon(Icons.meeting_room_rounded), label: 'Habitaciones'),
+            BottomNavigationBarItem(
+            icon: Icon(Icons.room_preferences_outlined), label: 'Tipo de cuarto'),
         BottomNavigationBarItem(
             icon: Icon(Icons.person_search_rounded), label: 'Usuarios'),
         BottomNavigationBarItem(
             icon: Icon(Icons.assignment_turned_in_rounded), label: 'Rubros'),
-        BottomNavigationBarItem(
-            icon: Icon(Icons.room_preferences_outlined), label: 'Tipo de cuarto'),
+        
       ],
       currentIndex: selectedIndex,
       selectedItemColor: ColorsApp.secondaryColor,

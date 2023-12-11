@@ -1,4 +1,4 @@
-import 'package:geco_mobile/modules/user/entities/user.dart';
+import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
 
 class Incidence {
   int idIncidence;
@@ -7,6 +7,7 @@ class Incidence {
   String image;
   int status;
   User user;
+  
 
   Incidence(this.idIncidence,this.createdAt,this.description,this.image,this.status,this.user);
 }

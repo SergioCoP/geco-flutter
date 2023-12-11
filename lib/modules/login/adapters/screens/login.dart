@@ -209,7 +209,7 @@ class _FormCardState extends State<_FormCard> {
                                         : () async {
                                             // Navigator.pushReplacementNamed(context, '/personal_cleaner');
                                             // Navigator.of(context).pushNamed('/rooms');
-                                            Navigator.pushReplacementNamed(
+                                            Navigator.pushNamed(
                                                 context, '/manager'); 
                                             // Response response;
                                             // try {
@@ -221,7 +221,6 @@ class _FormCardState extends State<_FormCard> {
                                             //       },
                                             //       options:
                                             //           Options(method: 'GET'));
-                                            //   print(response.data['msg']);
                                             //   if (response.data['msg'] ==
                                             //       'Loged') {
                                             //     Toasts.showSuccessToast(
@@ -233,7 +232,6 @@ class _FormCardState extends State<_FormCard> {
                                             //         'Contraseña o correo incorrectos');
                                             //   }
                                             // } catch (e) {
-                                            //   print(e);
                                             // }
                                           },
                                     child: const Text('Iniciar'),

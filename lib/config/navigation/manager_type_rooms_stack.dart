@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:geco_mobile/modules/type_rooms/adapters/screens/type_rooms_management.dart';
-import 'package:geco_mobile/modules/type_rooms/adapters/screens/type_rooms_register.dart';
-import 'package:geco_mobile/modules/type_rooms/adapters/screens/type_rooms_update.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_register.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_update.dart';
 
 class ManagerTypeRoomsStack extends StatelessWidget {
   const ManagerTypeRoomsStack({super.key});

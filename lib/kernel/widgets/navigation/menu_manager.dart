@@ -29,9 +29,9 @@ class _MenuManagerState extends State<MenuManager> {
         children: const [
           ManagerDashboardStack(),
           ManagerStack(),
+          ManagerTypeRoomsStack(),
           ManagerUserStack(),
           ManagerRubrosStack(),
-          ManagerTypeRoomsStack()
         ],
       ),
       bottomNavigationBar: BottomNavigationTabGerente(

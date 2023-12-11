@@ -182,7 +182,6 @@ class _RegisterHotelState extends State<RegisterHotel> {
                                                         },
                                                         options: Options(
                                                             method: 'POST'));
-                                                    print(response.data);
                                                     if (response.data['msg'] ==
                                                         'Register') {
                                                       response = await dio.request(
@@ -215,7 +214,7 @@ class _RegisterHotelState extends State<RegisterHotel> {
                                                           'Error al guardar el usuario');
                                                     }
                                                   } catch (e) {
-                                                    print(e);
+                                                    throw Exception(e);
                                                   }
                                                 },
                                           child: const Text('Registrar'),
