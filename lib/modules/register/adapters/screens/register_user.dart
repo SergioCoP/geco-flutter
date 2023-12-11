@@ -49,202 +49,188 @@ class _RegisterUser extends State<RegisterUser> {
           ),
         ),
         Expanded(
-            child: Container(
-              alignment: Alignment.center,
-              color: ColorsApp.primaryColor,
-              child: SingleChildScrollView(
-                child: Card(
-                  margin: const EdgeInsets.all(15),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15)),
-                  child: Column(children: [
-                    Form(
-                      key: _formKey,
-                      onChanged: () {
-                        setState(() {
-                          _isButtonDisabled = !_formKey.currentState!.validate();
-                        });
-                      },
-                      child: Column(
-                        children: <Container>[
-                          Container(
-                            margin: const EdgeInsets.all(20),
-                            child: Column(children: [
-                              const Text(
-                                'Registro',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 22, fontWeight: FontWeight.bold),
+          child: Container(
+            alignment: Alignment.center,
+            color: ColorsApp.primaryColor,
+            child: SingleChildScrollView(
+              child: Card(
+                margin: const EdgeInsets.all(15),
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                child: Column(children: [
+                  Form(
+                    key: _formKey,
+                    onChanged: () {
+                      setState(() {
+                        _isButtonDisabled = !_formKey.currentState!.validate();
+                      });
+                    },
+                    child: Column(
+                      children: <Container>[
+                        Container(
+                          margin: const EdgeInsets.all(20),
+                          child: Column(children: [
+                            const Text(
+                              'Registro',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 22, fontWeight: FontWeight.bold),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Nombre",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    )),
+                                keyboardType: TextInputType.text,
+                                controller: _nombre,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Nombre",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      )),
-                                  keyboardType: TextInputType.text,
-                                  controller: _nombre,
-                                  validator: (val) {
-                                    if (val!.isEmpty) {
-                                      return 'Campo obligatorio';
-                                    }
-                                  },
-                                ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Apellido Paterno",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    )),
+                                keyboardType: TextInputType.text,
+                                controller: _aPaterno,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Apellido Paterno",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      )),
-                                  keyboardType: TextInputType.text,
-                                  controller: _aPaterno,
-                                  validator: (val) {
-                                    if (val!.isEmpty) {
-                                      return 'Campo obligatorio';
-                                    }
-                                  },
-                                ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Apellido Materno",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    )),
+                                keyboardType: TextInputType.text,
+                                controller: _aMaterno,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Apellido Materno",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      )),
-                                  keyboardType: TextInputType.text,
-                                  controller: _aMaterno,
-                                  validator: (val) {
-                                    if (val!.isEmpty) {
-                                      return 'Campo obligatorio';
-                                    }
-                                  },
-                                ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 10),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Correo",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    )),
+                                keyboardType: TextInputType.emailAddress,
+                                controller: _correo,
+                                validator: (val) {
+                                  RegExp regex = RegExp(ValidationsApp.email);
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  } else if (!regex.hasMatch(val)) {
+                                    return 'Correo invalido';
+                                  }
+                                },
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 10),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Correo",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      )),
-                                  keyboardType: TextInputType.emailAddress,
-                                  controller: _correo,
-                                  validator: (val) {
-                                    RegExp regex = RegExp(ValidationsApp.email);
-                                    if (val!.isEmpty) {
-                                      return 'Campo obligatorio';
-                                    } else if (!regex.hasMatch(val)) {
-                                      return 'Correo invalido';
-                                    }
-                                  },
-                                ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Contraseña",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    )),
+                                keyboardType: TextInputType.text,
+                                controller: _contrasena,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                },
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Contraseña",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      )),
-                                  keyboardType: TextInputType.text,
-                                  controller: _contrasena,
-                                  validator: (val) {
-                                    if (val!.isEmpty) {
-                                      return 'Campo obligatorio';
-                                    }
-                                  },
-                                ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Confirmar contraseña",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    )),
+                                keyboardType: TextInputType.text,
+                                controller: _confcontrasena,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  } else if (val != _contrasena.text) {
+                                    return 'Las contraseñas no coinciden';
+                                  }
+                                },
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(top: 12),
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                      hintText: "Confirmar contraseña",
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(15),
-                                      )),
-                                  keyboardType: TextInputType.text,
-                                  controller: _confcontrasena,
-                                  validator: (val) {
-                                    if (val!.isEmpty) {
-                                      return 'Campo obligatorio';
-                                    } else if (val != _contrasena.text) {
-                                      return 'Las contraseñas no coinciden';
-                                    }
-                                  },
-                                ),
-                              ),
-                              Container(
-                                  margin: const EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        margin: const EdgeInsets.only(top: 15),
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(14)),
-                                              minimumSize: const Size(400, 60),
-                                              backgroundColor:
-                                                  ColorsApp.secondaryColor),
-                                          onPressed: _isButtonDisabled
-                                              ? null
-                                              : () async {
-                                                  Response response;
-                                                  try {
-                                                    response = await dio.request(
-                                                        'http://192.168.52.240:8080/registerUser',
-                                                        data: {
-                                                          'email': _correo.text,
-                                                          'password':
-                                                              _contrasena.text,
-                                                          'idPerson': {
-                                                            'name': _nombre.text,
-                                                            'surname':
-                                                                _aPaterno.text,
-                                                            'lastname':
-                                                                _aMaterno.text
-                                                          },
-                                                        },
-                                                        options: Options(
-                                                            method: 'POST'));
-                                                    print(response);
-                                                    if (response.data ==
-                                                        'register') {
-                                                          Toasts.showSuccessToast('Registrado');
-                                                      Navigator.of(context).pushNamed('/login');
-                                                    } else {
-                                                      Toasts.showWarningToast('Error al registrar');
-                                                    }
-                                                  } catch (e) {
-                                                    print(e);
-                                                  }
-                                                },
-                                          child: const Text('Registrar'),
-                                        ),
-                                      )
-                                    ],
-                                  )),
-                            ]),
-                          )
-                        ],
-                      ),
-                    )
-                  ]),
-                ),
+                            ),
+                            Container(
+                                margin: const EdgeInsets.all(10),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.only(top: 15),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(14)),
+                                            minimumSize: const Size(400, 60),
+                                            backgroundColor:
+                                                ColorsApp.secondaryColor),
+                                        onPressed: _isButtonDisabled
+                                            ? null
+                                            : () async {
+                                                Toasts.showSuccessToast(
+                                                    'Registro de hotel');
+                                                Navigator.pushNamed(context,
+                                                    '/registerUserHotel',
+                                                    arguments: {
+                                                      'nombreUs': _nombre.text,
+                                                      'apellidoPa':
+                                                          _aPaterno.text,
+                                                      'apellidoMa':
+                                                          _aPaterno.text,
+                                                      'correoUs': _correo.text,
+                                                      'contrasenaUs':
+                                                          _contrasena.text
+                                                    });
+                                              },
+                                        child:
+                                            const Text('Ir a registro hotel'),
+                                      ),
+                                    )
+                                  ],
+                                )),
+                          ]),
+                        )
+                      ],
+                    ),
+                  )
+                ]),
               ),
             ),
+          ),
         )
       ],
     ));

@@ -1,8 +1,8 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/kernel/toasts/toasts.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
 
 class Login extends StatefulWidget {
@@ -15,29 +15,28 @@ class Login extends StatefulWidget {
 class _Login extends State<Login> {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     //Image.asset('assets/images/geco_logo.png',width: 150,height: 150,),
     return Scaffold(
         body: Column(
       children: <Widget>[
+        // ignore: avoid_unnecessary_containers
         Container(
-            child: Container(
-          alignment: Alignment.center,
-          height: 150,
-          color: ColorsApp.primaryColor,
           child: Container(
             alignment: Alignment.center,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: SizedBox.fromSize(
-                size: const Size.fromRadius(48),
-                child: Image.asset(
-                  'assets/images/geco_logo.png',
+            height: 150,
+            color: ColorsApp.primaryColor,
+            child: Container(
+              alignment: Alignment.center,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: SizedBox.fromSize(
+                  size: const Size.fromRadius(48),
+                  child: Image.asset('assets/images/geco_logo.png')
                 ),
               ),
             ),
           ),
-        )),
+        ),
         Expanded(
           child: Container(
               alignment: Alignment.center,
@@ -60,7 +59,8 @@ class _FormCard extends StatefulWidget {
 class _FormCardState extends State<_FormCard> {
   final _formKey = GlobalKey<FormState>();
 
-  bool _isButtonDisabled = true;
+  // ignore: unused_field, prefer_final_fields
+  bool _isButtonDisabled = false;
   bool passVisible = true;
 
   final TextEditingController _email = TextEditingController(text: '');
@@ -202,26 +202,34 @@ class _FormCardState extends State<_FormCard> {
                                     onPressed: _isButtonDisabled
                                         ? null
                                         : () async {
-                                            Response response;
-                                            try {
-                                              response = await dio.request(
-                                                  'http://192.168.52.240:8080/login',
-                                                  queryParameters: {
-                                                    "email": _email.text,
-                                                    "password": _password.text
-                                                  },
-                                                  options:
-                                                      Options(method: 'GET'));
-
-                                              if (response.data) {
-                                              Toasts.showSuccessToast('Bienvenido');
-                                                Navigator.of(context).pushNamed('/controlPanel');
-                                              } else {
-                                                   Toasts.showWarningToast('Contraseña o correo incorrectos');
-                                              }
-                                            } catch (e) {
-                                              print(e);
-                                            }
+                                            // Navigator.pushReplacementNamed(context, '/personal_cleaner');
+                                            // Navigator.of(context).pushNamed('/rooms');
+                                            Navigator.pushReplacementNamed(
+                                                context, '/manager');
+                                            // Response response;
+                                            // try {
+                                            //   response = await dio.request(
+                                            // '${GlobalData.pathUserUri}/login',
+                                            //       queryParameters: {
+                                            //         "email": _email.text,
+                                            //         "password": _password.text
+                                            //       },
+                                            //       options:
+                                            //           Options(method: 'GET'));
+                                            //   print(response.data['msg']);
+                                            //   if (response.data['msg'] ==
+                                            //       'Loged') {
+                                            //     Toasts.showSuccessToast(
+                                            //         'Bienvenido');
+                                            //     Navigator.of(context)
+                                            //         .pushNamed('/controlPanel');
+                                            //   } else {
+                                            //     Toasts.showWarningToast(
+                                            //         'Contraseña o correo incorrectos');
+                                            //   }
+                                            // } catch (e) {
+                                            //   print(e);
+                                            // }
                                           },
                                     child: const Text('Iniciar'),
                                   ),
@@ -236,9 +244,9 @@ class _FormCardState extends State<_FormCard> {
                                   margin: const EdgeInsets.all(10),
                                   child: TextButton(
                                     style: TextButton.styleFrom(
-                                        textStyle:
-                                            const TextStyle(fontSize: 15),
-                                        foregroundColor: Colors.black),
+                                      textStyle: const TextStyle(
+                                          fontSize: 15, color: Colors.black),
+                                    ),
                                     onPressed: () {
                                       Navigator.of(context)
                                           .pushNamed('/registerUser');
