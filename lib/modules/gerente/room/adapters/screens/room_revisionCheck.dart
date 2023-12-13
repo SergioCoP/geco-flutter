@@ -19,12 +19,29 @@ class RoomRevisionCheck extends StatefulWidget {
 
 class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
   late Room room;
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
   final dio = Dio();
-  bool _isButtonDisabled = true;
+  // bool _isButtonDisabled = true;
   bool hasData = false;
   final _path = GlobalData.pathRoomUri;
   bool allClean = false;
   bool someClean = false;
+  @override
+  void initState() {
+    super.initState();
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
+  }
 
   List<Map<String, int>> listEvaluationItems = [];
   List<Rubro> listaRubros = [];
@@ -50,7 +67,7 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
         if (data['secondIdUser'] != null) {
           users.add(User.fromJson(data['secondIdUser']));
         }
-        Room room = Room.fromJson(response.data['data'], users);
+        room = Room.fromJson(response.data['data'], users);
         listaRubros = List.generate(room.idTypeRoom.rubros.length,
             (index) => room.idTypeRoom.rubros[index]);
         print(listaRubros.length);
@@ -153,15 +170,15 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
     final dynamic rawArgs = ModalRoute.of(context)!.settings.arguments;
     final Map<String, dynamic> arguments =
         (rawArgs as Map<String, dynamic>?) ?? {};
-    final idTypeRoom = arguments['idRoom'] ?? 0;
+    final idRoom = arguments['idroom'] ?? 0;
     if (!hasData) {
-      getRoomFetch(idTypeRoom);
+      getRoomFetch(idRoom);
     }
     return Scaffold(
         appBar: AppBar(
           title: const Text('Revisar habitación'),
           centerTitle: true,
-          backgroundColor: ColorsApp().primaryColor,
+          backgroundColor: color1,
           foregroundColor: Colors.white,
         ),
         body: hasData

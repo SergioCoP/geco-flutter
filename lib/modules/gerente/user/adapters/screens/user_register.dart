@@ -20,8 +20,26 @@ class _UserRegisterState extends State<UserRegister> {
   SizedBox sizedBox = const SizedBox(
     height: 25.0,
   );
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
   bool _isButtonDisabled = true;
   bool _passVisible = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
+  }
 
   final TextEditingController _nombresController =
       TextEditingController(text: '');
@@ -56,7 +74,7 @@ class _UserRegisterState extends State<UserRegister> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar un usuario'),
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(

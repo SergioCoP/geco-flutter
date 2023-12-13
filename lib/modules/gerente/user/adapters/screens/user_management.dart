@@ -34,6 +34,17 @@ class _UserManagementState extends State<UserManagement> {
     super.initState();
     _listUsuarios = obtenerUsuariosFetch();
     _listUsuariosRespaldo = _listUsuarios;
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
   }
 
   Future<List<User>> obtenerUsuariosFetch() async {
@@ -136,10 +147,7 @@ class _UserManagementState extends State<UserManagement> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.logout,
-                color: Colors.red,
-              ),
+              child: Icon(Icons.logout, color: color2),
             ),
           ),
         ],

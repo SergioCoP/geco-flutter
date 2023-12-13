@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomRegister extends StatefulWidget {
@@ -30,6 +29,23 @@ class _RoomRegisterState extends State<RoomRegister> {
 
   bool _isSelectedUserZero = true;
   bool _isButtonDisabled = true;
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
+  @override
+  void initState() {
+    super.initState();
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
+  }
 
   Future<void> traerTiposRoomFetch() async {
     try {
@@ -97,7 +113,7 @@ class _RoomRegisterState extends State<RoomRegister> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Registrar habitación"),
-          backgroundColor: ColorsApp().primaryColor,
+          backgroundColor: color1,
           foregroundColor: Colors.white,
         ),
         body: hasData

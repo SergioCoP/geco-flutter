@@ -48,11 +48,23 @@ class _EditRoomState extends State<EditRoom> {
   int estadoActual = 0;
 
   String estadoSeleccionado = '0';
-
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
   @override
   void initState() {
     super.initState();
     // fetchData();
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
   }
 
   Future<void> fetchData(final idRoom) async {
@@ -198,7 +210,7 @@ class _EditRoomState extends State<EditRoom> {
       appBar: AppBar(
         title: const Text('Editar Habitación'),
         centerTitle: true,
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
       ),
       body: hasData

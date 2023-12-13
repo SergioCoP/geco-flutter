@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -20,10 +19,29 @@ class _RubroUpdateState extends State<RubroUpdate> {
   final TextStyle textStyle =
       const TextStyle(fontSize: 15, fontWeight: FontWeight.w700);
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
+  }
+
   late Rubro rubro;
   final _path = GlobalData.pathRubroUri;
   bool hasData = false;
   bool hasError = false;
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
 
   final _formKeyUpdateRubro = GlobalKey<FormState>();
   TextEditingController _name = TextEditingController(text: '');
@@ -138,7 +156,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
       appBar: AppBar(
         title: const Text('Editar Rubro'),
         centerTitle: true,
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
       ),
       body: hasData

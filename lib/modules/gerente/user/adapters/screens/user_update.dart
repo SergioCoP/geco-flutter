@@ -21,6 +21,8 @@ class _UserUpdateState extends State<UserUpdate> {
   late bool hasData = false;
   // bool _passVisible = false;
   final _formKey = GlobalKey<FormState>();
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
   bool _isButtonDisabled = true;
   int _rolSeleccionado = 3;
   int _turnoSeleccionado = 0;
@@ -57,6 +59,10 @@ class _UserUpdateState extends State<UserUpdate> {
       if (response.data['status'] == 'OK') {
         final userData = response.data['data'];
         setState(() {
+          String? color11 = prefs.getString('primaryColor');
+          String? color22 = prefs.getString('secondaryColor');
+            color1 = Color(int.parse(color11!));
+            color2 = Color(int.parse(color22!));
           user = User.fromJson(userData);
           _rolSeleccionado = user.idRol!.idRol;
           _turnoSeleccionado = user.turn!;
@@ -91,7 +97,7 @@ class _UserUpdateState extends State<UserUpdate> {
     }
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
       ),
       body: hasData

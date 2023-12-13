@@ -35,6 +35,20 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
     super.initState();
     listaHabitaciones = [];
     fetchRooms();
+    setColor();
+  }
+
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
   }
 
   Future<void> fetchRooms() async {
@@ -142,7 +156,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Panel de control"),
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
@@ -161,9 +175,9 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child:  Icon(
                 Icons.logout,
-                color: Colors.red,
+                color: color2
               ),
             ),
           ),

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,8 +18,26 @@ class RubroRegister extends StatefulWidget {
 class _RubroRegisterState extends State<RubroRegister> {
   final TextStyle textStyle =
       const TextStyle(fontSize: 15, fontWeight: FontWeight.w700);
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setColor();
+  }
 
   late Rubro rubro;
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
+  }
 
   final _path = GlobalData.pathRubroUri;
   final _formKey = GlobalKey<FormState>();
@@ -90,8 +107,7 @@ class _RubroRegisterState extends State<RubroRegister> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5.0),
                                 )),
-                            onPressed: 
-                            _isButtonDisabled
+                            onPressed: _isButtonDisabled
                                 ? null
                                 : () async {
                                     try {

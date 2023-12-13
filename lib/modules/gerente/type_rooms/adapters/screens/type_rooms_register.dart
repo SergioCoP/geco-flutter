@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TypeRoomRegister extends StatefulWidget {
@@ -20,12 +19,33 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController(text: '');
   bool _isButtonDisabled = true;
+
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar un tipo de habitación'),
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
       ),
       body: Center(

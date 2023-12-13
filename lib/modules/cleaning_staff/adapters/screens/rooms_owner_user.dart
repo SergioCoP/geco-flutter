@@ -41,6 +41,19 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
     //   _listaHabitacionesRespaldo = _listaHabitaciones;
     //   throw Exception(e);
     // }
+    setColor();
+  }
+
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
   }
 
   Future<List<Room>> obtenerCuartosFetch() async {
@@ -73,13 +86,13 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
         }
       }
       return habitaciones;
-    } on DioException catch (e){
+    } on DioException catch (e) {
       print(e.response?.data);
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
       return habitaciones;
-    }catch (e, f) {
-      print('$e    , $f' );
+    } catch (e, f) {
+      print('$e    , $f');
       return habitaciones;
     }
   }
@@ -109,7 +122,7 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mis habitaciones'),
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
         actions: [
           InkWell(

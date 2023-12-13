@@ -88,31 +88,29 @@ Widget botonPorEstado(BuildContext context, int estado, int idRoom) {
     case 3: //Sucia
       return const Text('Desocupada');
     case 4: //Para revisar
-      return ElevatedButton(
-        //Si hay incidencias
-        onPressed: () {
-          // Navigator.of(context).pushNamed('/dashboard/checkIncindences');
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const RoomRevisionCheck(),
-                settings: RouteSettings(arguments: {'idRoom':idRoom})),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: ColorsApp.estadoConIncidencias,
+      return Ink(
+        decoration: ShapeDecoration(
+          color: ColorsApp.estadoSinRevisar,
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0),
+          ),
         ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.read_more),
-            Text(
-              'Verificar',
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
+        child: IconButton(
+          icon: const Icon(
+            Icons.info,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const RoomRevisionCheck(),
+                  settings: RouteSettings(arguments: {'idroom': idRoom})),
+            );
+          },
         ),
       );
+
     case 5: //Con incidencias
       return ElevatedButton(
         onPressed: () {

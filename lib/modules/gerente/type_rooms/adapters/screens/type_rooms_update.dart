@@ -5,7 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
-import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/entities/type_room.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +16,25 @@ class TypeRoomUpdate extends StatefulWidget {
 }
 
 class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
+  }
+
   final _formKey = GlobalKey<FormState>();
   final dio = Dio();
   bool _isButtonDisabled = false;
@@ -181,7 +199,7 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
       appBar: AppBar(
         title: const Text('Editar tipo de habitación'),
         centerTitle: true,
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
       ),
       body: hasData

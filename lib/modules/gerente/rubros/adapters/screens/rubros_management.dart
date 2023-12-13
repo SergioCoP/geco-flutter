@@ -22,6 +22,8 @@ class _RubrosManagementState extends State<RubrosManagement> {
   final double heightOfFirstContainer = 100.0;
   final _path = GlobalData.pathRubroUri;
   late bool hasChange = false;
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
 
   late Future<List<Rubro>> _listaRubros;
   late Future<List<Rubro>> _listaRubrosRepaldo;
@@ -30,6 +32,17 @@ class _RubrosManagementState extends State<RubrosManagement> {
     super.initState();
     _listaRubros = obtenerRubrosFetch();
     _listaRubrosRepaldo = _listaRubros;
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
   }
 
   Future<List<Rubro>> obtenerRubrosFetch() async {
@@ -97,7 +110,7 @@ class _RubrosManagementState extends State<RubrosManagement> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: const Text('Gestión de Rubros de evaluación'),
-          backgroundColor: ColorsApp().primaryColor,
+          backgroundColor: color1,
           foregroundColor: Colors.white,
           actions: [
             InkWell(
@@ -116,9 +129,9 @@ class _RubrosManagementState extends State<RubrosManagement> {
                   color: Colors.transparent,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.logout,
-                  color: Colors.red,
+                  color: color2
                 ),
               ),
             )

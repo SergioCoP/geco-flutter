@@ -20,6 +20,8 @@ class TypeRoomManagement extends StatefulWidget {
 
 class _TypeRoomManagementState extends State<TypeRoomManagement> {
   final double heightOfFirstContainer = 100.0;
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
   final _path = GlobalData.pathTypeRoomUri;
   bool hasChange = false;
 
@@ -31,6 +33,17 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
     super.initState();
     _listaTiposRoom = obtenerTiposCuartoFetch();
     _listaTiposRoomRespaldo = _listaTiposRoom;
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
   }
 
   Future<List<TypeRoom>> obtenerTiposCuartoFetch() async {
@@ -99,8 +112,8 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('Tipo de Cuarto'),
-        backgroundColor: ColorsApp().primaryColor,
+        title: const Text('Tipo de habitación'),
+        backgroundColor: color1,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
@@ -119,10 +132,7 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons.logout,
-                color: Colors.red,
-              ),
+              child: Icon(Icons.logout, color: color2),
             ),
           )
         ],

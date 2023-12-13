@@ -26,7 +26,8 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
   late Future<List<Room>> _listaHabitacionesRespaldo;
   // ignore: unused_field
   Future<List<dynamic>>? _listaHabitacionesTienenIncidencias;
-
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
   @override
   void initState() {
     super.initState();
@@ -38,6 +39,17 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
     //   _listaHabitacionesRespaldo = _listaHabitaciones;
     //   throw Exception(e);
     // }
+    setColor();
+  }
+
+  void setColor() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? color11 = prefs.getString('primaryColor');
+    String? color22 = prefs.getString('secondaryColor');
+    setState(() {
+      color1 = Color(int.parse(color11!));
+      color2 = Color(int.parse(color22!));
+    });
   }
 
   Future<List<Room>> obtenerCuartosFetch() async {
@@ -68,7 +80,7 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
         }
       }
       return habitaciones;
-    } on DioException catch (e){
+    } on DioException catch (e) {
       print(e.response?.data);
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
@@ -103,7 +115,7 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tablero de  habitaciones'),
-        backgroundColor: ColorsApp().primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
@@ -122,9 +134,9 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child:  Icon(
                 Icons.logout,
-                color: Colors.red,
+                color: color2,
               ),
             ),
           ),
