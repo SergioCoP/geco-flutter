@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_card_dashboard.dart';
@@ -105,6 +106,21 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
           });
         }
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer las habitaciones. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      setState(() {
+        hasFetch = true;
+        listaHabitaciones = [];
+      });
     } catch (e, f) {
       setState(() {
         hasFetch = true;

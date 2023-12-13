@@ -1,7 +1,10 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/kernel/toasts/toasts.dart';
@@ -22,7 +25,7 @@ class _Login extends State<Login> {
     isSessionActive();
   }
 
-  Future<void> isSessionActive() async {
+  Future isSessionActive() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       bool? session = prefs.getBool('session');
@@ -42,6 +45,17 @@ class _Login extends State<Login> {
           }
         }
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al iniciar sesión. Verifique que su usuario y contraseña sean los correctos.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } catch (e) {
       throw Exception(e);
     }
@@ -103,6 +117,82 @@ class _FormCardState extends State<_FormCard> {
   final TextEditingController _email = TextEditingController(text: '');
 
   final TextEditingController _password = TextEditingController(text: '');
+
+  Future login() async {
+    var colorsApp = ColorsApp();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final dio = Dio();
+      // dio.options.headers[
+      //     'Authorization'] = 'Bearer ';
+      final response = await dio.post('${GlobalData.pathUserUri}/login',
+          data: {"user": _email.text, "password": _password.text});
+      if (response.statusCode == 404) {
+        Toasts.showWarningToast('Contraseña o correo incorrectos');
+      }
+      if (response.data['status'] == 'OK' &&
+          response.data['message'] == 'Inicio de sesión exitoso') {
+        ///login exitoso
+        if (response.data['user']['status'] == 1) {
+          //El usuario esta activo
+          String color1 = response.data['user']['idHotel']['primaryColor']
+              .replaceAll('#', '0xff');
+          String color2 = response.data['user']['idHotel']['secondaryColor']
+              .replaceAll('#', '0xff');
+          prefs.setString('primaryColor', color1);
+          prefs.setString('secondaryColor', color2);
+          colorsApp.setPrimaryColor(Color(int.parse(color1)));
+          colorsApp.setSecondaryColor(Color(int.parse(color2)));
+          prefs.setInt('idHotel', response.data['user']['idHotel']['idHotel']);
+          prefs.setInt('idRol', response.data['user']['idRol']['idRol']);
+          switch (response.data['user']['idRol']['idRol']) {
+            case 1: //Es gerente
+              prefs.setBool('session', true);
+              await prefs.setString('token', response.data['token']);
+              await prefs.setInt('idUser', response.data['user']['idUser']);
+              Navigator.pushReplacementNamed(context, '/manager');
+              break;
+            case 3: //Es limpieza
+              prefs.setBool('session', true);
+              await prefs.setString('token', response.data['token']);
+              await prefs.setInt('idUser', response.data['user']['idUser']);
+              Navigator.pushReplacementNamed(context, '/personal_cleaner');
+              break;
+            default: //No tiene derecho a la app
+              prefs.clear();
+              break;
+          }
+        } else {
+          prefs.clear();
+          //Usuario no activo
+          Navigator.popUntil(context, ModalRoute.withName('/login'));
+        }
+      } else {
+        Toasts.showWarningToast('Contraseña o correo incorrectos');
+      }
+    } on DioException catch (e) {
+      print(e.response?.statusCode);
+      if (e.response?.statusCode == 404) {}
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al iniciar sesión. Verifique que su usuario y contraseña sean los correctos.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } on HttpStatus catch (e) {
+      print('HttpStatus: $e');
+    } catch (e, stackTarce) {
+      print('ERROS; $e');
+      print('StackTrace: $stackTarce');
+      throw Exception(e);
+    } finally {
+      // Código que se ejecutará independientemente de si se lanza una excepción o no
+      print('Bloque Finally');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -240,119 +330,12 @@ class _FormCardState extends State<_FormCard> {
                                                 BorderRadius.circular(14)),
                                         minimumSize: const Size(400, 60),
                                         backgroundColor:
-                                            colorsApp.secondaryColor),
+                                            colorsApp.secondaryColor,
+                                        foregroundColor: Colors.white),
                                     onPressed: _isButtonDisabled
                                         ? null
-                                        : () async {
-                                            try {
-                                              SharedPreferences prefs =
-                                                  await SharedPreferences
-                                                      .getInstance();
-                                              final dio = Dio();
-                                              // dio.options.headers[
-                                              //     'Authorization'] = 'Bearer ';
-                                              final response = await dio.post(
-                                                  '${GlobalData.pathUserUri}/login',
-                                                  data: {
-                                                    "user": _email.text,
-                                                    "password": _password.text
-                                                  });
-                                              if (response.statusCode == 404) {
-                                                Toasts.showWarningToast(
-                                                    'Contraseña o correo incorrectos');
-                                              }
-                                              if (response.data['status'] ==
-                                                      'OK' &&
-                                                  response.data['message'] ==
-                                                      'Inicio de sesión exitoso') {
-                                                ///login exitoso
-                                                if (response.data['user']
-                                                        ['status'] ==
-                                                    1) {
-                                                  //El usuario esta activo
-                                                  String color1 = response
-                                                      .data['user']['idHotel']
-                                                          ['primaryColor']
-                                                      .replaceAll('#', '0xff');
-                                                  String color2 = response
-                                                      .data['user']['idHotel']
-                                                          ['secondaryColor']
-                                                      .replaceAll('#', '0xff');
-                                                  prefs.setString(
-                                                      'primaryColor', color1);
-                                                  prefs.setString(
-                                                      'secondaryColor', color2);
-                                                  colorsApp.setPrimaryColor(
-                                                      Color(int.parse(color1)));
-                                                  colorsApp.setSecondaryColor(
-                                                      Color(int.parse(color2)));
-                                                  prefs.setInt(
-                                                      'idHotel',
-                                                      response.data['user']
-                                                              ['idHotel']
-                                                          ['idHotel']);
-                                                  prefs.setInt(
-                                                      'idRol',
-                                                      response.data['user']
-                                                          ['idRol']['idRol']);
-                                                  switch (response.data['user']
-                                                      ['idRol']['idRol']) {
-                                                    case 1: //Es gerente
-                                                      prefs.setBool(
-                                                          'session', true);
-                                                      await prefs.setString(
-                                                          'token',
-                                                          response
-                                                              .data['token']);
-                                                      await prefs.setInt(
-                                                          'idUser',
-                                                          response.data['user']
-                                                              ['idUser']);
-                                                      Navigator
-                                                          .pushReplacementNamed(
-                                                              context,
-                                                              '/manager');
-                                                      break;
-                                                    case 3: //Es limpieza
-                                                      prefs.setBool(
-                                                          'session', true);
-                                                      await prefs.setString(
-                                                          'token',
-                                                          response
-                                                              .data['token']);
-                                                      await prefs.setInt(
-                                                          'idUser',
-                                                          response.data['user']
-                                                              ['idUser']);
-                                                      Navigator
-                                                          .pushReplacementNamed(
-                                                              context,
-                                                              '/personal_cleaner');
-                                                      break;
-                                                    default: //No tiene derecho a la app
-                                                      prefs.clear();
-                                                      break;
-                                                  }
-                                                } else {
-                                                  prefs.clear();
-                                                  //Usuario no activo
-                                                  Navigator.popUntil(
-                                                      context,
-                                                      ModalRoute.withName(
-                                                          '/login'));
-                                                }
-                                              } else {
-                                                Toasts.showWarningToast(
-                                                    'Contraseña o correo incorrectos');
-                                              }
-                                            } catch (e, stackTarce) {
-                                              print('ERROS; $e');
-                                              print('StackTrace: $stackTarce');
-                                              throw Exception(e);
-                                            } finally {
-                                              // Código que se ejecutará independientemente de si se lanza una excepción o no
-                                              print('Bloque Finally');
-                                            }
+                                        : () {
+                                            login();
                                           },
                                     child: const Text('Iniciar'),
                                   ),

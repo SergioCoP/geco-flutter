@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
@@ -114,9 +115,19 @@ class _EditRoomState extends State<EditRoom> {
       }
     } on DioException catch (e) {
       print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer al isuario. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e, f) {
       print('$e   ,   $f');
-      throw Exception(e);
+      Navigator.pop(context);
     }
   }
 
@@ -157,8 +168,20 @@ class _EditRoomState extends State<EditRoom> {
           MaterialPageRoute(builder: (context) => const RoomManagement()),
         );
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer al isuario. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e) {
-      throw Exception(e);
+      Navigator.pop(context);
     }
   }
 

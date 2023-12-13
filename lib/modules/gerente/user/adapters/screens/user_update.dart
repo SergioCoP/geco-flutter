@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
@@ -62,6 +63,18 @@ class _UserUpdateState extends State<UserUpdate> {
           hasData = true;
         });
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar consultar al usuario. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e) {
       throw Exception(e);
     }
@@ -257,7 +270,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                                   Navigator.of(context)
                                                       .popAndPushNamed(
                                                           '/manager');
-                                                }else {
+                                                } else {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(
                                                     const SnackBar(
@@ -265,6 +278,20 @@ class _UserUpdateState extends State<UserUpdate> {
                                                             'No se pudo actualizar el usuario. Verifique sus datos.')),
                                                   );
                                                 }
+                                              } on DioException catch (e) {
+                                                print(e);
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        "Ha sucedido un error al intentar actualizar al usuario. Por favor intente mas tarde",
+                                                    toastLength:
+                                                        Toast.LENGTH_SHORT,
+                                                    gravity:
+                                                        ToastGravity.CENTER,
+                                                    timeInSecForIosWeb: 1,
+                                                    backgroundColor: Colors.red,
+                                                    textColor: Colors.white,
+                                                    fontSize: 16.0);
+                                                Navigator.pop(context);
                                               } catch (e, f) {
                                                 print('$e  ,  $f');
                                                 ScaffoldMessenger.of(context)

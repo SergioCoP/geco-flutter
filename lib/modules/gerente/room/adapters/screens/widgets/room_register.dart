@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
@@ -34,6 +35,7 @@ class _RoomRegisterState extends State<RoomRegister> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+      int? idHotel = prefs.getInt('idHotel');
       final response = await dio.get(_pathTypeRoom,
           options: Options(headers: {
             "Accept": "application/json",
@@ -43,15 +45,29 @@ class _RoomRegisterState extends State<RoomRegister> {
       if (response.data['status'] == 'OK') {
         List<dynamic> traerTipos = response.data['data'];
         for (var typeRoom in traerTipos) {
-          tiposRoom.add({
-            'idTypeRoom': typeRoom['idTypeRoom'],
-            'name': typeRoom['name'],
-          });
+          if (typeRoom['idHotel']['idHotel'] == idHotel) {
+            tiposRoom.add({
+              'idTypeRoom': typeRoom['idTypeRoom'],
+              'name': typeRoom['name'],
+            });
+          }
         }
         setState(() {
           hasData = true;
         });
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer los tipos de habitación. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e) {
       setState(() {
         hasData = true;
@@ -307,6 +323,21 @@ class _RoomRegisterState extends State<RoomRegister> {
                                                               'No se pudo realizar la petición, verifique sus datos')),
                                                     );
                                                   }
+                                                } on DioException catch (e) {
+                                                  print(e);
+                                                  Fluttertoast.showToast(
+                                                      msg:
+                                                          "Ha sucedido un error al intentar registrar la habitación. Por favor intente mas tarde",
+                                                      toastLength:
+                                                          Toast.LENGTH_SHORT,
+                                                      gravity:
+                                                          ToastGravity.CENTER,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0);
+                                                  Navigator.pop(context);
                                                 } catch (e) {
                                                   ScaffoldMessenger.of(context)
                                                       .showSnackBar(

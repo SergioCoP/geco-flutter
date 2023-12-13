@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
@@ -52,6 +53,18 @@ class _RubroUpdateState extends State<RubroUpdate> {
           hasData = true;
         });
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer al el rubro. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e) {
       setState(() {
         hasData = true;
@@ -84,8 +97,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
         // Navigator.of(context).popAndPushNamed('/manager/rubros');
         // Navigator.pushReplacement(context,
         //     MaterialPageRoute(builder: (context) => const RubrosManagement()));
-        Navigator.popAndPushNamed(
-            context, '/manager');
+        Navigator.popAndPushNamed(context, '/manager');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -93,6 +105,18 @@ class _RubroUpdateState extends State<RubroUpdate> {
                   'Hubo un error al actualizar el rubro. Verifica que el nombre del rubro no exista')),
         );
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar actualizar el rubro. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e, e2) {
       setState(() {
         hasError = true;
@@ -165,6 +189,14 @@ class _RubroUpdateState extends State<RubroUpdate> {
                             Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          ColorsApp.buttonPrimaryColor,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0),
+                                      )),
                                   onPressed: _isButtonDisabled
                                       ? null
                                       : () async {

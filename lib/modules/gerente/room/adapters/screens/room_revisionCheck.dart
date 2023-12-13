@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_dashboard.dart';
@@ -58,8 +59,30 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
           hasData = true;
         });
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer la habitacion. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e) {
-      throw Exception('Error al traer los datos asies que pendjo: $e');
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer la habitacion. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     }
   }
 
@@ -83,7 +106,7 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
 
     print('Estan todos los rubros checados?: $allCheckeds ');
     try {
-      final data = {'status': 1};
+      final data = {'status': status};
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
       Response response;
@@ -98,8 +121,29 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) => const RoomsDashboard()));
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar cambiar el estado con la base de datos. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } catch (e) {
-      throw Exception('Error al traer los datos asies');
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar cambiar el estado. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     }
   }
 
@@ -140,7 +184,7 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
                           child: Row(
                             children: [
                               Text(
-                                'HAB-01',
+                                room.name,
                                 style: TextStyle(
                                     fontSize: 26.0,
                                     fontWeight: FontWeight.bold),

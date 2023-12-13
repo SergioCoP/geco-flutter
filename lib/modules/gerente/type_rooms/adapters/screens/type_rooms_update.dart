@@ -1,6 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
@@ -32,6 +33,7 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
+      int? idHotel = prefs.getInt('idHotel');
       Response response;
       response = await dio.get('$_path/$idTypeRoom',
           options: Options(headers: {
@@ -52,8 +54,19 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
         if (response2.data['status'] == 'OK') {
           final data = response2.data['data'];
           if (data is List) {
-            listaRubros = List.generate(
-                data.length, (index) => Rubro.fromJson(data[index]));
+            for (var i = 0; i < data.length; i++) {
+              Rubro rubro = Rubro.fromJson(data[i]);
+              if (rubro.idHotel.idHotel == idHotel) {
+                listaRubros.add(rubro);
+              }
+            }
+            // listaRubros = List.generate(data.length, (index) {
+            //   Rubro rubro = Rubro.fromJson(data[index]);
+            //   if (rubro.idHotel.idHotel == idHotel) {
+            //     return rubro;
+            //   }
+            //   return 1;
+            // });
             rubrosValue = List.generate(
               listaRubros.length,
               (index) {
@@ -79,6 +92,18 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
           hasData = true;
         });
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer el tipo de habitación. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pop(context);
     } catch (e) {
       setState(() {
         // hasData = true;
@@ -122,6 +147,17 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
                   'Hubo un error al actualizar el rubro. Verifique sus datos y pruebe más tarde.')),
         );
       }
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar actualizar el tipo de habitacón. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

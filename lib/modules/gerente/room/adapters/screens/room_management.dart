@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_card.dart';
@@ -59,20 +60,34 @@ class _RoomManagementState extends State<RoomManagement> {
       if (response.data['status'] == 'OK') {
         if (response.data['data'] != null) {
           final roomsData = response.data['data'];
-          for (var habitacion in roomsData) {
-            if (habitacion['idHotel']['idHotel'] == idHotel) {
-              List<User> users = [];
-              if (habitacion['firstIdUser'] != null) {
-                users.add(User.fromJson(habitacion['firstIdUser']));
+          if (roomsData.length > 0) {
+            for (var habitacion in roomsData) {
+              if (habitacion['idHotel']['idHotel'] == idHotel) {
+                List<User> users = [];
+                if (habitacion['firstIdUser'] != null) {
+                  users.add(User.fromJson(habitacion['firstIdUser']));
+                }
+                if (habitacion['secondIdUser'] != null) {
+                  users.add(User.fromJson(habitacion['secondIdUser']));
+                }
+                habitaciones.add(Room.fromJson(habitacion, users));
               }
-              if (habitacion['secondIdUser'] != null) {
-                users.add(User.fromJson(habitacion['secondIdUser']));
-              }
-              habitaciones.add(Room.fromJson(habitacion, users));
             }
           }
         }
       }
+      return habitaciones;
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer la ahbitación. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
       return habitaciones;
     } catch (e, f) {
       print(f);

@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_register.dart';
@@ -48,14 +49,26 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
       if (response.data['status'] == 'OK') {
         if (response.data['data'] != null) {
           for (var tipoRoom in response.data['data']) {
-           if (tipoRoom['idHotel']['idHotel'] == idHotel) {
+            if (tipoRoom['idHotel']['idHotel'] == idHotel) {
               listaTiposCuarto.add(TypeRoom.fromJson(tipoRoom));
-           }
+            }
           }
         }
       } else {
         return [];
       }
+      return listaTiposCuarto;
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer los tipos de habitación. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
       return listaTiposCuarto;
     } catch (e, f) {
       print('$e, $f');
@@ -94,7 +107,7 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
             onTap: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.clear();
-               Navigator.of(context).pushAndRemoveUntil(
+              Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const Login()),
                   (route) => false);
             },
@@ -145,17 +158,17 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
                       } else {
                         List<TypeRoom> tp = snapshot.data!;
                         if (tp.isNotEmpty) {
-                           return ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, index) {
-                            return TypeRoomCard(snapshot.data![index]);
-                          },
-                        );
-                        }else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, index) {
+                              return TypeRoomCard(snapshot.data![index]);
+                            },
+                          );
+                        } else {
                           return const Center(
-                          child: Text(
-                              'No hay nigún tipo de habitacion regitrado actualmente.'),
-                        );
+                            child: Text(
+                                'No hay nigún tipo de habitacion regitrado actualmente.'),
+                          );
                         }
                       }
                     }),

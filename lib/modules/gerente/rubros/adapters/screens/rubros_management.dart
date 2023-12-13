@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_register.dart';
@@ -55,6 +56,18 @@ class _RubrosManagementState extends State<RubrosManagement> {
         }
       }
       return listaRubrosFetch;
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer los rubros de evaluación. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return listaRubrosFetch;
     } catch (e) {
       return listaRubrosFetch;
     }
@@ -91,9 +104,9 @@ class _RubrosManagementState extends State<RubrosManagement> {
               onTap: () async {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.clear();
-                 Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const Login()),
-                  (route) => false);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const Login()),
+                    (route) => false);
               },
               child: Container(
                 width: 50,
@@ -148,9 +161,10 @@ class _RubrosManagementState extends State<RubrosManagement> {
                                       rubro: snapshot.data![index]);
                                 },
                               );
-                            }else {
+                            } else {
                               return const Center(
-                                child: Text('No hay ningún rubro de evaluacion registrado actualmente. '));
+                                  child: Text(
+                                      'No hay ningún rubro de evaluacion registrado actualmente. '));
                             }
                           }
                         })),
@@ -192,7 +206,8 @@ class _RubrosManagementState extends State<RubrosManagement> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const RubroRegister()),
+                                    builder: (context) =>
+                                        const RubroRegister()),
                               );
                             },
                             child: const Icon(Icons.add)),

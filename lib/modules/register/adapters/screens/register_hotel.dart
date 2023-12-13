@@ -282,8 +282,33 @@ class _RegisterHotelState extends State<RegisterHotel> {
                                                         }
                                                       }
                                                     }
+                                                  } on DioException catch (e) {
+                                                    print(e);
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Ha sucedido un error al intentar registra el hotel Verifique sus datos y pruebe mas tarde.",
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        gravity:
+                                                            ToastGravity.CENTER,
+                                                        timeInSecForIosWeb: 1,
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        textColor: Colors.white,
+                                                        fontSize: 16.0);
                                                   } catch (e) {
-                                                    throw Exception(e);
+                                                    Fluttertoast.showToast(
+                                                        msg:
+                                                            "Ha sucedido un error al intentar registra el hotel Verifique sus datos y pruebe mas tarde.",
+                                                        toastLength:
+                                                            Toast.LENGTH_SHORT,
+                                                        gravity:
+                                                            ToastGravity.CENTER,
+                                                        timeInSecForIosWeb: 1,
+                                                        backgroundColor:
+                                                            Colors.red,
+                                                        textColor: Colors.white,
+                                                        fontSize: 16.0);
                                                   }
                                                 },
                                           child: const Text('Registrar'),

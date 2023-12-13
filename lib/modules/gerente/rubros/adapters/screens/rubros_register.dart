@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
@@ -89,19 +90,19 @@ class _RubroRegisterState extends State<RubroRegister> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(5.0),
                                 )),
-                            onPressed: _isButtonDisabled
+                            onPressed: 
+                            _isButtonDisabled
                                 ? null
                                 : () async {
-                                    
                                     try {
                                       SharedPreferences prefs =
                                           await SharedPreferences.getInstance();
                                       String? token = prefs.getString('token');
-                                       int? idHotel = prefs.getInt('idHotel');
-                                       final data = {
-                                      'name': _description.text,
-                                      'idHotel': {'idHotel': idHotel}
-                                    };
+                                      int? idHotel = prefs.getInt('idHotel');
+                                      final data = {
+                                        'name': _description.text,
+                                        'idHotel': {'idHotel': idHotel}
+                                      };
                                       final dio = Dio();
                                       Response response;
                                       response = await dio.post(_path,
@@ -135,6 +136,17 @@ class _RubroRegisterState extends State<RubroRegister> {
                                               'Error al registrar rubro. Verifique sus datos.'),
                                         ));
                                       }
+                                    } on DioException catch (e) {
+                                      print(e);
+                                      Fluttertoast.showToast(
+                                          msg:
+                                              "Ha sucedido un error al intentar registrar el rubo. Por favor intente mas tarde",
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+                                          timeInSecForIosWeb: 1,
+                                          backgroundColor: Colors.red,
+                                          textColor: Colors.white,
+                                          fontSize: 16.0);
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(const SnackBar(

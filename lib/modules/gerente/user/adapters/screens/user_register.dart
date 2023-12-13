@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
@@ -217,46 +218,59 @@ class _UserRegisterState extends State<UserRegister> {
                                   final dio = Dio();
                                   const path = GlobalData.pathUserUri;
                                   try {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  String? token = prefs.getString('token');
-                                  int? idHotel = prefs.getInt('idHotel');
-                                  final response = await dio.post(path,
-                                      data: {
-                                        'email': _correoController.text,
-                                        'password': _contraseniaController.text,
-                                        'username': _usernameController.text,
-                                        'idPerson': {
-                                          'name': _nombresController.text,
-                                          'surname':
-                                              _apellidoPaternoController.text,
-                                          'lastname':
-                                              _apellidoMaternoController.text,
+                                    SharedPreferences prefs =
+                                        await SharedPreferences.getInstance();
+                                    String? token = prefs.getString('token');
+                                    int? idHotel = prefs.getInt('idHotel');
+                                    final response = await dio.post(path,
+                                        data: {
+                                          'email': _correoController.text,
+                                          'password':
+                                              _contraseniaController.text,
+                                          'username': _usernameController.text,
+                                          'idPerson': {
+                                            'name': _nombresController.text,
+                                            'surname':
+                                                _apellidoPaternoController.text,
+                                            'lastname':
+                                                _apellidoMaternoController.text,
+                                          },
+                                          'idHotel': {
+                                            'idHotel': idHotel,
+                                          },
+                                          'idRol': {
+                                            'idRol': obtenerIdRol(
+                                                rolNames[_rolSeleccionado]!)
+                                          },
                                         },
-                                        'idHotel': {
-                                          'idHotel': idHotel,
-                                        },
-                                        'idRol': {
-                                          'idRol': obtenerIdRol(
-                                              rolNames[_rolSeleccionado]!)
-                                        },
-                                      },
-                                      options: Options(headers: {
-                                        "Accept": "application/json",
-                                        "Content-Type": "application/json",
-                                        'Authorization': 'Bearer $token'
-                                      }));
-                                  if (response.data['status'] == 'CREATED') {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            'Usuario registrado exitosamente.'),
-                                      ),
-                                    );
-                                    Navigator.of(context)
-                                        .popAndPushNamed('/manager');
-                                  }
-                                  } catch (e,f) {
+                                        options: Options(headers: {
+                                          "Accept": "application/json",
+                                          "Content-Type": "application/json",
+                                          'Authorization': 'Bearer $token'
+                                        }));
+                                    if (response.data['status'] == 'CREATED') {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Usuario registrado exitosamente.'),
+                                        ),
+                                      );
+                                      Navigator.of(context)
+                                          .popAndPushNamed('/manager');
+                                    }
+                                  } on DioException catch (e) {
+                                    print(e);
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Ha sucedido un error al intentar registrar al usuario. Por favor intente mas tarde",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0);
+                                  } catch (e, f) {
                                     print('$e  ,  $f');
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(

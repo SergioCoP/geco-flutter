@@ -2,6 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/user/adapters/screens/user_register.dart';
@@ -38,36 +39,48 @@ class _UserManagementState extends State<UserManagement> {
   Future<List<User>> obtenerUsuariosFetch() async {
     List<User> usuariost = [];
 
-    // try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('token');
-    int? idHotel = prefs.getInt('idHotel');
-    String? primaryColor = prefs.getString('primaryColor');
-    String? secondaryColor = prefs.getString('secondaryColor');
-    color1 = Color(int.parse(primaryColor!));
-    color2 = Color(int.parse(secondaryColor!));
-    hasChange = true;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      int? idHotel = prefs.getInt('idHotel');
+      String? primaryColor = prefs.getString('primaryColor');
+      String? secondaryColor = prefs.getString('secondaryColor');
+      color1 = Color(int.parse(primaryColor!));
+      color2 = Color(int.parse(secondaryColor!));
+      hasChange = true;
 
-    final dio = Dio();
-    final response = await dio.get(path,
-        options: Options(headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          'Authorization': 'Bearer $token'
-        }));
-    if (response.data['status'] == 'OK') {
-      if (response.data['data'] != null) {
-        for (var usuario in response.data['data']) {
-          if (usuario['idHotel']['idHotel'] == idHotel) {
-            usuariost.add(User.fromJson(usuario));
+      final dio = Dio();
+      final response = await dio.get(path,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
+      if (response.data['status'] == 'OK') {
+        if (response.data['data'] != null) {
+          for (var usuario in response.data['data']) {
+            if (usuario['idHotel']['idHotel'] == idHotel) {
+              usuariost.add(User.fromJson(usuario));
+            }
           }
         }
       }
+      return usuariost;
+    } on DioException catch (e) {
+      print(e);
+      Fluttertoast.showToast(
+          msg:
+              "Ha sucedido un error al intentar traer a los usuarios. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      return usuariost;
+    } catch (e) {
+      return usuariost;
     }
-    return usuariost;
-    // } catch (e) {
-    //   return usuariost;
-    // }
   }
 
   void filtrarUsuario(String query) {
