@@ -27,6 +27,7 @@ class MainApp extends StatelessWidget {
         '/login': (context) => const Login(),
         '/logout': (context) => const Login(),
         '/registerUser': (context) => const RegisterUser(),
+        '/registerUserHotel': (context) => const RegisterHotel(),
         '/users': (context) => const UserManagement(),
         '/manager': (context) => const MenuManager(),
         '/personal_cleaner': (context) => const MenuPersonalCleaner(),

@@ -7,7 +7,11 @@ class Person {
   Person(this.idPerson, this.name, this.surname, this.lastname);
 
   static Person fromJson(idPerson) {
-    return Person(idPerson['idPerson'] ?? 0, idPerson['name'], idPerson['surname'] ?? '',
-        idPerson['lastname'] ?? '');
+    return Person(idPerson['idPerson'] ?? 0, idPerson['name'],
+        idPerson['surname'] ?? '', idPerson['lastname'] ?? '');
+  }
+
+  static Person? defaulPerson() {
+    return Person(0, '', '', '');
   }
 }

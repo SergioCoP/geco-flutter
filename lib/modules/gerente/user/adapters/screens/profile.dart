@@ -10,7 +10,7 @@ class Profile extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Perfil de usuario'),
         centerTitle: true,
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
       ),
       body: Column(
         children: [
@@ -80,6 +80,7 @@ class Profile extends StatelessWidget {
                   ElevatedButton(
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/login');
+                      
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,

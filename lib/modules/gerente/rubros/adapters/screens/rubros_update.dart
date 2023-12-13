@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
-import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RubroUpdate extends StatefulWidget {
   const RubroUpdate({super.key});
@@ -30,8 +30,15 @@ class _RubroUpdateState extends State<RubroUpdate> {
 
   Future<void> rubroDataFetch(final idRubro) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final dio = Dio();
-      final response = await dio.get('$_path/$idRubro');
+      final response = await dio.get('$_path/$idRubro',
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         final data = response.data['data'];
         // rubro = Rubro(
@@ -56,22 +63,29 @@ class _RubroUpdateState extends State<RubroUpdate> {
 
   void updateRubro(Rubro rubro, String name) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       final dio = Dio();
-      final response = await dio.put(
-        _path,
-        data: {
-          'idEvaluationItem': rubro.idEvaluationItem,
-          'name': name,
-          // 'status': rubro.status,
-        },
-      );
+      final response = await dio.put(_path,
+          data: {
+            'idEvaluationItem': rubro.idEvaluationItem,
+            'name': name,
+            // 'status': rubro.status,
+          },
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Rubro actualizado exitosamente.')),
         );
         // Navigator.of(context).popAndPushNamed('/manager/rubros');
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const RubrosManagement()));
+        // Navigator.pushReplacement(context,
+        //     MaterialPageRoute(builder: (context) => const RubrosManagement()));
+        Navigator.popAndPushNamed(
+            context, '/manager');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -80,8 +94,10 @@ class _RubroUpdateState extends State<RubroUpdate> {
         );
       }
     } catch (e, e2) {
-      hasError = true;
-      throw Exception(e);
+      setState(() {
+        hasError = true;
+      });
+      throw Exception('$e , $e2');
     }
   }
 
@@ -98,7 +114,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
       appBar: AppBar(
         title: const Text('Editar Rubro'),
         centerTitle: true,
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
       ),
       body: hasData

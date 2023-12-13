@@ -1,9 +1,14 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/cleaning_staff/adapters/screens/widgets/room_user_card.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
+import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
+import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomsOwnerUser extends StatefulWidget {
   const RoomsOwnerUser({super.key});
@@ -38,22 +43,44 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
     // }
   }
 
-
   Future<List<Room>> obtenerCuartosFetch() async {
     List<Room> habitaciones = [];
-    idUser = 14;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    int? id = prefs.getInt('idUser');
+    idUser = id ?? 0;
     try {
       final dio = Dio();
-      final response = await dio.get(_path);
+      final response = await dio.get(_path,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         for (var habitacion in response.data['data']) {
-          habitaciones.add(Room.fromJson(habitacion));
+          List<User> users = [];
+          if (habitacion['firstIdUser'] != null) {
+            if (habitacion['firstIdUser']['idUser'] == idUser) {
+              habitaciones.add(Room.fromJson(habitacion, users));
+            }
+          }
+          if (habitacion['secondIdUser'] != null) {
+            if (habitacion['secondIdUser']['idUser'] == idUser) {
+              habitaciones.add(Room.fromJson(habitacion, users));
+            }
+          }
         }
       }
       return habitaciones;
-    } catch (e) {
-      // return habitaciones
-      throw Exception(e);
+    } on DioException catch (e){
+      print(e.response?.data);
+      print(e.response?.statusMessage);
+      print(e.response?.statusCode);
+      return habitaciones;
+    }catch (e, f) {
+      print('$e    , $f' );
+      return habitaciones;
     }
   }
 
@@ -82,13 +109,16 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mis habitaciones'),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
-            onTap: () {
-              print(Navigator.defaultRouteName);
-              Navigator.pushNamed(context, '/login');
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (route) => false);
             },
             child: Container(
               width: 50,
@@ -134,28 +164,15 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
                       if (data.isNotEmpty) {
                         return ListView.builder(
                           itemCount: data.length,
-                          itemBuilder: (context, index){
-                            Room roomUser = data[index];
-                            bool hasRooms = false;
-                            if (roomUser.users.isNotEmpty ) {
-                              if (roomUser.users[0].idUser == idUser) {
-                                hasRooms = true;
-                                return RoomUserCard(
-                                    room: data[index], path: _path);
-                              } else if (roomUser.users[1].idUser == idUser) {
-                                return RoomUserCard(
-                                    room: data[index], path: _path);
-                              }
-                            }
-                            if (!hasRooms) {
-                              const Center(
-                                  child: Text(
-                                      'No hay ninguna Habitación registrada Actualmente. :)'));
-                            }
+                          itemBuilder: (context, index) {
+                            return RoomUserCard(room: data[index], path: _path);
                           },
                         );
                       } else {
-                        return const IsEmptyRooms();
+                        return const Center(
+                          child: Text(
+                              'No cuentas con habitaciones a cargo de limpieza'),
+                        );
                       }
                     }
                   },
@@ -172,7 +189,7 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
                         padding: const EdgeInsets.all(10.0),
                         child: TextField(
                           onChanged: (value) {
-                            //filterCards(value);
+                            filterCards(value);
                           },
                           decoration: const InputDecoration(
                             labelText: 'Buscar por Identificador',

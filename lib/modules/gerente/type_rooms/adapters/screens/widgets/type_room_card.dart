@@ -45,7 +45,7 @@ class _TypeRoomCardState extends State<TypeRoomCard> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: 200.0,
+                                width: 250.0,
                                 height: 50.0,
                                 child: Text(
                                   widget.typeRoom.name,
@@ -58,7 +58,7 @@ class _TypeRoomCardState extends State<TypeRoomCard> {
                                 ),
                               ),
                               Text(
-                                'Cantidad de Rubros Asignados: ${widget.typeRoom.rubros.length}',
+                                'Rubros Asignados: ${widget.typeRoom.rubros.length}',
                                 style: const TextStyle(
                                   fontSize: 16.0,
                                   color: Colors.black,

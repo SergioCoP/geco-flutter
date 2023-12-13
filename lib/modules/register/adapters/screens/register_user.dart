@@ -18,6 +18,7 @@ class _RegisterUser extends State<RegisterUser> {
   bool _isButtonDisabled = true;
 
   final TextEditingController _nombre = TextEditingController(text: '');
+  final TextEditingController _usuario = TextEditingController(text: '');
 
   final TextEditingController _aPaterno = TextEditingController(text: '');
   final TextEditingController _aMaterno = TextEditingController(text: '');
@@ -34,7 +35,7 @@ class _RegisterUser extends State<RegisterUser> {
         Container(
           alignment: Alignment.center,
           height: 150,
-          color: ColorsApp.primaryColor,
+          color: ColorsApp().primaryColor,
           child: Container(
             alignment: Alignment.center,
             child: ClipRRect(
@@ -51,7 +52,7 @@ class _RegisterUser extends State<RegisterUser> {
         Expanded(
           child: Container(
             alignment: Alignment.center,
-            color: ColorsApp.primaryColor,
+            color: ColorsApp().primaryColor,
             child: SingleChildScrollView(
               child: Card(
                 margin: const EdgeInsets.all(15),
@@ -82,6 +83,7 @@ class _RegisterUser extends State<RegisterUser> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                     hintText: "Nombre",
+                                    labelText: 'Nombre',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     )),
@@ -91,6 +93,7 @@ class _RegisterUser extends State<RegisterUser> {
                                   if (val!.isEmpty) {
                                     return 'Campo obligatorio';
                                   }
+                                  return null;
                                 },
                               ),
                             ),
@@ -99,6 +102,7 @@ class _RegisterUser extends State<RegisterUser> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                     hintText: "Apellido Paterno",
+                                    labelText: "Apellido Paterno",
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     )),
@@ -108,6 +112,7 @@ class _RegisterUser extends State<RegisterUser> {
                                   if (val!.isEmpty) {
                                     return 'Campo obligatorio';
                                   }
+                                  return null;
                                 },
                               ),
                             ),
@@ -116,6 +121,7 @@ class _RegisterUser extends State<RegisterUser> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                     hintText: "Apellido Materno",
+                                    labelText: "Apellido Materno",
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     )),
@@ -125,6 +131,26 @@ class _RegisterUser extends State<RegisterUser> {
                                   if (val!.isEmpty) {
                                     return 'Campo obligatorio';
                                   }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                    hintText: "Nombre de usuario",
+                                    labelText: "Nombre de usuario",
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    )),
+                                keyboardType: TextInputType.text,
+                                controller: _usuario,
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return 'Campo obligatorio';
+                                  }
+                                  return null;
                                 },
                               ),
                             ),
@@ -132,7 +158,8 @@ class _RegisterUser extends State<RegisterUser> {
                               margin: const EdgeInsets.only(top: 10),
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                    hintText: "Correo",
+                                    hintText: "Correo electrónico",
+                                    labelText: 'Correo electrónico',
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     )),
@@ -145,6 +172,7 @@ class _RegisterUser extends State<RegisterUser> {
                                   } else if (!regex.hasMatch(val)) {
                                     return 'Correo invalido';
                                   }
+                                  return null;
                                 },
                               ),
                             ),
@@ -153,6 +181,7 @@ class _RegisterUser extends State<RegisterUser> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                     hintText: "Contraseña",
+                                    labelText: "Contraseña",
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     )),
@@ -162,6 +191,7 @@ class _RegisterUser extends State<RegisterUser> {
                                   if (val!.isEmpty) {
                                     return 'Campo obligatorio';
                                   }
+                                  return null;
                                 },
                               ),
                             ),
@@ -170,6 +200,7 @@ class _RegisterUser extends State<RegisterUser> {
                               child: TextFormField(
                                 decoration: InputDecoration(
                                     hintText: "Confirmar contraseña",
+                                    labelText: "Confirmar contraseña",
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(15),
                                     )),
@@ -181,6 +212,7 @@ class _RegisterUser extends State<RegisterUser> {
                                   } else if (val != _contrasena.text) {
                                     return 'Las contraseñas no coinciden';
                                   }
+                                  return null;
                                 },
                               ),
                             ),
@@ -197,7 +229,7 @@ class _RegisterUser extends State<RegisterUser> {
                                                     BorderRadius.circular(14)),
                                             minimumSize: const Size(400, 60),
                                             backgroundColor:
-                                                ColorsApp.secondaryColor),
+                                                ColorsApp().secondaryColor),
                                         onPressed: _isButtonDisabled
                                             ? null
                                             : () async {
@@ -211,6 +243,7 @@ class _RegisterUser extends State<RegisterUser> {
                                                           _aPaterno.text,
                                                       'apellidoMa':
                                                           _aPaterno.text,
+                                                      'username': _usuario.text,
                                                       'correoUs': _correo.text,
                                                       'contrasenaUs':
                                                           _contrasena.text

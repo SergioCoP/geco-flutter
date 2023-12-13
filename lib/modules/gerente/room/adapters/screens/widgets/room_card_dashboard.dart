@@ -4,13 +4,13 @@ import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_revisionC
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 
 class RoomCardDashboard extends StatelessWidget {
-  final Room roomIncidences;
-  const RoomCardDashboard({super.key, required this.roomIncidences});
+  final Room room;
+  const RoomCardDashboard({super.key, required this.room});
 
   @override
   Widget build(BuildContext context) {
     Color? buttonColor;
-    switch (roomIncidences.status) {
+    switch (room.status) {
       case 0: //eliminada o deshabilitada
         buttonColor = Colors.red;
         break;
@@ -50,7 +50,7 @@ class RoomCardDashboard extends StatelessWidget {
               children: [
                 SizedBox(
                   child: Text(
-                    roomIncidences.name,
+                    room.name,
                     style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -58,7 +58,7 @@ class RoomCardDashboard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 20.0),
-                botonPorEstado(context, roomIncidences.status),
+                botonPorEstado(context, room.status, room.idRoom),
               ],
             ),
             const Spacer(),
@@ -77,7 +77,7 @@ class RoomCardDashboard extends StatelessWidget {
   }
 }
 
-Widget botonPorEstado(BuildContext context, int estado) {
+Widget botonPorEstado(BuildContext context, int estado, int idRoom) {
   switch (estado) {
     case 0:
       return const Text('Deshabilitada');
@@ -92,8 +92,12 @@ Widget botonPorEstado(BuildContext context, int estado) {
         //Si hay incidencias
         onPressed: () {
           // Navigator.of(context).pushNamed('/dashboard/checkIncindences');
-          Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const RoomRevisionCheck()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const RoomRevisionCheck(),
+                settings: RouteSettings(arguments: {'idRoom':idRoom})),
+          );
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorsApp.estadoConIncidencias,

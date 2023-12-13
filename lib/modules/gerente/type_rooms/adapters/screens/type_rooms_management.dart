@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
@@ -5,6 +7,8 @@ import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_register.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/widgets/type_room_card.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/entities/type_room.dart';
+import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TypeRoomManagement extends StatefulWidget {
   const TypeRoomManagement({super.key});
@@ -30,16 +34,33 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
 
   Future<List<TypeRoom>> obtenerTiposCuartoFetch() async {
     List<TypeRoom> listaTiposCuarto = [];
-    final dio = Dio();
-    final response = await dio.get(_path);
-    if (response.data['status'] == 'OK') {
-      for (var tipoRoom in response.data['data']) {
-        listaTiposCuarto.add(TypeRoom.fromJson(tipoRoom));
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      int? idHotel = prefs.getInt('idHotel');
+      final dio = Dio();
+      final response = await dio.get(_path,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
+      if (response.data['status'] == 'OK') {
+        if (response.data['data'] != null) {
+          for (var tipoRoom in response.data['data']) {
+           if (tipoRoom['idHotel']['idHotel'] == idHotel) {
+              listaTiposCuarto.add(TypeRoom.fromJson(tipoRoom));
+           }
+          }
+        }
+      } else {
+        return [];
       }
-    } else {
-      return [];
+      return listaTiposCuarto;
+    } catch (e, f) {
+      print('$e, $f');
+      return listaTiposCuarto;
     }
-    return listaTiposCuarto;
   }
 
   void filtrarTiposRoom(String query) {
@@ -66,12 +87,16 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const Text('Tipo de Cuarto'),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/login');
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
+               Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (route) => false);
             },
             child: Container(
               width: 50,
@@ -118,12 +143,20 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
                               'Ha sucedido un error al intentar procesar los datos'),
                         );
                       } else {
-                        return ListView.builder(
+                        List<TypeRoom> tp = snapshot.data!;
+                        if (tp.isNotEmpty) {
+                           return ListView.builder(
                           itemCount: snapshot.data!.length,
                           itemBuilder: (context, index) {
                             return TypeRoomCard(snapshot.data![index]);
                           },
                         );
+                        }else {
+                          return const Center(
+                          child: Text(
+                              'No hay nigún tipo de habitacion regitrado actualmente.'),
+                        );
+                        }
                       }
                     }),
               ),
@@ -164,7 +197,8 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const TypeRoomRegister()),
+                                  builder: (context) =>
+                                      const TypeRoomRegister()),
                             );
                           },
                           child: const Icon(Icons.add)),

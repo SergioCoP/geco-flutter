@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/edit_room.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 
 class RoomCard extends StatefulWidget {
@@ -139,10 +140,18 @@ class _RoomCardState extends State<RoomCard> {
                               color: Colors.white,
                             ),
                             onPressed: () {
-                              Navigator.pushNamed(
+                              // Navigator.pushNamed(
+                              //   context,
+                              //   '/manager/check_rooms/edit_room',
+                              //   arguments: {'idRoom': widget.room.idRoom},
+                              // );
+                              Navigator.push(
                                 context,
-                                '/manager/check_rooms/edit_room',
-                                arguments: {'idRoom': widget.room.idRoom},
+                                MaterialPageRoute(
+                                    builder: (context) => const EditRoom(),
+                                    settings: RouteSettings(
+                                      arguments: {'idRoom': widget.room.idRoom},
+                                    )),
                               );
                             },
                           ),
@@ -242,44 +251,44 @@ class _RoomCardState extends State<RoomCard> {
                 ),
 
                 ///---------------------------
-                RichText(
-                  text: TextSpan(
-                    text: 'Encargado del turno matutino: \n',
-                    style: const TextStyle(color: Colors.black),
-                    children: [
-                      TextSpan(
-                        text: widget.room.users.isNotEmpty
-                            ? '${widget.room.users[0].idPerson.name} ${widget.room.users[0].idPerson.surname} ${widget.room.users[0].idPerson.lastname ?? ''}'
-                            : 'Sin asignar',
-                        style: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
+                // RichText(
+                //   text: TextSpan(
+                //     text: 'Encargado del turno matutino: \n',
+                //     style: const TextStyle(color: Colors.black),
+                //     children: [
+                //       TextSpan(
+                //         text: widget.room.user1 != null
+                //             ? '${widget.room.user1.idPerson.name} ${widget.room.user1.idPerson.surname} ${widget.room.user1.idPerson.lastname ?? ''}'
+                //             : 'Sin asignar',
+                //         style: const TextStyle(
+                //             color: Colors.black, fontWeight: FontWeight.bold),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 10.0,
+                // ),
 
                 ///---------------------------
-                RichText(
-                  text: TextSpan(
-                    text: 'Encargado del turno vespertino: \n',
-                    style: const TextStyle(color: Colors.black),
-                    children: [
-                      TextSpan(
-                        text: widget.room.users.length > 1
-                            ? '${widget.room.users[1].idPerson.name} ${widget.room.users[0].idPerson.surname} ${widget.room.users[0].idPerson.lastname ?? ''}'
-                            : 'Sin asignar',
-                        style: const TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
+                // RichText(
+                //   text: TextSpan(
+                //     text: 'Encargado del turno vespertino: \n',
+                //     style: const TextStyle(color: Colors.black),
+                //     children: [
+                //       TextSpan(
+                //         text: widget.room.user2 != null
+                //             ? '${widget.room.user2.idPerson.name} ${widget.room.user2.idPerson.surname} ${widget.room.user2.idPerson.lastname ?? ''}'
+                //             : 'Sin asignar',
+                //         style: const TextStyle(
+                //             color: Colors.black, fontWeight: FontWeight.bold),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(
+                //   height: 10.0,
+                // ),
 
                 ///---------------------------
               ],

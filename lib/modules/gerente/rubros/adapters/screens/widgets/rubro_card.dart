@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_update.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
 class RubroCard extends StatefulWidget {
@@ -53,11 +54,19 @@ class _RubroCardState extends State<RubroCard> {
               Switch(
                 value: switchStatus,
                 onChanged: (bool value) async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  String? token = prefs.getString('token');
                   final dio = Dio();
                   final path =
                       '${GlobalData.pathRubroUri}/status/${widget.rubro.idEvaluationItem}';
                   Response response;
-                  response = await dio.put(path);
+                  response = await dio.put(path,
+                      options: Options(headers: {
+                        "Accept": "application/json",
+                        "Content-Type": "application/json",
+                        'Authorization': 'Bearer $token'
+                      }));
                   if (response.data['status'] == 'UPDATED') {
                     setState(() {
                       widget.rubro.status = switchStatus ? 1 : 0;

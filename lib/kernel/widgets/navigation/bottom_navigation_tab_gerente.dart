@@ -24,8 +24,8 @@ class BottomNavigationTabGerente extends StatelessWidget {
         
       ],
       currentIndex: selectedIndex,
-      selectedItemColor: ColorsApp.secondaryColor,
-      unselectedItemColor: ColorsApp.primaryColor,
+      selectedItemColor: ColorsApp().secondaryColor,
+      unselectedItemColor: ColorsApp().primaryColor,
       onTap: onItemTapped,
     );
   }

@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   dio: ^5.3.3
   fluttertoast: ^8.2.2
+  shared_preferences: ^2.2.2
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

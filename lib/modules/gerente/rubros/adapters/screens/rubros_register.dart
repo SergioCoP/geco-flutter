@@ -6,6 +6,7 @@ import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RubroRegister extends StatefulWidget {
   const RubroRegister({super.key});
@@ -30,7 +31,7 @@ class _RubroRegisterState extends State<RubroRegister> {
       appBar: AppBar(
         title: const Text("Registro de Rubro"),
         centerTitle: true,
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
       ),
       body: Center(
@@ -82,18 +83,34 @@ class _RubroRegisterState extends State<RubroRegister> {
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ColorsApp.buttonPrimaryColor,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                )),
                             onPressed: _isButtonDisabled
                                 ? null
                                 : () async {
-                                    final data = {
-                                      'name': _description.text,
-                                      'idHotel': {'idHotel': 1}
-                                    };
+                                    
                                     try {
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      String? token = prefs.getString('token');
+                                       int? idHotel = prefs.getInt('idHotel');
+                                       final data = {
+                                      'name': _description.text,
+                                      'idHotel': {'idHotel': idHotel}
+                                    };
                                       final dio = Dio();
                                       Response response;
-                                      response =
-                                          await dio.post(_path, data: data);
+                                      response = await dio.post(_path,
+                                          data: data,
+                                          options: Options(headers: {
+                                            "Accept": "application/json",
+                                            "Content-Type": "application/json",
+                                            'Authorization': 'Bearer $token'
+                                          }));
                                       if (response.data['status'] ==
                                           'CREATED') {
                                         ScaffoldMessenger.of(context)
@@ -103,12 +120,14 @@ class _RubroRegisterState extends State<RubroRegister> {
                                         ));
                                         // Navigator.of(context)
                                         //     .popAndPushNamed('/manager/rubros');
-                                        Navigator.pop(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const RubrosManagement()),
-                                        );
+                                        // Navigator.pushReplacement(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //       builder: (context) =>
+                                        //           const RubrosManagement()),
+                                        // );
+                                        Navigator.popAndPushNamed(
+                                            context, '/manager');
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(

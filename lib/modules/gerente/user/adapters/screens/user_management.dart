@@ -1,9 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/user/adapters/screens/user_register.dart';
 import 'package:geco_mobile/modules/gerente/user/adapters/screens/widgets/user_card.dart';
 import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
+import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserManagement extends StatefulWidget {
   const UserManagement({super.key});
@@ -13,8 +18,12 @@ class UserManagement extends StatefulWidget {
 }
 
 class _UserManagementState extends State<UserManagement> {
+  final colorsApp = ColorsApp();
+  bool hasChange = false;
   final double heightOfFirstContainer = 100.0;
   final path = GlobalData.pathUserUri;
+  Color color1 = ColorsApp().primaryColor;
+  Color color2 = ColorsApp().secondaryColor;
   bool hasData = false;
   Future<List<User>>? _listUsuarios;
   Future<List<User>>? _listUsuariosRespaldo;
@@ -28,20 +37,37 @@ class _UserManagementState extends State<UserManagement> {
 
   Future<List<User>> obtenerUsuariosFetch() async {
     List<User> usuariost = [];
-    try {
-      final dio = Dio();
-      final response = await dio.get(path);
-      if (response.data['status'] == 'OK') {
-        if (response.data['data'] != null) {
-          for (var usuario in response.data['data']) {
+
+    // try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    int? idHotel = prefs.getInt('idHotel');
+    String? primaryColor = prefs.getString('primaryColor');
+    String? secondaryColor = prefs.getString('secondaryColor');
+    color1 = Color(int.parse(primaryColor!));
+    color2 = Color(int.parse(secondaryColor!));
+    hasChange = true;
+
+    final dio = Dio();
+    final response = await dio.get(path,
+        options: Options(headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $token'
+        }));
+    if (response.data['status'] == 'OK') {
+      if (response.data['data'] != null) {
+        for (var usuario in response.data['data']) {
+          if (usuario['idHotel']['idHotel'] == idHotel) {
             usuariost.add(User.fromJson(usuario));
           }
         }
       }
-      return usuariost;
-    } catch (e) {
-      return usuariost;
     }
+    return usuariost;
+    // } catch (e) {
+    //   return usuariost;
+    // }
   }
 
   void filtrarUsuario(String query) {
@@ -51,9 +77,9 @@ class _UserManagementState extends State<UserManagement> {
         setState(() {
           List<User> usuariosFiltrados = data.where((user) {
             String fullname =
-                '${user.idPerson.name} ${user.idPerson.lastname} ${user.idPerson.surname}';
-            return user.username.toLowerCase().contains(query) ||
-                user.idRol.name.toLowerCase().contains(query) ||
+                '${user.idPerson?.name} ${user.idPerson?.lastname} ${user.idPerson?.surname}';
+            return user.username!.toLowerCase().contains(query) ||
+                user.idRol!.name.toLowerCase().contains(query) ||
                 fullname.toLowerCase().contains(query);
           }).toList();
           _listUsuarios = Future.value(usuariosFiltrados);
@@ -68,16 +94,26 @@ class _UserManagementState extends State<UserManagement> {
 
   @override
   Widget build(BuildContext context) {
+    if (hasChange) {
+      setState(() {
+        color1 = color1;
+        color2 = color2;
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestión de usuarios'),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: color1,
         foregroundColor: Colors.white,
         automaticallyImplyLeading: false,
         actions: [
           InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, '/login');
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (route) => false);
             },
             child: Container(
               width: 50,
@@ -119,7 +155,9 @@ class _UserManagementState extends State<UserManagement> {
                         child: CircularProgressIndicator(),
                       );
                     } else if (snapshot.hasError) {
-                      return const Text("Ha sucedido un error maquiavelico.");
+                      print(snapshot.error);
+                      return const Center(
+                          child: Text("Ha sucedido un error maquiavelico."));
                     } else {
                       List<User> sapoUser = snapshot.data;
                       if (sapoUser.isNotEmpty) {
@@ -201,8 +239,10 @@ class _UserManagementState extends State<UserManagement> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed('/manager/users/register');
+                            // Navigator.of(context)
+                            //     .pushNamed('/manager/users/register');
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const UserRegister()));
                           },
                           child: const Icon(Icons.add)),
                     ),
@@ -225,7 +265,7 @@ Future<void> cambiarEstadoUser(BuildContext context, User user) async {
       content:
           // Text('¿Está seguro de cambiar de activo a desactivado al usuario ${user.person.name} ?'),
           Text(
-              '¿Está seguro de cambiar de activo a desactivado al usuario ${user.idPerson.name} ?'),
+              '¿Está seguro de cambiar de activo a desactivado al usuario ${user.idPerson?.name} ?'),
       actions: <Widget>[
         MaterialButton(
           onPressed: () {

@@ -2,17 +2,41 @@
 
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ignore: must_be_immutable
-class CreateIncidence extends StatelessWidget {
+class CreateIncidence extends StatefulWidget {
   CreateIncidence({super.key});
+
+  @override
+  State<CreateIncidence> createState() => _CreateIncidenceState();
+}
+
+class _CreateIncidenceState extends State<CreateIncidence> {
   TextStyle textoLabel = TextStyle(fontSize: 26.0, fontWeight: FontWeight.bold);
+  int idUser = 0;
+  bool hasData = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  void traerDatos() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int? id = prefs.getInt('idUser');
+    setState(() {
+      idUser = id!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Revisar incidencia'),
-          backgroundColor: ColorsApp.primaryColor,
+          title: const Text('Crea una incidencia'),
+          backgroundColor: ColorsApp().primaryColor,
+          foregroundColor: Colors.white,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

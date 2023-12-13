@@ -26,4 +26,8 @@ class Hotel {
       'imageUrl': imageUrl,
     };
   }
+
+  static Hotel? defaulHotel() {
+    return Hotel(0, '', '', '', '');
+  }
 }

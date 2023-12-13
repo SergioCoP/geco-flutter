@@ -6,6 +6,7 @@ import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/entities/type_room.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TypeRoomUpdate extends StatefulWidget {
   const TypeRoomUpdate({super.key});
@@ -29,13 +30,25 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
 
   Future<void> getTypeRoomFetch(final idTypeRoom) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
       Response response;
-      response = await dio.get('$_path/$idTypeRoom');
+      response = await dio.get('$_path/$idTypeRoom',
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         typeRoom = TypeRoom.fromJson(response.data['data']);
         _nameController.text = typeRoom.name;
         Response response2;
-        response2 = await dio.get(GlobalData.pathRubroUri);
+        response2 = await dio.get(GlobalData.pathRubroUri,
+            options: Options(headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              'Authorization': 'Bearer $token'
+            }));
         if (response2.data['status'] == 'OK') {
           final data = response2.data['data'];
           if (data is List) {
@@ -87,16 +100,21 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
       };
 
       Response response;
-      response = await dio.put(_path, data: data);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      response = await dio.put(_path,
+          data: data,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('registro actualizado exitosamente.')),
         );
         // Navigator.of(context).popAndPushNamed('/manager/types');
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const TypeRoomManagement()),
-        );
+        Navigator.of(context).popAndPushNamed('/manager');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -127,7 +145,7 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
       appBar: AppBar(
         title: const Text('Editar tipo de habitación'),
         centerTitle: true,
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
       ),
       body: hasData
@@ -188,12 +206,11 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
                           const SizedBox(height: 16.0),
                           ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: ColorsApp.buttonPrimaryColor,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                              ),
+                                  backgroundColor: ColorsApp.buttonPrimaryColor,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  )),
                               onPressed: _isButtonDisabled
                                   ? null
                                   : () {

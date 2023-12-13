@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TypeRoomRegister extends StatefulWidget {
   const TypeRoomRegister({super.key});
@@ -23,7 +24,7 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar un tipo de habitación'),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
       ),
       body: Center(
@@ -75,11 +76,20 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
                                 : () async {
                                     final dio = Dio();
                                     try {
-                                      final response =
-                                          await dio.post(_path, data: {
-                                        'name': _name.text,
-                                        'idHotel': {'idHotel': 1}
-                                      });
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      String? token = prefs.getString('token');
+                                      int? idHotel = prefs.getInt('idHotel');
+                                      final response = await dio.post(_path,
+                                          data: {
+                                            'name': _name.text,
+                                            'idHotel': {'idHotel': idHotel}
+                                          },
+                                          options: Options(headers: {
+                                            "Accept": "application/json",
+                                            "Content-Type": "application/json",
+                                            'Authorization': 'Bearer $token'
+                                          }));
                                       if (response.data['status'] ==
                                           'CREATED') {
                                         ScaffoldMessenger.of(context)
@@ -89,12 +99,14 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
                                         ));
                                         // Navigator.popAndPushNamed(
                                         //     context, '/manager/types');
-                                        Navigator.pop(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const TypeRoomManagement()),
-                                        );
+                                        // Navigator.pushReplacement(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //       builder: (context) =>
+                                        //           const TypeRoomManagement()),
+                                        // );
+                                        Navigator.of(context)
+                                            .popAndPushNamed('/manager');
                                       }
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
@@ -105,12 +117,11 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.buttonPrimaryColor,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
+                                backgroundColor: ColorsApp.buttonPrimaryColor,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                )),
                             child: const Text('Registrar'))
                       ],
                     ),

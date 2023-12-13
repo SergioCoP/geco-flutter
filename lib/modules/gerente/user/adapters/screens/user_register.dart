@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/kernel/validations/validations_app.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserRegister extends StatefulWidget {
   const UserRegister({super.key});
@@ -54,7 +55,7 @@ class _UserRegisterState extends State<UserRegister> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registrar un usuario'),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -205,36 +206,46 @@ class _UserRegisterState extends State<UserRegister> {
                         alignment: Alignment.topCenter,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorsApp.thirColor,
-                          ),
+                              backgroundColor: ColorsApp.buttonPrimaryColor,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              )),
                           onPressed: _isButtonDisabled
                               ? null
                               : () async {
                                   final dio = Dio();
                                   const path = GlobalData.pathUserUri;
-                                  // try {
-                                  final response = await dio.post(
-                                    path,
-                                    data: {
-                                      'email': _correoController.text,
-                                      'password': _contraseniaController.text,
-                                      'username': _usernameController.text,
-                                      'idPerson': {
-                                        'name': _nombresController.text,
-                                        'surname':
-                                            _apellidoPaternoController.text,
-                                        'lastname':
-                                            _apellidoMaternoController.text,
+                                  try {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  String? token = prefs.getString('token');
+                                  int? idHotel = prefs.getInt('idHotel');
+                                  final response = await dio.post(path,
+                                      data: {
+                                        'email': _correoController.text,
+                                        'password': _contraseniaController.text,
+                                        'username': _usernameController.text,
+                                        'idPerson': {
+                                          'name': _nombresController.text,
+                                          'surname':
+                                              _apellidoPaternoController.text,
+                                          'lastname':
+                                              _apellidoMaternoController.text,
+                                        },
+                                        'idHotel': {
+                                          'idHotel': idHotel,
+                                        },
+                                        'idRol': {
+                                          'idRol': obtenerIdRol(
+                                              rolNames[_rolSeleccionado]!)
+                                        },
                                       },
-                                      'idHotel': {
-                                        'idHotel': 1,
-                                      },
-                                      'idRol': {
-                                        'idRol': obtenerIdRol(
-                                            rolNames[_rolSeleccionado]!)
-                                      },
-                                    },
-                                  );
+                                      options: Options(headers: {
+                                        "Accept": "application/json",
+                                        "Content-Type": "application/json",
+                                        'Authorization': 'Bearer $token'
+                                      }));
                                   if (response.data['status'] == 'CREATED') {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
@@ -243,16 +254,17 @@ class _UserRegisterState extends State<UserRegister> {
                                       ),
                                     );
                                     Navigator.of(context)
-                                        .pushNamed('/manager/users');
+                                        .popAndPushNamed('/manager');
                                   }
-                                  // } catch (e) {
-                                  //   ScaffoldMessenger.of(context).showSnackBar(
-                                  //     const SnackBar(
-                                  //       content: Text(
-                                  //           'No se pudo registrar al usuario. Intente de nuevo.'),
-                                  //     ),
-                                  //   );
-                                  // }
+                                  } catch (e,f) {
+                                    print('$e  ,  $f');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'No se pudo registrar al usuario. Intente de nuevo.'),
+                                      ),
+                                    );
+                                  }
                                 },
                           child: const Text('Registrar usuario'),
                         ),

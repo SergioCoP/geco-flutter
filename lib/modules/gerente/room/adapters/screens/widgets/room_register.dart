@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomRegister extends StatefulWidget {
   const RoomRegister({super.key});
@@ -31,7 +32,14 @@ class _RoomRegisterState extends State<RoomRegister> {
 
   Future<void> traerTiposRoomFetch() async {
     try {
-      final response = await dio.get(_pathTypeRoom);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      final response = await dio.get(_pathTypeRoom,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         List<dynamic> traerTipos = response.data['data'];
         for (var typeRoom in traerTipos) {
@@ -73,7 +81,7 @@ class _RoomRegisterState extends State<RoomRegister> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Registrar habitación"),
-          backgroundColor: ColorsApp.primaryColor,
+          backgroundColor: ColorsApp().primaryColor,
           foregroundColor: Colors.white,
         ),
         body: hasData
@@ -231,24 +239,47 @@ class _RoomRegisterState extends State<RoomRegister> {
                                       const EdgeInsets.symmetric(vertical: 16),
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: ColorsApp.secondaryColor,
-                                      foregroundColor: Colors.white,
-                                    ),
+                                        backgroundColor:
+                                            ColorsApp.buttonPrimaryColor,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                        )),
                                     onPressed: _isButtonDisabled
                                         ? null
                                         : _isSelectedUserZero
                                             ? null
                                             : () async {
                                                 try {
+                                                  SharedPreferences prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  String? token =
+                                                      prefs.getString('token');
+                                                  int? idHotel =
+                                                      prefs.getInt('idHotel');
                                                   Response response;
-                                                  response = await dio
-                                                      .post(_pathRoom, data: {
-                                                    "idTypeRoom": {
-                                                      "idTypeRoom":
-                                                          tiposRoomSeleccionado
-                                                    },
-                                                    "idHotel": {"idHotel": 1}
-                                                  });
+                                                  response = await dio.post(
+                                                      _pathRoom,
+                                                      data: {
+                                                        "idTypeRoom": {
+                                                          "idTypeRoom":
+                                                              tiposRoomSeleccionado
+                                                        },
+                                                        "idHotel": {
+                                                          "idHotel": idHotel
+                                                        }
+                                                      },
+                                                      options:
+                                                          Options(headers: {
+                                                        "Accept":
+                                                            "application/json",
+                                                        "Content-Type":
+                                                            "application/json",
+                                                        'Authorization':
+                                                            'Bearer $token'
+                                                      }));
                                                   if (response.data['status'] ==
                                                       'CREATED') {
                                                     ScaffoldMessenger.of(
@@ -258,15 +289,15 @@ class _RoomRegisterState extends State<RoomRegister> {
                                                           content: Text(
                                                               'Registro completado exitosamente.')),
                                                     );
-                                                    // Navigator.of(context)
-                                                    //     .popAndPushNamed(
-                                                    //         '/manager/check_rooms');
-                                                    Navigator.pop(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const RoomManagement()),
-                                                    );
+                                                    Navigator.of(context)
+                                                        .popAndPushNamed(
+                                                            '/manager');
+                                                    // Navigator.pop(
+                                                    //   context,
+                                                    //   MaterialPageRoute(
+                                                    //       builder: (context) =>
+                                                    //           const RoomManagement()),
+                                                    // );
                                                   } else {
                                                     ScaffoldMessenger.of(
                                                             context)

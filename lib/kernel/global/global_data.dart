@@ -6,4 +6,6 @@ class GlobalData {
   static const String pathPersonUri = '$pathUri/person';
   static const String pathRubroUri = '$pathUri/evaluation-item';
   static const String pathTypeRoomUri = '$pathUri/type-room';
+  static const String pathIncidenceUri = '$pathUri/incidence';
+  static const String pathHotelUir = '$pathUri/hotel';
 }

@@ -12,7 +12,7 @@ class RoomIncidencesCheck extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Revisar incidencia'),
-          backgroundColor: ColorsApp.primaryColor,
+          backgroundColor: ColorsApp().primaryColor,
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),

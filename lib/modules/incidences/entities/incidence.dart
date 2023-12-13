@@ -1,13 +1,26 @@
-import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
-
 class Incidence {
   int idIncidence;
-  DateTime createdAt;
+  String discoveredOn;
   String description;
   String image;
   int status;
-  User user;
-  
+  int idUser;
+  int idRoom;
+  int idHotel;
 
-  Incidence(this.idIncidence,this.createdAt,this.description,this.image,this.status,this.user);
+  Incidence(this.idIncidence, this.discoveredOn, this.description, this.image,
+      this.status, this.idUser, this.idRoom, this.idHotel);
+
+  static Incidence fromJson(incidencia) {
+    return Incidence(
+      incidencia['idIncidence'],
+      incidencia['discoveredOn'],
+      incidencia['description'],
+      incidencia['image'],
+      incidencia['status'],
+      incidencia['idUser']['idUser'],
+      incidencia['idRoom']['idRoom'],
+      incidencia['idRoom']['idHotel']['idHotel'],
+    );
+  }
 }

@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
+import 'package:geco_mobile/modules/gerente/user/adapters/screens/user_update.dart';
 import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserCard extends StatefulWidget {
   final User user;
@@ -29,7 +31,14 @@ class _UserCardState extends State<UserCard> {
   ];
 
   Future<void> cambiarEstado() async {
-    final response = await dio.put('$path/status/${widget.user.idUser}');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    final response = await dio.put('$path/status/${widget.user.idUser}',
+        options: Options(headers: {
+          "Accept": "application/json",
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $token'
+        }));
     if (response.data['status'] == 'OK') {
       setState(() {
         widget.user.status = status ? 1 : 0;
@@ -64,7 +73,7 @@ class _UserCardState extends State<UserCard> {
                         height: 105.0,
                         child: Text(
                           //Nombre del usuario
-                          '${widget.user.idPerson.name} ${widget.user.idPerson.surname} ${widget.user.idPerson.lastname}',
+                          '${widget.user.idPerson!.name} ${widget.user.idPerson!.surname} ${widget.user.idPerson!.lastname}',
                           maxLines: 3,
                           overflow: TextOverflow.clip,
                           style: const TextStyle(
@@ -79,7 +88,7 @@ class _UserCardState extends State<UserCard> {
                       ),
                       Text(
                         ///EL ROL DEL USUARIO
-                        '${roles[widget.user.idRol.idRol] ?? 'Sin definir'}',
+                        '${roles[widget.user.idRol!.idRol] ?? 'Sin definir'}',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w300,
@@ -121,11 +130,16 @@ class _UserCardState extends State<UserCard> {
                               ),
                               child: IconButton(
                                 onPressed: () {
-                                  Navigator.of(context).pushNamed(
-                                      '/manager/users/update',
-                                      arguments: {
+                                  // Navigator.of(context).pushNamed(
+                                  //     '/manager/users/update',
+                                  //     arguments: {
+                                  //       'idUser': widget.user.idUser
+                                  //     });
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (builder) => const UserUpdate(),
+                                      settings: RouteSettings(arguments: {
                                         'idUser': widget.user.idUser
-                                      });
+                                      })));
                                 },
                                 icon: const Icon(Icons.edit),
                                 color: Colors.white,
@@ -208,7 +222,7 @@ class _UserCardState extends State<UserCard> {
                                                   children: [
                                                     TextSpan(
                                                       text: widget
-                                                          .user.idRol.name,
+                                                          .user.idRol!.name,
                                                       style: const TextStyle(
                                                           color: Colors.black,
                                                           fontWeight:

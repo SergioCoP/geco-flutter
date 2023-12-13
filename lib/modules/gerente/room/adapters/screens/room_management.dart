@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
@@ -5,6 +7,9 @@ import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_card.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_register.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
+import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
+import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomManagement extends StatefulWidget {
   const RoomManagement({super.key});
@@ -36,26 +41,41 @@ class _RoomManagementState extends State<RoomManagement> {
     // }
   }
 
-  Future<List<Room>> fetchError() async {
-    try {
-      return [];
-    } catch (e) {
-      return [];
-    }
-  }
-
   Future<List<Room>> obtenerCuartosFetch() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    int? idHotel = prefs.getInt('idHotel');
+    print(token);
+    print(idHotel);
     List<Room> habitaciones = [];
     try {
       final dio = Dio();
-      final response = await dio.get(_path);
+      final response = await dio.get(_path,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
-        for (var habitacion in response.data['data']) {
-          habitaciones.add(Room.fromJson(habitacion));
+        if (response.data['data'] != null) {
+          final roomsData = response.data['data'];
+          for (var habitacion in roomsData) {
+            if (habitacion['idHotel']['idHotel'] == idHotel) {
+              List<User> users = [];
+              if (habitacion['firstIdUser'] != null) {
+                users.add(User.fromJson(habitacion['firstIdUser']));
+              }
+              if (habitacion['secondIdUser'] != null) {
+                users.add(User.fromJson(habitacion['secondIdUser']));
+              }
+              habitaciones.add(Room.fromJson(habitacion, users));
+            }
+          }
         }
       }
       return habitaciones;
-    } catch (e) {
+    } catch (e, f) {
+      print(f);
       return habitaciones;
     }
   }
@@ -85,13 +105,16 @@ class _RoomManagementState extends State<RoomManagement> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gestión de habitaciones'),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
-            onTap: () {
-              print(Navigator.defaultRouteName);
-              Navigator.pushNamed(context, '/login');
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (route) => false);
             },
             child: Container(
               width: 50,

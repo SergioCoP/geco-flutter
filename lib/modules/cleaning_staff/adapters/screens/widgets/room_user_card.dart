@@ -6,6 +6,8 @@ import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/cleaning_staff/adapters/screens/create_incidence.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
+import 'package:geco_mobile/modules/incidences/entities/incidence.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomUserCard extends StatefulWidget {
   final Room room;
@@ -24,6 +26,7 @@ class _RoomUserCardState extends State<RoomUserCard> {
   Widget build(BuildContext context) {
     Color? buttonColor;
     String? estado;
+    List<Incidence> listaIncidencias = [];
     switch (widget.room.status) {
       case 0:
         estado = 'No disponible';
@@ -107,18 +110,43 @@ class _RoomUserCardState extends State<RoomUserCard> {
                         ),
                         onPressed: () async {
                           final dio = Dio();
+                          int estado = 4;
                           Response response;
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          String? token = prefs.getString('token');
+                          final response1 = await dio.get(
+                              '${GlobalData.pathIncidenceUri}/room/${widget.room.idRoom}');
+                          if (response1.data['status'] == 'OK') {
+                            if (response1.data['data'] != null) {
+                              for (var inci in response1.data['data']) {
+                                if (inci['status'] == 1) {
+                                  listaIncidencias
+                                      .add(Incidence.fromJson(inci));
+                                }
+                              }
+                            }
+                          }
+                          if (listaIncidencias.isEmpty) {
+                            //Marcar como con detalle
+                            estado = 5;
+                          }
                           response = await dio.put(
                               '${GlobalData.pathRoomUri}/status/${widget.room.idRoom}',
-                              data: {'status': 4});
+                              data: {'status': estado},
+                              options: Options(headers: {
+                                "Accept": "application/json",
+                                "Content-Type": "application/json",
+                                'Authorization': 'Bearer $token'
+                              }));
                           if (response.data['status'] == 'OK') {
                             setState(() {
                               widget.room.status = 4;
                               ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text(
-                                      'Habitacion en espera para revisión.')),
-                            );
+                                const SnackBar(
+                                    content: Text(
+                                        'Habitacion en espera para revisión.')),
+                              );
                               Navigator.of(context).pop();
                             });
                           } else {
@@ -200,7 +228,7 @@ class _RoomUserCardState extends State<RoomUserCard> {
             const SizedBox(
               width: 10.0,
             ),
-            widget.room.status == 3
+            widget.room.status == 3 || widget.room.status == 4 || widget.room.status == 5
                 ? Container(
                     decoration: const BoxDecoration(
                       color: ColorsApp.estadoConIncidencias,
@@ -214,11 +242,14 @@ class _RoomUserCardState extends State<RoomUserCard> {
                       onPressed: () {
                         // showCustomDialogForm(widget.room.name);
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CreateIncidence()));
-                        // showCustomDialog(
-                        //     'Título del Diálogo', 'Descripción del Diálogo');
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CreateIncidence(),
+                            settings: RouteSettings(
+                              arguments: {'idRoom': widget.room.idRoom},
+                            ),
+                          ),
+                        );
                       },
                     ),
                   )

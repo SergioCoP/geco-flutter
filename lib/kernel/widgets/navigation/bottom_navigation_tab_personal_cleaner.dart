@@ -14,8 +14,8 @@ class BottomNavigationTabPersonalCleaner extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.table_bar), label: 'Habitaciones'),
       ],
        currentIndex: selectedIndex,
-      selectedItemColor: ColorsApp.secondaryColor,
-      unselectedItemColor: ColorsApp.primaryColor,
+      selectedItemColor: ColorsApp().secondaryColor,
+      unselectedItemColor: ColorsApp().primaryColor,
       onTap: onItemTapped,
     );
   }

@@ -8,23 +8,27 @@ class Room {
   String name;
   TypeRoom idTypeRoom;
   int status;
-  List<User> users;
+  // User? user1;
+  // User? user2;
+  List users;
   Hotel idHotel;
 
   Room(this.idRoom, this.roomNumber, this.name, this.idTypeRoom, this.status,
       this.users, this.idHotel);
 
-  static Room fromJson(habitacion) {
+  static Room fromJson(habitacion, List<User> users) {
     return Room(
-      habitacion['idRoom'],
-      habitacion['roomNumber'] ?? '',
+      habitacion['idRoom'] ?? 0,
+      habitacion['roomNumber'] ?? 0,
       habitacion['name'] ?? 'Habitación-${habitacion['idRoom']}',
-      TypeRoom.fromJson(habitacion['idTypeRoom']??{}),
-      habitacion['status'],
-      User.fromListJson(habitacion['users'] ?? []),
-      Hotel.fromJson(habitacion['idHotel'] ?? {}),
+      TypeRoom.fromJson(habitacion['idTypeRoom'] ?? {}),
+      habitacion['status'] ?? 0,
+      users,
+      // habitacion['firstIdUser'] ?? 0,
+      // habitacion['secondIdUser'] ?? 0,
+      // User.fromJson(habitacion['firstIdUser'] ?? User.defaultUser()),
+      // User.fromJson(habitacion['secondIdUser'] ?? User.defaultUser()),
+      Hotel.fromJson(habitacion['idHotel'] ?? Hotel.defaulHotel()),
     );
   }
-  
-
 }

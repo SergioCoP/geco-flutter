@@ -1,9 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/cleaning_staff/adapters/screens/widgets/room_user_card.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
+import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
+import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomsAllUser extends StatefulWidget {
   const RoomsAllUser({super.key});
@@ -35,24 +40,38 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
     // }
   }
 
-  Future<List<Room>> fetchError() async {
-    try {
-      return [];
-    } catch (e) {
-      return [];
-    }
-  }
-
   Future<List<Room>> obtenerCuartosFetch() async {
     List<Room> habitaciones = [];
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      int? idHotel = prefs.getInt('idHotel');
       final dio = Dio();
-      final response = await dio.get(_path);
+      final response = await dio.get(_path,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         for (var habitacion in response.data['data']) {
-          habitaciones.add(Room.fromJson(habitacion));
+          if (habitacion['idHotel']['idHotel'] == idHotel) {
+            List<User> users = [];
+            if (habitacion['firstIdUser'] != null) {
+              users.add(User.fromJson(habitacion['firstIdUser']));
+            }
+            if (habitacion['secondIdUser'] != null) {
+              users.add(User.fromJson(habitacion['secondIdUser']));
+            }
+            habitaciones.add(Room.fromJson(habitacion, users));
+          }
         }
       }
+      return habitaciones;
+    } on DioException catch (e){
+      print(e.response?.data);
+      print(e.response?.statusMessage);
+      print(e.response?.statusCode);
       return habitaciones;
     } catch (e) {
       return habitaciones;
@@ -84,13 +103,16 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tablero de  habitaciones'),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
-            onTap: () {
-              print(Navigator.defaultRouteName);
-              Navigator.pushNamed(context, '/login');
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (route) => false);
             },
             child: Container(
               width: 50,
@@ -157,7 +179,7 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
                         padding: const EdgeInsets.all(10.0),
                         child: TextField(
                           onChanged: (value) {
-                            //filterCards(value);
+                            filterCards(value);
                           },
                           decoration: const InputDecoration(
                             labelText: 'Buscar por Identificador',

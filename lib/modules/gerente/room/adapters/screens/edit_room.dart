@@ -7,6 +7,7 @@ import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:geco_mobile/kernel/theme/color_app.dart';
 
 // ignore: must_be_immutable
@@ -57,23 +58,47 @@ class _EditRoomState extends State<EditRoom> {
     final dio = Dio();
     const pathRoom = GlobalData.pathRoomUri;
     const pathUsers = GlobalData.pathUserUri;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
     try {
-      final response = await dio.get('$pathRoom/$idRoom');
+      final response = await dio.get('$pathRoom/$idRoom',
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
-        room = Room.fromJson(response.data['data']);
-        if (room.users.isNotEmpty) {
-          userMatutinoSeleccionado = room.users[0].idUser;
-          if (room.users.length > 1) {
-            userVespertinoSeleccionado = room.users[1].idUser;
-          }
+        final data = response.data['data'];
+        List<User> users = [];
+        if (data['firstIdUser'] != null) {
+          users.add(User.fromJson(data['firstIdUser']));
         }
-        final responseUsers = await dio.get(pathUsers);
+        if (data['secondIdUser'] != null) {
+          users.add(User.fromJson(data['secondIdUser']));
+        }
+        print('Aqui la longitud de los users por room: ${users.length}');
+        room = Room.fromJson(response.data['data'], users);
+
+        final responseUsers = await dio.get(pathUsers,
+            options: Options(headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+              'Authorization': 'Bearer $token'
+            }));
         if (responseUsers.data['status'] == 'OK') {
           List<User> listaUsuarios =
               User.fromListJson(responseUsers.data['data']);
           for (var user in listaUsuarios) {
+            if (room.users.isNotEmpty) {
+              if (room.users[0] != null) {
+                userMatutinoSeleccionado = room.users[0].idUser!;
+              }
+              if (room.users[1] != null) {
+                userVespertinoSeleccionado = room.users[1].idUser!;
+              }
+            }
             String fullname =
-                '${user.idPerson.name} ${user.idPerson.surname} ${user.idPerson.lastname ?? ''} ';
+                '${user.idPerson?.name} ${user.idPerson?.surname} ${user.idPerson?.lastname ?? ''} ';
             final userMap = {'id': user.idUser, 'name': fullname};
             if (user.turn == 1) {
               usersMatutinos.add(userMap);
@@ -87,7 +112,10 @@ class _EditRoomState extends State<EditRoom> {
           });
         }
       }
-    } catch (e) {
+    } on DioException catch (e) {
+      print(e);
+    } catch (e, f) {
+      print('$e   ,   $f');
       throw Exception(e);
     }
   }
@@ -98,19 +126,26 @@ class _EditRoomState extends State<EditRoom> {
     int user2,
   ) async {
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      int? idHotel = prefs.getInt('idHotel');
       Response response;
-      response = await dio.post(GlobalData.pathRoomUri, data: {
-        "idRoom": room.idRoom,
-        "status": room.status,
-        "name": room.name,
-        "roomNumber": room.roomNumber,
-        "idTypeRoom": {"idTypeRoom": room.idTypeRoom.idTypeRoom},
-        "users": [
-          {"idUser": userMatutinoSeleccionado},
-          {"idUser": userVespertinoSeleccionado}
-        ],
-        "idHotel": {"idHotel": 1}
-      });
+      response = await dio.post(GlobalData.pathRoomUri,
+          data: {
+            "idRoom": room.idRoom,
+            "status": room.status,
+            "name": room.name,
+            "roomNumber": room.roomNumber,
+            "idTypeRoom": {"idTypeRoom": room.idTypeRoom.idTypeRoom},
+            "firstIdUser": {"idUser": userMatutinoSeleccionado},
+            "secondIdUser": {"idUser": userVespertinoSeleccionado},
+            "idHotel": {"idHotel": idHotel}
+          },
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data["status"] == 'CREATED') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -140,7 +175,7 @@ class _EditRoomState extends State<EditRoom> {
       appBar: AppBar(
         title: const Text('Editar Habitación'),
         centerTitle: true,
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
       ),
       body: hasData
@@ -276,8 +311,11 @@ class _EditRoomState extends State<EditRoom> {
                             const SizedBox(height: 30),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                  backgroundColor: ColorsApp.secondaryColor,
-                                  foregroundColor: Colors.white),
+                                  backgroundColor: ColorsApp.buttonPrimaryColor,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  )),
                               onPressed: _isButtonDisabled
                                   ? null
                                   : () {

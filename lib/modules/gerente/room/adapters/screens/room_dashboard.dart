@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,9 @@ import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_card_dashboard.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
+import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
 import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RoomsDashboard extends StatefulWidget {
   const RoomsDashboard({super.key});
@@ -41,49 +43,73 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
             totalEnRevision = totalIncidencias = totalDeshabilitadas = 0;
         listaHabitaciones = [];
       }
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+      int? idHotel = prefs.getInt('idHotel');
       final dio = Dio();
       const path = GlobalData.pathRoomUri;
-      final response = await dio.get(path);
+      final response = await dio.get(path,
+          options: Options(headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            'Authorization': 'Bearer $token'
+          }));
       if (response.data['status'] == 'OK') {
         if (response.data['data'] != null) {
           final roomsData = response.data['data'];
           setState(
             () {
               for (var room in roomsData) {
-                totalCuartos += 1;
-                listaHabitaciones.add(Room.fromJson(room));
-                switch (room['status']) {
-                  case 1: // esta en venta
-                    totalEnVenta += 1;
-                    break;
-                  case 2: // esta en uso
-                    totalEnUso += 1;
-                    break;
-                  case 3: // estan sucias
-                    totalSucio += 1;
-                    break;
-                  case 4: // esta en revision pendiente
-                    totalEnRevision += 1;
-                    break;
-                  case 5: // tienen incidencias
-                    totalIncidencias += 1;
-                    break;
-                  case 0: // Estan deshabilitadas
-                    totalDeshabilitadas += 1;
-                    break;
-                  default:
-                    break;
+                if (room['idHotel']['idHotel'] == idHotel) {
+                  totalCuartos += 1;
+                  List<User> users = [];
+                  print(room.toString());
+                  if (room['firstIdUser'] != null) {
+                    users.add(User.fromJson(room['firstIdUser']));
+                  }
+                  if (room['secondIdUser'] != null) {
+                    users.add(User.fromJson(room['secondIdUser']));
+                  }
+                  listaHabitaciones.add(Room.fromJson(room, users));
+                  switch (room['status']) {
+                    case 1: // esta en venta
+                      totalEnVenta += 1;
+                      break;
+                    case 2: // esta en uso
+                      totalEnUso += 1;
+                      break;
+                    case 3: // estan sucias
+                      totalSucio += 1;
+                      break;
+                    case 4: // esta en revision pendiente
+                      totalEnRevision += 1;
+                      break;
+                    case 5: // tienen incidencias
+                      totalIncidencias += 1;
+                      break;
+                    case 0: // Estan deshabilitadas
+                      totalDeshabilitadas += 1;
+                      break;
+                    default:
+                      break;
+                  }
                 }
               }
               hasFetch = true;
             },
           );
+        } else {
+          setState(() {
+            hasFetch = true;
+            listaHabitaciones = [];
+          });
         }
       }
-    } catch (e) {
+    } catch (e, f) {
       setState(() {
         hasFetch = true;
         listaHabitaciones = [];
+        print('$e   ,    $f');
         throw Exception(e);
       });
     }
@@ -100,15 +126,16 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Panel de control"),
-        backgroundColor: ColorsApp.primaryColor,
+        backgroundColor: ColorsApp().primaryColor,
         foregroundColor: Colors.white,
         actions: [
           InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Login()),
-              );
+            onTap: () async {
+              SharedPreferences prefs = await SharedPreferences.getInstance();
+              prefs.clear();
+              Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(builder: (context) => const Login()),
+                  (route) => false);
             },
             child: Container(
               width: 50,
@@ -143,7 +170,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                               itemCount: listaHabitaciones.length,
                               itemBuilder: (context, index) {
                                 return RoomCardDashboard(
-                                    roomIncidences: listaHabitaciones[index]);
+                                    room: listaHabitaciones[index]);
                               },
                             ),
                           ),
@@ -393,8 +420,30 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
               : RefreshIndicator(
                   onRefresh: fetchRooms,
                   child: Center(
-                    child: Text(
-                        'No se encontraron habitaciones registradas en este hotel. :)'),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                            'No se encontraron habitaciones registradas en este hotel. :)'),
+                        SizedBox(
+                          width: 125.0,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {
+                                  fetchRooms();
+                                });
+                              },
+                              child: Row(
+                                children: [
+                                  Text('Recargar'),
+                                  Icon(Icons.replay_outlined),
+                                ],
+                              )),
+                        )
+                      ],
+                    ),
                   ),
                 )
           : RefreshIndicator(
