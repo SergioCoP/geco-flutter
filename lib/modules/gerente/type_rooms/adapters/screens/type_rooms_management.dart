@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_register.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/widgets/type_room_card.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/entities/type_room.dart';
 
@@ -158,8 +159,13 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
                                 borderRadius: BorderRadius.circular(5.0),
                               )),
                           onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed('/manager/types/register');
+                            // Navigator.of(context)
+                            //     .pushNamed('/manager/types/register');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const TypeRoomRegister()),
+                            );
                           },
                           child: const Icon(Icons.add)),
                     ),

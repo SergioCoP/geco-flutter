@@ -2,18 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_card.dart';
-import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_register.dart';
+import 'package:geco_mobile/modules/cleaning_staff/adapters/screens/widgets/room_user_card.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 
-class RoomManagement extends StatefulWidget {
-  const RoomManagement({super.key});
+class RoomsAllUser extends StatefulWidget {
+  const RoomsAllUser({super.key});
 
   @override
-  State<RoomManagement> createState() => _RoomManagementState();
+  State<RoomsAllUser> createState() => _RoomsAllUserState();
 }
 
-class _RoomManagementState extends State<RoomManagement> {
+class _RoomsAllUserState extends State<RoomsAllUser> {
   final double heightOfFirstContainer = 100.0;
   final _path = GlobalData.pathRoomUri;
   late bool hasChange = false;
@@ -84,7 +83,7 @@ class _RoomManagementState extends State<RoomManagement> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestión de habitaciones'),
+        title: const Text('Tablero de  habitaciones'),
         backgroundColor: ColorsApp.primaryColor,
         foregroundColor: Colors.white,
         actions: [
@@ -137,7 +136,7 @@ class _RoomManagementState extends State<RoomManagement> {
                         return ListView.builder(
                           itemCount: data.length,
                           itemBuilder: (context, index) {
-                            return RoomCard(room: data[index], path: _path);
+                            return RoomUserCard(room: data[index], path: _path);
                           },
                         );
                       } else {
@@ -179,13 +178,8 @@ class _RoomManagementState extends State<RoomManagement> {
                                 borderRadius: BorderRadius.circular(5.0),
                               )),
                           onPressed: () {
-                            // Navigator.of(context)
-                            //     .pushNamed('/manager/check_rooms/register');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const RoomRegister()),
-                            );
+                            Navigator.of(context)
+                                .pushNamed('/manager/check_rooms/register');
                           },
                           child: const Icon(Icons.add)),
                     ),

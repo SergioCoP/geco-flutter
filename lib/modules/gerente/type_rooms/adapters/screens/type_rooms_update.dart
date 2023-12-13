@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/entities/type_room.dart';
 
 class TypeRoomUpdate extends StatefulWidget {
@@ -91,7 +92,11 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('registro actualizado exitosamente.')),
         );
-        Navigator.of(context).popAndPushNamed('/manager/types');
+        // Navigator.of(context).popAndPushNamed('/manager/types');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const TypeRoomManagement()),
+        );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(

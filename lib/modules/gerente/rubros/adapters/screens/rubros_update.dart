@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
 import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 
@@ -24,50 +25,53 @@ class _RubroUpdateState extends State<RubroUpdate> {
   bool hasError = false;
 
   final _formKeyUpdateRubro = GlobalKey<FormState>();
+  TextEditingController _name = TextEditingController(text: '');
   bool _isButtonDisabled = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<void> rubroDataFetch(final idRubro) async {
     try {
       final dio = Dio();
-      final response = await dio
-          .get('$_path/getRubro', queryParameters: {"idRubro": idRubro});
-      if (response.data['msg'] == 'OK') {
+      final response = await dio.get('$_path/$idRubro');
+      if (response.data['status'] == 'OK') {
         final data = response.data['data'];
-        rubro = Rubro(data['idEvaluationItem'] ?? idRubro,
-            data['name'] ?? 'Sin nombre', 
-            data['status'] ?? 0,
-            data['idHotel'] as Hotel
-            );
+        // rubro = Rubro(
+        //     data['idEvaluationItem'] ?? idRubro,
+        //     data['name'] ?? 'Sin nombre',
+        //     data['status'] ?? 0,
+        //     data['idHotel'] as Hotel);
+        rubro = Rubro.fromJson(data);
+        _name = TextEditingController(text: rubro.name);
         setState(() {
           hasData = true;
         });
       }
     } catch (e) {
-      hasError = true;
+      setState(() {
+        hasData = true;
+        hasError = true;
+        throw Exception(e);
+      });
     }
   }
 
-  void updateRubro(Rubro rubro) async {
+  void updateRubro(Rubro rubro, String name) async {
     try {
       final dio = Dio();
       final response = await dio.put(
         _path,
         data: {
           'idEvaluationItem': rubro.idEvaluationItem,
-          'name': rubro.name,
+          'name': name,
           // 'status': rubro.status,
         },
       );
-      if (response.data['status'] == 'UPDATED') {
+      if (response.data['status'] == 'OK') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Rubro actualizado exitosamente.')),
         );
-        Navigator.of(context).popAndPushNamed('/manager/rubros');
+        // Navigator.of(context).popAndPushNamed('/manager/rubros');
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) => const RubrosManagement()));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -77,6 +81,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
       }
     } catch (e, e2) {
       hasError = true;
+      throw Exception(e);
     }
   }
 
@@ -85,7 +90,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
     final dynamic rawArgs = ModalRoute.of(context)!.settings.arguments;
     final Map<String, dynamic> arguments =
         (rawArgs as Map<String, dynamic>?) ?? {};
-    final idRubro = arguments['idRubro'];
+    final idRubro = arguments['idRubro'] ?? 0;
     if (!hasData) {
       rubroDataFetch(idRubro);
     }
@@ -125,11 +130,11 @@ class _RubroUpdateState extends State<RubroUpdate> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Text(
-                              'Identificador',
+                              'Nombre del rubro',
                               style: textStyle,
                             ),
                             TextFormField(
-                              initialValue: rubro.name,
+                              controller: _name,
                               decoration: const InputDecoration(
                                 labelText: "Descripcion del rubro",
                                 hintText: "Descripcion del rubro",
@@ -140,9 +145,6 @@ class _RubroUpdateState extends State<RubroUpdate> {
                                 }
                                 return null;
                               },
-                              onSaved: (value) {
-                                rubro.name = value!;
-                              },
                             ),
                             Padding(
                               padding: const EdgeInsets.all(16.0),
@@ -150,7 +152,7 @@ class _RubroUpdateState extends State<RubroUpdate> {
                                   onPressed: _isButtonDisabled
                                       ? null
                                       : () async {
-                                          updateRubro(rubro);
+                                          updateRubro(rubro, _name.text);
                                         },
                                   child: const Text("Actualizar rubro")),
                             )

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_revisionCheck.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 
 class RoomCardDashboard extends StatelessWidget {
@@ -90,7 +91,9 @@ Widget botonPorEstado(BuildContext context, int estado) {
       return ElevatedButton(
         //Si hay incidencias
         onPressed: () {
-          Navigator.of(context).pushNamed('/dashboard/checkIncindences');
+          // Navigator.of(context).pushNamed('/dashboard/checkIncindences');
+          Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const RoomRevisionCheck()));
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorsApp.estadoConIncidencias,

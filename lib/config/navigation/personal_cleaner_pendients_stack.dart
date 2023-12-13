@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geco_mobile/modules/gerente/room/personal_cleaner/adpters/screens/pendient_rooms.dart';
+import 'package:geco_mobile/modules/cleaning_staff/adapters/screens/rooms_owner_user.dart';
 
 class PersonalCleanerPendientsStack extends StatelessWidget {
   const PersonalCleanerPendientsStack({super.key});
@@ -9,7 +9,8 @@ class PersonalCleanerPendientsStack extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/personal_cleaner/pendients',
       routes: {
-        '/personal_cleaner/pendients': (context) => const PendientRooms(),
+        '/personal_cleaner/pendients': (context) => const RoomsOwnerUser(),
+        //'personal_cleaner/pendients/mark_rooms': (context) => const MarkRoom();
       },
     );
   }

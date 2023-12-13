@@ -11,9 +11,9 @@ class ManagerStack extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/manager/check_rooms',
+      initialRoute: '/login/manager/check_rooms',
       routes: {
-        '/manager/check_rooms': (context) => const RoomManagement(),
+        '/login/manager/check_rooms': (context) => const RoomManagement(),
         '/manager/check_rooms/register': (context) => const RoomRegister(),
         '/manager/check_rooms/edit_room': (context) => const EditRoom(),
         '/login': (context) => const Login(),

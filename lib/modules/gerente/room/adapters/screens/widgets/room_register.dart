@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
 
 class RoomRegister extends StatefulWidget {
   const RoomRegister({super.key});
@@ -257,9 +258,15 @@ class _RoomRegisterState extends State<RoomRegister> {
                                                           content: Text(
                                                               'Registro completado exitosamente.')),
                                                     );
-                                                    Navigator.of(context)
-                                                        .popAndPushNamed(
-                                                            '/manager/check_rooms');
+                                                    // Navigator.of(context)
+                                                    //     .popAndPushNamed(
+                                                    //         '/manager/check_rooms');
+                                                    Navigator.pop(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              const RoomManagement()),
+                                                    );
                                                   } else {
                                                     ScaffoldMessenger.of(
                                                             context)

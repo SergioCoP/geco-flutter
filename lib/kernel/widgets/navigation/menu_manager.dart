@@ -5,6 +5,11 @@ import 'package:geco_mobile/config/navigation/manager_stack.dart';
 import 'package:geco_mobile/config/navigation/manager_type_rooms_stack.dart';
 import 'package:geco_mobile/config/navigation/manager_user_stack.dart';
 import 'package:geco_mobile/kernel/widgets/navigation/bottom_navigation_tab_gerente.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_dashboard.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
+import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
+import 'package:geco_mobile/modules/gerente/user/adapters/screens/user_management.dart';
 
 class MenuManager extends StatefulWidget {
   const MenuManager({super.key});
@@ -27,11 +32,16 @@ class _MenuManagerState extends State<MenuManager> {
       body: IndexedStack(
         index: _selectedIndex,
         children: const [
-          ManagerDashboardStack(),
-          ManagerStack(),
-          ManagerTypeRoomsStack(),
-          ManagerUserStack(),
-          ManagerRubrosStack(),
+          RoomsDashboard(),
+          RoomManagement(),
+          TypeRoomManagement(),
+          UserManagement(),
+          RubrosManagement()
+          // ManagerDashboardStack(),
+          // ManagerStack(),
+          // ManagerTypeRoomsStack(),
+          // ManagerUserStack(),
+          // ManagerRubrosStack(),
         ],
       ),
       bottomNavigationBar: BottomNavigationTabGerente(

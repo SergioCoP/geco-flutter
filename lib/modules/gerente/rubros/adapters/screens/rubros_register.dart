@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_management.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 
 class RubroRegister extends StatefulWidget {
@@ -93,14 +94,21 @@ class _RubroRegisterState extends State<RubroRegister> {
                                       Response response;
                                       response =
                                           await dio.post(_path, data: data);
-                                      if (response.data['status'] == 'CREATED') {
+                                      if (response.data['status'] ==
+                                          'CREATED') {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
                                           content: Text(
                                               'Rubro registrado correctamente.'),
                                         ));
-                                        Navigator.of(context)
-                                            .popAndPushNamed('/manager/rubros');
+                                        // Navigator.of(context)
+                                        //     .popAndPushNamed('/manager/rubros');
+                                        Navigator.pop(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const RubrosManagement()),
+                                        );
                                       } else {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(

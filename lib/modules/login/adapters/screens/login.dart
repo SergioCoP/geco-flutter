@@ -209,12 +209,13 @@ class _FormCardState extends State<_FormCard> {
                                         : () async {
                                             // Navigator.pushReplacementNamed(context, '/personal_cleaner');
                                             // Navigator.of(context).pushNamed('/rooms');
-                                            Navigator.pushNamed(
-                                                context, '/manager'); 
+                                            // print(Navigator.defaultRouteName);
+                                            Navigator.pushReplacementNamed(
+                                                context, '/manager');
                                             // Response response;
                                             // try {
                                             //   response = await dio.request(
-                                                  // '${GlobalData.pathUserUri}/login',
+                                            // '${GlobalData.pathUserUri}/login',
                                             //       queryParameters: {
                                             //         "email": _email.text,
                                             //         "password": _password.text

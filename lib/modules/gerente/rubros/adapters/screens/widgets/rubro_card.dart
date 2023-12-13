@@ -3,6 +3,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
+import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/rubros_update.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 
 // ignore: must_be_immutable
@@ -90,10 +91,19 @@ class _RubroCardState extends State<RubroCard> {
                 ),
                 child: IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(
+                    // Navigator.pushNamed(
+                    //   context,
+                    //   '/manager/rubros/update',
+                    //   arguments: {'idRubro': widget.rubro.idEvaluationItem},
+                    // );
+                    Navigator.push(
                       context,
-                      '/manager/rubros/update',
-                      arguments: {'idRubro': widget.rubro.idEvaluationItem},
+                      MaterialPageRoute(
+                        builder: (context) => const RubroUpdate(),
+                        settings: RouteSettings(
+                          arguments: {'idRubro': widget.rubro.idEvaluationItem},
+                        ),
+                      ),
                     );
                   },
                   icon: const Icon(Icons.edit),

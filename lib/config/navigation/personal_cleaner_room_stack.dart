@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:geco_mobile/modules/gerente/room/personal_cleaner/adpters/screens/all_rooms_table.dart';
+import 'package:geco_mobile/modules/cleaning_staff/adapters/screens/rooms_all_user.dart';
 
 class PersonalCleanerRoomsStack extends StatelessWidget {
   const PersonalCleanerRoomsStack({super.key});
@@ -9,7 +9,8 @@ class PersonalCleanerRoomsStack extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/personal_cleaner/all_rooms',
       routes: {
-        '/personal_cleaner/all_rooms': (context) => const AllRoomsTable(),
+        '/personal_cleaner/all_rooms': (context) => const RoomsAllUser(),
+        //'personal_cleaner/all_rooms/mark_Room': (context) => const MarkRoom();
       },
     );
   }

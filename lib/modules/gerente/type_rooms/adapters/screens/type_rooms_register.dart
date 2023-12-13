@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_management.dart';
 
 class TypeRoomRegister extends StatefulWidget {
   const TypeRoomRegister({super.key});
@@ -86,8 +87,14 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
                                           content: Text(
                                               'Rubro registrado correctamente.'),
                                         ));
-                                        Navigator.popAndPushNamed(
-                                            context, '/manager/types');
+                                        // Navigator.popAndPushNamed(
+                                        //     context, '/manager/types');
+                                        Navigator.pop(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  const TypeRoomManagement()),
+                                        );
                                       }
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)

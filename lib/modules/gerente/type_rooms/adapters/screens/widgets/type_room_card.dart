@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geco_mobile/modules/gerente/type_rooms/adapters/screens/type_rooms_update.dart';
 import 'package:geco_mobile/modules/gerente/type_rooms/entities/type_room.dart';
 
 // ignore: must_be_immutable
@@ -85,11 +86,20 @@ class _TypeRoomCardState extends State<TypeRoomCard> {
                                 color: Colors.white,
                               ),
                               onPressed: () {
-                                Navigator.of(context).pushNamed(
-                                    '/manger/types/update',
-                                    arguments: {
-                                      'idTypeRoom': widget.typeRoom.idTypeRoom
-                                    });
+                                // Navigator.of(context).pushNamed(
+                                //     '/manger/types/update',
+                                //     arguments: {
+                                //       'idTypeRoom': widget.typeRoom.idTypeRoom
+                                //     });
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const TypeRoomUpdate(),
+                                      settings: RouteSettings(arguments: {
+                                        'idTypeRoom': widget.typeRoom.idTypeRoom
+                                      })),
+                                );
                               },
                             ),
                           ),

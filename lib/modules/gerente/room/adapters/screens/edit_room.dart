@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
 // import 'package:geco_mobile/kernel/theme/color_app.dart';
@@ -116,7 +117,10 @@ class _EditRoomState extends State<EditRoom> {
             content: Text('Habitación actualizada exitosamente.'),
           ),
         );
-        Navigator.of(context).pushNamed('/manager/check_rooms');
+        Navigator.pop(
+          context,
+          MaterialPageRoute(builder: (context) => const RoomManagement()),
+        );
       }
     } catch (e) {
       throw Exception(e);
@@ -278,10 +282,9 @@ class _EditRoomState extends State<EditRoom> {
                                   ? null
                                   : () {
                                       actualizarDatos(
-                                        room,
-                                        userMatutinoSeleccionado,
-                                        userVespertinoSeleccionado
-                                      );
+                                          room,
+                                          userMatutinoSeleccionado,
+                                          userVespertinoSeleccionado);
                                     },
                               child: const Text('Guardar Cambios'),
                             ),

@@ -2,26 +2,28 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_card.dart';
-import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_register.dart';
+import 'package:geco_mobile/modules/cleaning_staff/adapters/screens/widgets/room_user_card.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 
-class RoomManagement extends StatefulWidget {
-  const RoomManagement({super.key});
+class RoomsOwnerUser extends StatefulWidget {
+  const RoomsOwnerUser({super.key});
 
   @override
-  State<RoomManagement> createState() => _RoomManagementState();
+  State<RoomsOwnerUser> createState() => _RoomsOwnerUserState();
 }
 
-class _RoomManagementState extends State<RoomManagement> {
+class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
   final double heightOfFirstContainer = 100.0;
   final _path = GlobalData.pathRoomUri;
+
   late bool hasChange = false;
 
   late Future<List<Room>> _listaHabitaciones;
   late Future<List<Room>> _listaHabitacionesRespaldo;
   // ignore: unused_field
   Future<List<dynamic>>? _listaHabitacionesTienenIncidencias;
+
+  late int idUser;
 
   @override
   void initState() {
@@ -36,16 +38,10 @@ class _RoomManagementState extends State<RoomManagement> {
     // }
   }
 
-  Future<List<Room>> fetchError() async {
-    try {
-      return [];
-    } catch (e) {
-      return [];
-    }
-  }
 
   Future<List<Room>> obtenerCuartosFetch() async {
     List<Room> habitaciones = [];
+    idUser = 14;
     try {
       final dio = Dio();
       final response = await dio.get(_path);
@@ -56,7 +52,8 @@ class _RoomManagementState extends State<RoomManagement> {
       }
       return habitaciones;
     } catch (e) {
-      return habitaciones;
+      // return habitaciones
+      throw Exception(e);
     }
   }
 
@@ -84,7 +81,7 @@ class _RoomManagementState extends State<RoomManagement> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Gestión de habitaciones'),
+        title: const Text('Mis habitaciones'),
         backgroundColor: ColorsApp.primaryColor,
         foregroundColor: Colors.white,
         actions: [
@@ -130,14 +127,31 @@ class _RoomManagementState extends State<RoomManagement> {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(child: CircularProgressIndicator());
                     } else if (snapshot.hasError) {
+                      print(snapshot.error);
                       return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
                       List<Room> data = snapshot.data!;
                       if (data.isNotEmpty) {
                         return ListView.builder(
                           itemCount: data.length,
-                          itemBuilder: (context, index) {
-                            return RoomCard(room: data[index], path: _path);
+                          itemBuilder: (context, index){
+                            Room roomUser = data[index];
+                            bool hasRooms = false;
+                            if (roomUser.users.isNotEmpty ) {
+                              if (roomUser.users[0].idUser == idUser) {
+                                hasRooms = true;
+                                return RoomUserCard(
+                                    room: data[index], path: _path);
+                              } else if (roomUser.users[1].idUser == idUser) {
+                                return RoomUserCard(
+                                    room: data[index], path: _path);
+                              }
+                            }
+                            if (!hasRooms) {
+                              const Center(
+                                  child: Text(
+                                      'No hay ninguna Habitación registrada Actualmente. :)'));
+                            }
                           },
                         );
                       } else {
@@ -179,13 +193,8 @@ class _RoomManagementState extends State<RoomManagement> {
                                 borderRadius: BorderRadius.circular(5.0),
                               )),
                           onPressed: () {
-                            // Navigator.of(context)
-                            //     .pushNamed('/manager/check_rooms/register');
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const RoomRegister()),
-                            );
+                            Navigator.of(context)
+                                .pushNamed('/manager/check_rooms/register');
                           },
                           child: const Icon(Icons.add)),
                     ),

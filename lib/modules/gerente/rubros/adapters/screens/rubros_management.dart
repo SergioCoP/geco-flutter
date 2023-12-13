@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_register.dart';
 import 'package:geco_mobile/modules/gerente/rubros/adapters/screens/widgets/rubro_card.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 
@@ -160,8 +161,13 @@ class _RubrosManagementState extends State<RubrosManagement> {
                                   borderRadius: BorderRadius.circular(5.0),
                                 )),
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed('/manager/rubros/register');
+                              // Navigator.of(context)
+                              //     .pushNamed('/manager/rubros/register');
+                              Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const RoomRegister()),
+                            );
                             },
                             child: const Icon(Icons.add)),
                       ),

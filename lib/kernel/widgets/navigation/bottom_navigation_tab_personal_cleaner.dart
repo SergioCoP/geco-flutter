@@ -12,7 +12,6 @@ class BottomNavigationTabPersonalCleaner extends StatelessWidget {
       items: const <BottomNavigationBarItem>[
         BottomNavigationBarItem(icon: Icon(Icons.room_service), label: 'Pendientes'),
         BottomNavigationBarItem(icon: Icon(Icons.table_bar), label: 'Habitaciones'),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
       ],
        currentIndex: selectedIndex,
       selectedItemColor: ColorsApp.secondaryColor,

@@ -6,6 +6,7 @@ import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/widgets/room_card_dashboard.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
+import 'package:geco_mobile/modules/login/adapters/screens/login.dart';
 
 class RoomsDashboard extends StatefulWidget {
   const RoomsDashboard({super.key});
@@ -83,6 +84,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
       setState(() {
         hasFetch = true;
         listaHabitaciones = [];
+        throw Exception(e);
       });
     }
   }
@@ -103,7 +105,10 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
         actions: [
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, '/login');
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const Login()),
+              );
             },
             child: Container(
               width: 50,
