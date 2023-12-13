@@ -41,7 +41,7 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
 
   Future<List<Room>> obtenerCuartosFetch() async {
     List<Room> habitaciones = [];
-    idUser = 2;
+    idUser = 1;
     try {
       final dio = Dio();
       final response = await dio.get(_path);
