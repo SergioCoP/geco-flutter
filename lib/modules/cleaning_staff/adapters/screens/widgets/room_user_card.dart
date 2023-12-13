@@ -216,7 +216,7 @@ class _RoomUserCardState extends State<RoomUserCard> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => CreateIncidence()));
+                                builder: (context) => CreateIncidence(room: widget.room)));
                         // showCustomDialog(
                         //     'Título del Diálogo', 'Descripción del Diálogo');
                       },
