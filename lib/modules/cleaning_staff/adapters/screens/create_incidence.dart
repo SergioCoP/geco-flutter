@@ -6,6 +6,7 @@ import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 import 'package:image_picker/image_picker.dart';
 
+
 class CreateIncidence extends StatefulWidget {
   final Room room;
 
@@ -48,6 +49,8 @@ class _CreateIncidenceState extends State<CreateIncidence> {
       List<int> imageBytes = await _image!.readAsBytes();
       String base64Image = base64Encode(imageBytes);
       await _registerIncidence(base64Image);
+    }else{
+      print('no hay img');
     }
   }
 
@@ -55,7 +58,7 @@ class _CreateIncidenceState extends State<CreateIncidence> {
     try {
       final dio = Dio();
       Response response = await dio.post(
-        'http://localhost:8080/api/incidence',
+        'http://192.168.0.3:8080/api/incidence',
         data: {
           'image': base64Image,
           'description': _incidenceDescriptionController.text,
@@ -65,7 +68,7 @@ class _CreateIncidenceState extends State<CreateIncidence> {
         },
       );
 
-      if (response.data['status'] == 'CREATED') {
+      if (response.data['status'] == 'OK') {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Incidencia registrada exitosamente.'),
@@ -122,74 +125,81 @@ class _CreateIncidenceState extends State<CreateIncidence> {
         title: const Text('Revisar incidencia'),
         backgroundColor: ColorsApp.primaryColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: statusColor,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              child: Text(
-                widget.room.name,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(height: 20),
-            // Input Text grande para describir la incidencia
-            TextField(
-              controller: _incidenceDescriptionController,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                hintText: 'Descripción de la incidencia',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(height: 20),
-            // Botones para cámara y galería
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 32, right: 32, bottom: 32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(5.0),
                   ),
-                  onPressed: _getFromCamera,
-                  child: Text('Cámara'),
+                  child: Text(
+                    widget.room.name,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
+                SizedBox(height: 20),
+                // Input Text grande para describir la incidencia
+                TextField(
+                  controller: _incidenceDescriptionController,
+                  maxLines: 5,
+                  decoration: const InputDecoration(
+                    hintText: 'Descripción de la incidencia',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(height: 20),
+                // Botones para cámara y galería
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      onPressed: _getFromCamera,
+                      child: Text('Cámara'),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      onPressed: _openImagePicker,
+                      child: Text('Galería'),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                // Container gris de 30x30
+                Container(
+                  alignment: Alignment.center,
+                  width: double.infinity,
+                  height: 150,
+                  color: Colors.grey[300],
+                  child: _image != null
+                      ? Image.file(_image!, fit: BoxFit.cover)
+                      : const Text('Selecciona una imagen'),
+                ),
+                SizedBox(height: 20),
+                // Botón para registrar incidencia
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: ColorsApp.thirColor,
                   ),
-                  onPressed: _openImagePicker,
-                  child: Text('Galería'),
+                  onPressed: (){
+                    print('REGISTRARRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR');
+                    _uploadImage();
+                  },
+                  child: Text('Registrar incidencia'),
                 ),
               ],
             ),
-            SizedBox(height: 20),
-            // Container gris de 30x30
-            Container(
-              alignment: Alignment.center,
-              width: double.infinity,
-              height: 150,
-              color: Colors.grey[300],
-              child: _image != null
-                  ? Image.file(_image!, fit: BoxFit.cover)
-                  : const Text('Selecciona una imagen'),
-            ),
-            SizedBox(height: 20),
-            // Botón para registrar incidencia
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorsApp.thirColor,
-              ),
-              onPressed: _uploadImage,
-              child: Text('Registrar incidencia'),
-            ),
-          ],
+          ),
         ),
       ),
     );
