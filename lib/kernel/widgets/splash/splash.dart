@@ -20,11 +20,18 @@ class _SplashState extends State<Splash> {
       body: Center(
         child: Column(
         mainAxisAlignment: MainAxisAlignment.center,//centrar contenido
-        children:<Widget> [
-        Image.asset('assets/images/geco_logo.png',
-        width: 200,
-        height: 250,),
-         Text(widget.legend)]),),
+        children: <Widget>[
+            ClipOval(
+              child: Image.asset(
+                'assets/images/geco_logo.png',
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover, // Ajusta la imagen al círculo
+              ),
+            ),
+            const SizedBox(height: 20), // Espacio entre la imagen y el texto
+            Text(widget.legend),
+          ],),),
     );
   }
 }
