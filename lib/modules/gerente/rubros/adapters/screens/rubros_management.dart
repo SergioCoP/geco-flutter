@@ -24,6 +24,7 @@ class _RubrosManagementState extends State<RubrosManagement> {
   late bool hasChange = false;
   Color color1 = ColorsApp().primaryColor;
   Color color2 = ColorsApp().secondaryColor;
+  String namehotel = 'Geco';
 
   late Future<List<Rubro>> _listaRubros;
   late Future<List<Rubro>> _listaRubrosRepaldo;
@@ -73,7 +74,7 @@ class _RubrosManagementState extends State<RubrosManagement> {
       print(e);
       Fluttertoast.showToast(
           msg:
-              "Ha sucedido un error al intentar traer los rubros de evaluación. Por favor intente mas tarde",
+              "Ha sucedido un error al intentar traer los rubros de revisión. Por favor intente mas tarde",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -109,7 +110,7 @@ class _RubrosManagementState extends State<RubrosManagement> {
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Gestión de Rubros de evaluación'),
+          title: const Text('Gestión de Rubros de revisión'),
           backgroundColor: color1,
           foregroundColor: Colors.white,
           actions: [
@@ -129,10 +130,7 @@ class _RubrosManagementState extends State<RubrosManagement> {
                   color: Colors.transparent,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.logout,
-                  color: color2
-                ),
+                child: Icon(Icons.logout, color: color2),
               ),
             )
           ],

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
-import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_dashboard.dart';
+import 'package:geco_mobile/kernel/toasts/toasts.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 import 'package:geco_mobile/modules/gerente/rubros/entities/rubro.dart';
 import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
@@ -118,7 +118,7 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
       allCheckeds = true;
     } else {
       //Si no todos los puntos estan marcados
-      status = 5;
+      status = 3; //marcar como sucia
     }
 
     print('Estan todos los rubros checados?: $allCheckeds ');
@@ -135,8 +135,14 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
-        Navigator.pushReplacement(context,
-            MaterialPageRoute(builder: (context) => const RoomsDashboard()));
+        if (allCheckeds) {
+          Toasts.showSuccessToast(
+              'Se ha completado la revisión. La habitación esta disponible para su uso');
+        } else {
+          Toasts.showSuccessToast(
+              'Se ha completado la revisión. La habitación esta marcada como sucia');
+        }
+         Navigator.of(context).popAndPushNamed('/manager');
       }
     } on DioException catch (e) {
       print(e);
@@ -230,7 +236,7 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
                         ),
                         const SizedBox(height: 16.0),
                         Text(
-                          'rubros de evaluación: ',
+                          'rubros de revisión: ',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Column(

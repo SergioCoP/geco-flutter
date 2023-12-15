@@ -26,171 +26,157 @@ class _RubroCardState extends State<RubroCard> {
     return Card(
       margin: const EdgeInsets.all(12.0),
       elevation: 2.0,
-      color: Color.fromARGB(255, 255, 255, 255),
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
-        side: BorderSide(color: Colors.black, width: 0.5),
+        side: BorderSide(color: Colors.white),
       ),
       child: Padding(
         padding: const EdgeInsets.all(18.0),
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 200.0,
-                height: 50.0,
-                child: Text(
-                  widget.rubro.name,
-                  maxLines: 3,
-                  overflow: TextOverflow.clip,
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 23.0,
-                      fontWeight: FontWeight.bold),
-                ),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 150.0,
+              height: 50.0,
+              child: Text(
+                widget.rubro.name,
+                maxLines: 3,
+                overflow: TextOverflow.clip,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 23.0,
+                    fontWeight: FontWeight.bold),
               ),
-              const Spacer(),
-              Switch(
-                value: switchStatus,
-                onChanged: (bool value) async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? token = prefs.getString('token');
-                  final dio = Dio();
-                  final path =
-                      '${GlobalData.pathRubroUri}/status/${widget.rubro.idEvaluationItem}';
-                  Response response;
-                  response = await dio.put(path,
-                      options: Options(headers: {
-                        // "Accept": "application/json",
-                        // "Content-Type": "application/json",
-                        'Authorization': 'Bearer $token'
-                      }));
-                  if (response.data['status'] == 'UPDATED') {
-                    setState(() {
-                      widget.rubro.status = switchStatus ? 1 : 0;
-                      switchStatus = value;
-                    });
-                  }
+            ),
+            const Spacer(),
+            Switch(
+              value: switchStatus,
+              onChanged: (bool value) async {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                String? token = prefs.getString('token');
+                final dio = Dio();
+                final path =
+                    '${GlobalData.pathRubroUri}/status/${widget.rubro.idEvaluationItem}';
+                Response response;
+                response = await dio.put(path,
+                    options: Options(headers: {
+                      // "Accept": "application/json",
+                      // "Content-Type": "application/json",
+                      'Authorization': 'Bearer $token'
+                    }));
+                if (response.data['status'] == 'UPDATED') {
                   setState(() {
-                    switchStatus = value;
                     widget.rubro.status = switchStatus ? 1 : 0;
+                    switchStatus = value;
                   });
-                },
-                activeColor: Colors.green,
-                inactiveTrackColor: Colors.red,
-                inactiveThumbColor: Colors.red.shade100,
-                materialTapTargetSize: MaterialTapTargetSize.padded,
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 15.0,
-          ),
-          Row(
-            children: [
-              Ink(
-                ///Editar el rubro
-                decoration: ShapeDecoration(
-                  color: Colors.lightBlue,
-                  shape: ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
+                }
+                setState(() {
+                  switchStatus = value;
+                  widget.rubro.status = switchStatus ? 1 : 0;
+                });
+              },
+              activeColor: Colors.green,
+              inactiveTrackColor: Colors.red,
+              inactiveThumbColor: Colors.red.shade100,
+              materialTapTargetSize: MaterialTapTargetSize.padded,
+            ),
+            const SizedBox(width: 10.0),
+            Ink(
+              ///Editar el rubro
+              decoration: ShapeDecoration(
+                color: Colors.lightBlue,
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
                 ),
-                child: IconButton(
-                  onPressed: () {
-                    // Navigator.pushNamed(
-                    //   context,
-                    //   '/manager/rubros/update',
-                    //   arguments: {'idRubro': widget.rubro.idEvaluationItem},
-                    // );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RubroUpdate(),
-                        settings: RouteSettings(
-                          arguments: {'idRubro': widget.rubro.idEvaluationItem},
-                        ),
+              ),
+              child: IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RubroUpdate(),
+                      settings: RouteSettings(
+                        arguments: {'idRubro': widget.rubro.idEvaluationItem},
                       ),
-                    );
-                  },
-                  icon: const Icon(Icons.edit),
-                  color: Colors.white,
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.edit),
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(
+              width: 5.0,
+            ),
+            Ink(
+              decoration: ShapeDecoration(
+                color: Colors.lightBlue,
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
                 ),
               ),
-              SizedBox(
-                width: 5.0,
-              ),
-              Ink(
-                decoration: ShapeDecoration(
-                  color: Colors.lightBlue,
-                  shape: ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Rubro'),
-                            content: SizedBox(
-                                height: 50.0,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Rubro: ',
-                                        style: TextStyle(color: Colors.black),
-                                        children: [
-                                          TextSpan(
-                                            text: widget.rubro.name,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
-                                      ),
+              child: IconButton(
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text('Rubro'),
+                          content: SizedBox(
+                              height: 50.0,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
+                                      text: 'Rubro: ',
+                                      style: TextStyle(color: Colors.black),
+                                      children: [
+                                        TextSpan(
+                                          text: widget.rubro.name,
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
                                     ),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Estado: ',
-                                        style: TextStyle(color: Colors.black),
-                                        children: [
-                                          TextSpan(
-                                            text: widget.rubro.status == 1
-                                                ? 'Activo'
-                                                : 'No activo',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          )
-                                        ],
-                                      ),
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: 'Estado: ',
+                                      style: TextStyle(color: Colors.black),
+                                      children: [
+                                        TextSpan(
+                                          text: widget.rubro.status == 1
+                                              ? 'Activo'
+                                              : 'No activo',
+                                          style: TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
                                     ),
-                                  ],
-                                )),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text('Cerrar'),
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                  icon: const Icon(Icons.info_outline_rounded),
-                  color: Colors.white,
-                ),
+                                  ),
+                                ],
+                              )),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Cerrar'),
+                            ),
+                          ],
+                        );
+                      });
+                },
+                icon: const Icon(Icons.info_outline_rounded),
+                color: Colors.white,
               ),
-            ],
-          )
-        ]),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -151,6 +151,7 @@ class _FormCardState extends State<_FormCard> {
       // colorsApp.setPrimaryColor(Color(int.parse(color1)));
       // colorsApp.setSecondaryColor(Color(int.parse(color2)));
       prefs.setInt('idHotel', response.data['user']['idHotel']['idHotel']);
+      prefs.setString('namehotel', response.data['user']['idHotel']['name']);
       prefs.setInt('idRol', response.data['user']['idRol']['idRol']);
 
       switch (response.data['user']['idRol']['idRol']) {

@@ -78,7 +78,6 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                 if (room['idHotel']['idHotel'] == idHotel) {
                   totalCuartos += 1;
                   List<User> users = [];
-                  print(room.toString());
                   if (room['firstIdUser'] != null) {
                     users.add(User.fromJson(room['firstIdUser']));
                   }
@@ -391,7 +390,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                                                   const EdgeInsets.all(8.0),
                                               child: Column(
                                                 children: [
-                                                  Text('En revisión',
+                                                  Text('Limpias',
                                                       style: labelText),
                                                   Text(
                                                     '$totalEnRevision',

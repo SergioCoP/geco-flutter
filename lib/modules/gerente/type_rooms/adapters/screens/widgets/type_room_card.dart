@@ -23,116 +23,78 @@ class _TypeRoomCardState extends State<TypeRoomCard> {
     return Card(
       margin: const EdgeInsets.all(12.0),
       elevation: 2.0,
-      color: const Color.fromARGB(255, 255, 255, 255),
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
-        side: const BorderSide(color: Colors.black, width: 0.5),
+        side: const BorderSide(color: Colors.white),
       ),
       child: Padding(
         padding: const EdgeInsets.all(18.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+        child: Row(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 250.0,
-                                height: 50.0,
-                                child: Text(
-                                  widget.typeRoom.name,
-                                  maxLines: 2,
-                                  style: const TextStyle(
-                                    fontSize: 23.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                'Rubros Asignados: ${widget.typeRoom.rubros.length}',
-                                style: const TextStyle(
-                                  fontSize: 16.0,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 15.0,
-                      ),
-                      Row(
-                        children: [
-                          Ink(
-                            decoration: ShapeDecoration(
-                              color: Colors.lightBlue,
-                              shape: ContinuousRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                // Navigator.of(context).pushNamed(
-                                //     '/manger/types/update',
-                                //     arguments: {
-                                //       'idTypeRoom': widget.typeRoom.idTypeRoom
-                                //     });
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const TypeRoomUpdate(),
-                                    settings: RouteSettings(
-                                      arguments: {
-                                        'idTypeRoom': widget.typeRoom.idTypeRoom
-                                      },
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10.0,
-                          ),
-                          Ink(
-                            decoration: ShapeDecoration(
-                              color: Colors.lightBlue,
-                              shape: ContinuousRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.info,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                showInfo(context, widget.typeRoom);
-                              },
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+            SizedBox(
+              width: 200.0,
+              height: 50.0,
+              child: Text(
+                widget.typeRoom.name,
+                maxLines: 2,
+                style: const TextStyle(
+                  fontSize: 23.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
-              ],
-            )
+              ),
+            ),
+            const Spacer(),
+            Ink(
+              decoration: ShapeDecoration(
+                color: Colors.lightBlue,
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.edit,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const TypeRoomUpdate(),
+                      settings: RouteSettings(
+                        arguments: {'idTypeRoom': widget.typeRoom.idTypeRoom},
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(
+              width: 10.0,
+            ),
+            Ink(
+              decoration: ShapeDecoration(
+                color: Colors.lightBlue,
+                shape: ContinuousRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.info,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  showInfo(context, widget.typeRoom);
+                },
+              ),
+            ),
+            const SizedBox(
+              height: 15.0,
+            ),
           ],
         ),
       ),

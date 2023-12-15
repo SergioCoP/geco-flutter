@@ -11,16 +11,17 @@ import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CreateIncidence extends StatefulWidget {
+class CreateIncidenceGerente extends StatefulWidget {
   final Room room;
 
-  const CreateIncidence({Key? key, required this.room}) : super(key: key);
+  const CreateIncidenceGerente({Key? key, required this.room})
+      : super(key: key);
 
   @override
-  State<CreateIncidence> createState() => _CreateIncidenceState();
+  State<CreateIncidenceGerente> createState() => _CreateIncidenceState();
 }
 
-class _CreateIncidenceState extends State<CreateIncidence> {
+class _CreateIncidenceState extends State<CreateIncidenceGerente> {
   Color color1 = ColorsApp().primaryColor;
   Color color2 = ColorsApp().secondaryColor;
   bool hasIamge = false;
@@ -101,7 +102,7 @@ class _CreateIncidenceState extends State<CreateIncidence> {
               'Authorization': 'Bearer $token'
             }));
         Toasts.showSuccessToast('incidencia registrada con éxito');
-        Navigator.of(context).popAndPushNamed('/personal_cleaner');
+        Navigator.of(context).popAndPushNamed('/manager');
       }
     } on DioException catch (e) {
       print('ERROR DE DIO: $e');

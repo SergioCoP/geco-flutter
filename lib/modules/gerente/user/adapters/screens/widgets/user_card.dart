@@ -53,9 +53,10 @@ class _UserCardState extends State<UserCard> {
       margin: const EdgeInsets.all(12.0),
       elevation: 2.0,
       color: Colors.white,
+      surfaceTintColor: Colors.white,
       shadowColor: const Color.fromARGB(118, 0, 0, 0),
       shape: const RoundedRectangleBorder(
-        side: BorderSide(color: Colors.black, width: 0.5),
+        side: BorderSide(color: Colors.white),
         borderRadius: BorderRadius.all(Radius.circular(5)),
       ),
       child: SizedBox(

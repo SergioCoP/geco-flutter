@@ -269,6 +269,8 @@ class _RegisterHotelState extends State<RegisterHotel> {
           prefs.setString('token', response2.data['token']);
           prefs.setInt('idUser', response2.data['user']['idUser']);
           prefs.setInt('idHotel', response2.data['user']['idHotel']['idHotel']);
+          prefs.setString(
+              'namehotel', response.data['user']['idHotel']['name']);
           prefs.setString('primaryColor', color1);
           prefs.setString('secondaryColor', color2);
           Navigator.pushReplacementNamed(context, '/manager');

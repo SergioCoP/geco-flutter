@@ -1,48 +1,30 @@
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {
-  final String legend; // Definir propiedades del constructor
-  const Splash({Key? key, required this.legend}) : super(key: key);
-
+  final String legend; //definir propiedades del constructor
+  const Splash({super.key, required this.legend}); 
   @override
-  State<Splash> createState() =>
-      _SplashState(); // _refiere a que la clase es privada
+  State<Splash> createState() => _SplashState();//_refiere a que la clase es privada
 }
 
 class _SplashState extends State<Splash> {
   @override
-  void initState() {
+  void initState(){//se ejecuta despues de cargar el componente o widget
     super.initState();
-    _loadSplash();
+    Future.delayed(const Duration(seconds: 2),() => Navigator.pushReplacementNamed(context, '/login'));
   }
-
-  Future<void> _loadSplash() async {
-    await Future.delayed(const Duration(seconds: 2));
-    Navigator.pushReplacementNamed(context, '/login');
-  }
-
+ //requires para hacer obligatorio
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return  Scaffold(
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ClipOval(
-              child: Image.asset(
-                'assets/images/geco_logo.png',
-                width: 200,
-                height: 200,
-                fit: BoxFit.cover,
-              ),
-            ),
-            // const SizedBox(height: 20),
-            // Text(widget.legend),
-            const SizedBox(height: 20),
-            const CircularProgressIndicator(color: Colors.green), // Indicador de carga
-          ],
-        ),
-      ),
+        mainAxisAlignment: MainAxisAlignment.center,//centrar contenido
+        children:<Widget> [
+        Image.asset('assets/images/geco_logo.png',
+        width: 200,
+        height: 250,),
+         Text(widget.legend)]),),
     );
   }
 }

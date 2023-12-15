@@ -58,7 +58,7 @@ class _RoomManagementState extends State<RoomManagement> {
       final response = await dio.get(_path,
           options: Options(headers: {
             "Accept": "application/json",
-            // "Content-Type": "application/json",
+            "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -85,7 +85,7 @@ class _RoomManagementState extends State<RoomManagement> {
       print('ESTE ERROR DE DIO DESDE ROOM: $e');
       Fluttertoast.showToast(
           msg:
-              "Ha sucedido un error al intentar traer la ahbitación. Por favor intente mas tarde",
+              "Ha sucedido un error al intentar traer la habitación. Por favor intente mas tarde",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -143,10 +143,7 @@ class _RoomManagementState extends State<RoomManagement> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                Icons.logout,
-                color: color2
-              ),
+              child: Icon(Icons.logout, color: color2),
             ),
           ),
         ],
@@ -183,7 +180,34 @@ class _RoomManagementState extends State<RoomManagement> {
                           },
                         );
                       } else {
-                        return const IsEmptyRooms();
+                        return Center(
+                            child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                                'No hay ninguna Habitación registrada Actualmente. :)'),
+                            SizedBox(
+                              width: 125.0,
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _listaHabitaciones =
+                                          obtenerCuartosFetch();
+                                      _listaHabitacionesRespaldo =
+                                          _listaHabitaciones;
+                                    });
+                                  },
+                                  child: const Row(
+                                    children: [
+                                      Text('Recargar'),
+                                      Icon(Icons.replay_outlined),
+                                    ],
+                                  )),
+                            )
+                          ],
+                        ));
                       }
                     }
                   },
@@ -239,15 +263,5 @@ class _RoomManagementState extends State<RoomManagement> {
         ),
       ),
     );
-  }
-}
-
-class IsEmptyRooms extends StatelessWidget {
-  const IsEmptyRooms({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-        child: Text('No hay ninguna Habitación registrada Actualmente. :)'));
   }
 }
