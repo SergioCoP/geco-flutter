@@ -94,11 +94,14 @@ class _TypeRoomCardState extends State<TypeRoomCard> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>
-                                          const TypeRoomUpdate(),
-                                      settings: RouteSettings(arguments: {
+                                    builder: (context) =>
+                                        const TypeRoomUpdate(),
+                                    settings: RouteSettings(
+                                      arguments: {
                                         'idTypeRoom': widget.typeRoom.idTypeRoom
-                                      })),
+                                      },
+                                    ),
+                                  ),
                                 );
                               },
                             ),

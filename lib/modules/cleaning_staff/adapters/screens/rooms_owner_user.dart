@@ -33,14 +33,8 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
   @override
   void initState() {
     super.initState();
-    // try {
     _listaHabitaciones = obtenerCuartosFetch();
     _listaHabitacionesRespaldo = _listaHabitaciones;
-    // } catch (e) {
-    //   _listaHabitaciones = fetchError();
-    //   _listaHabitacionesRespaldo = _listaHabitaciones;
-    //   throw Exception(e);
-    // }
     setColor();
   }
 
@@ -67,7 +61,7 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
       final response = await dio.get(_path,
           options: Options(headers: {
             "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -92,7 +86,7 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
       print(e.response?.statusCode);
       return habitaciones;
     } catch (e, f) {
-      print('$e    , $f');
+      print('ESTE ES UN ERROR DE OWN USER ROOMS: $e  ,  $f');
       return habitaciones;
     }
   }
@@ -129,6 +123,7 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
             onTap: () async {
               SharedPreferences prefs = await SharedPreferences.getInstance();
               prefs.clear();
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(builder: (context) => const Login()),
                   (route) => false);
@@ -141,9 +136,9 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.logout,
-                color: Colors.red,
+                color: color2,
               ),
             ),
           ),
@@ -205,28 +200,13 @@ class _RoomsOwnerUserState extends State<RoomsOwnerUser> {
                             filterCards(value);
                           },
                           decoration: const InputDecoration(
-                            labelText: 'Buscar por Identificador',
+                            labelText: 'Busca tus habitaciones',
                             hintText: 'Buscar habitación',
                             border: OutlineInputBorder(),
                             suffixIcon: Icon(Icons.search, color: Colors.blue),
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.buttonPrimaryColor,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              )),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed('/manager/check_rooms/register');
-                          },
-                          child: const Icon(Icons.add)),
                     ),
                   ],
                 ),

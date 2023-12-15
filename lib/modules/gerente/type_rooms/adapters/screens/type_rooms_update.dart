@@ -32,6 +32,7 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
     setState(() {
       color1 = Color(int.parse(color11!));
       color2 = Color(int.parse(color22!));
+      hasData = true;
     });
   }
 
@@ -55,8 +56,8 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
       Response response;
       response = await dio.get('$_path/$idTypeRoom',
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -65,8 +66,8 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
         Response response2;
         response2 = await dio.get(GlobalData.pathRubroUri,
             options: Options(headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json",
+              // "Accept": "application/json",
+              // "Content-Type": "application/json",
               'Authorization': 'Bearer $token'
             }));
         if (response2.data['status'] == 'OK') {
@@ -148,8 +149,8 @@ class _TypeRoomUpdateState extends State<TypeRoomUpdate> {
       response = await dio.put(_path,
           data: data,
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {

@@ -33,7 +33,7 @@ class _RoomUserCardState extends State<RoomUserCard> {
         buttonColor = Colors.red;
         break;
       case 1:
-        estado = 'En venta';
+        estado = 'Disponible';
         buttonColor = ColorsApp.estadoEnVenta;
         break;
       case 2:
@@ -119,8 +119,8 @@ class _RoomUserCardState extends State<RoomUserCard> {
                             final response1 = await dio.get(
                                 '${GlobalData.pathIncidenceUri}/room/${widget.room.idRoom}',
                                 options: Options(headers: {
-                                  "Accept": "application/json",
-                                  "Content-Type": "application/json",
+                                  // "Accept": "application/json",
+                                  // "Content-Type": "application/json",
                                   'Authorization': 'Bearer $token'
                                 }));
                             if (response1.data['status'] == 'OK') {
@@ -142,8 +142,8 @@ class _RoomUserCardState extends State<RoomUserCard> {
                                 '${GlobalData.pathRoomUri}/status/${widget.room.idRoom}',
                                 data: {'status': estado},
                                 options: Options(headers: {
-                                  "Accept": "application/json",
-                                  "Content-Type": "application/json",
+                                  // "Accept": "application/json",
+                                  // "Content-Type": "application/json",
                                   'Authorization': 'Bearer $token'
                                 }));
                             if (response.data['status'] == 'OK') {
@@ -210,6 +210,7 @@ class _RoomUserCardState extends State<RoomUserCard> {
       margin: const EdgeInsets.all(12.0),
       elevation: 2.0,
       color: Colors.white,
+      surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(5.0),
         side: const BorderSide(color: Colors.black, width: 0.5),
@@ -267,7 +268,9 @@ class _RoomUserCardState extends State<RoomUserCard> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => CreateIncidence(room: widget.room,),
+                            builder: (context) => CreateIncidence(
+                              room: widget.room,
+                            ),
                             settings: RouteSettings(
                               arguments: {'idRoom': widget.room.idRoom},
                             ),

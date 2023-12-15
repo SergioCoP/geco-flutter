@@ -38,6 +38,7 @@ class _UserUpdateState extends State<UserUpdate> {
   SizedBox sizedBox = const SizedBox(
     height: 25.0,
   );
+  TextEditingController name = TextEditingController(text: '');
 
   @override
   void initState() {
@@ -51,8 +52,8 @@ class _UserUpdateState extends State<UserUpdate> {
     try {
       final response = await dio.get('${GlobalData.pathUserUri}/$idUser',
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
 
@@ -61,9 +62,10 @@ class _UserUpdateState extends State<UserUpdate> {
         setState(() {
           String? color11 = prefs.getString('primaryColor');
           String? color22 = prefs.getString('secondaryColor');
-            color1 = Color(int.parse(color11!));
-            color2 = Color(int.parse(color22!));
+          color1 = Color(int.parse(color11!));
+          color2 = Color(int.parse(color22!));
           user = User.fromJson(userData);
+          name = TextEditingController(text: user.username);
           _rolSeleccionado = user.idRol!.idRol;
           _turnoSeleccionado = user.turn!;
           hasData = true;
@@ -138,7 +140,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: <Widget>[
                                   TextFormField(
-                                    initialValue: user.username,
+                                    controller: name,
                                     // controller: _nombresController,
                                     decoration: InputDecoration(
                                       labelText: 'Nombre de usuario',
@@ -197,7 +199,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                         )
                                       : const SizedBox(height: 20.0),
                                   sizedBox,
-                                  user.idRol!.idRol != 1
+                                  user.idRol!.idRol == 3
                                       ? DropdownButtonFormField<int>(
                                           decoration: const InputDecoration(
                                               labelText:
@@ -249,7 +251,7 @@ class _UserUpdateState extends State<UserUpdate> {
                                                     data: {
                                                       'idUser': user.idUser,
                                                       'email': user.email,
-                                                      'username': user.username,
+                                                      'username': name.text,
                                                       'turn':
                                                           _turnoSeleccionado,
                                                       'idRol': {
@@ -258,10 +260,10 @@ class _UserUpdateState extends State<UserUpdate> {
                                                       },
                                                     },
                                                     options: Options(headers: {
-                                                      "Accept":
-                                                          "application/json",
-                                                      "Content-Type":
-                                                          "application/json",
+                                                      // "Accept":
+                                                      //     "application/json",
+                                                      // "Content-Type":
+                                                      //     "application/json",
                                                       'Authorization':
                                                           'Bearer $token'
                                                     }));

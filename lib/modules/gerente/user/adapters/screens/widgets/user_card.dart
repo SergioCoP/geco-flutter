@@ -35,8 +35,8 @@ class _UserCardState extends State<UserCard> {
     String? token = prefs.getString('token');
     final response = await dio.put('$path/status/${widget.user.idUser}',
         options: Options(headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
+          // "Accept": "application/json",
+          // "Content-Type": "application/json",
           'Authorization': 'Bearer $token'
         }));
     if (response.data['status'] == 'OK') {
@@ -101,16 +101,21 @@ class _UserCardState extends State<UserCard> {
                     ///SIWTCH Y LOS BOTONES
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Switch(
-                          value: status,
-                          activeColor: Colors.green,
-                          inactiveTrackColor: Colors.red,
-                          inactiveThumbColor: Colors.red.shade100,
-                          materialTapTargetSize: MaterialTapTargetSize.padded,
-                          onChanged: (value) {
-                            status = value;
-                            cambiarEstado();
-                          }),
+                      widget.user.idRol?.idRol == 1
+                          ? const SizedBox(
+                              height: 50,
+                            )
+                          : Switch(
+                              value: status,
+                              activeColor: Colors.green,
+                              inactiveTrackColor: Colors.red,
+                              inactiveThumbColor: Colors.red.shade100,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.padded,
+                              onChanged: (value) {
+                                status = value;
+                                cambiarEstado();
+                              }),
                       const SizedBox(
                         height: 40,
                       ),
@@ -221,8 +226,8 @@ class _UserCardState extends State<UserCard> {
                                                       color: Colors.black),
                                                   children: [
                                                     TextSpan(
-                                                      text: widget
-                                                          .user.idRol!.name,
+                                                      text: widget.user.idRol!
+                                                          .description,
                                                       style: const TextStyle(
                                                           color: Colors.black,
                                                           fontWeight:

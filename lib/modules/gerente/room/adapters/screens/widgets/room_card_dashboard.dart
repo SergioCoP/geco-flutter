@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
+import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_incidencesCheck.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_revisionCheck.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
 
@@ -36,41 +37,41 @@ class RoomCardDashboard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.all(12.0),
       elevation: 2.0,
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(
-            5.0), // Ajusta el radio del borde de la tarjeta
-        side: const BorderSide(
-            color: Colors.black, width: 0.5), // Añade un borde más marcado
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Row(
-          children: [
-            Column(
-              children: [
-                SizedBox(
-                  child: Text(
+          borderRadius: BorderRadius.circular(5.0),
+          side: const BorderSide(color: Colors.white)),
+      child: SizedBox(
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  //NOMBRE DE LA HABITACION
+                  Text(
                     room.name,
                     style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                        fontSize: 18.0, fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(height: 20.0),
-                botonPorEstado(context, room.status, room.idRoom),
-              ],
-            ),
-            const Spacer(),
-            Container(
-              width: 30,
-              height: 31,
-              decoration: BoxDecoration(
-                color: buttonColor,
-                borderRadius: BorderRadius.circular(15.0),
+                  const Spacer(),
+                  Container(
+                    width: 30,
+                    height: 31,
+                    decoration: BoxDecoration(
+                      color: buttonColor,
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                  )
+                ],
               ),
-            )
-          ],
+              const SizedBox(height: 25.0),
+              botonPorEstado(context, room.status, room.idRoom),
+            ],
+          ),
         ),
       ),
     );
@@ -112,22 +113,26 @@ Widget botonPorEstado(BuildContext context, int estado, int idRoom) {
       );
 
     case 5: //Con incidencias
-      return ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed('/dashboard/checkRevision');
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: ColorsApp.estadoSinRevisar,
+      return Ink(
+        decoration: ShapeDecoration(
+          color: ColorsApp.estadoConIncidencias,
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(25.0),
+          ),
         ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.warning),
-            Text(
-              'Revisar',
-              style: TextStyle(color: Colors.black),
-            ),
-          ],
+        child: IconButton(
+          icon: const Icon(
+            Icons.warning,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => RoomIncidencesCheck(),
+                  settings: RouteSettings(arguments: {'idroom': idRoom})),
+            );
+          },
         ),
       );
     default:

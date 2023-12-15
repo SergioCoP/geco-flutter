@@ -21,19 +21,20 @@ class _RoomRegisterState extends State<RoomRegister> {
   final _formKeyRoomRegister = GlobalKey<FormState>();
   bool hasData = false;
   bool hasError = false;
-
-  late List<Map<String, dynamic>> tiposRoom = [
+  List<Map<String, dynamic>> tiposRoom = [
     {'idTypeRoom': 0, 'name': 'Seleccione un tipo de habitación'}
   ];
-  int tiposRoomSeleccionado = 0;
 
+  int tiposRoomSeleccionado = 0;
   bool _isSelectedUserZero = true;
   bool _isButtonDisabled = true;
   Color color1 = ColorsApp().primaryColor;
   Color color2 = ColorsApp().secondaryColor;
+
   @override
   void initState() {
     super.initState();
+    hasData = false;
     setColor();
   }
 
@@ -47,7 +48,20 @@ class _RoomRegisterState extends State<RoomRegister> {
     });
   }
 
+  List<Map<String, dynamic>> limpiarTiposList() {
+    final Map<int, dynamic> filter = {};
+    for (Map<String, dynamic> tp in tiposRoom) {
+      filter[tp['idTypeRoom']] = tp;
+    }
+    final List<Map<String, dynamic>> lisFilter =
+        filter.keys.map((key) => filter[key] as Map<String, dynamic>).toList();
+    return lisFilter;
+  }
+
   Future<void> traerTiposRoomFetch() async {
+    tiposRoom = [
+      {'idTypeRoom': 0, 'name': 'Seleccione un tipo de habitación'}
+    ];
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('token');
@@ -60,15 +74,17 @@ class _RoomRegisterState extends State<RoomRegister> {
           }));
       if (response.data['status'] == 'OK') {
         List<dynamic> traerTipos = response.data['data'];
-        for (var typeRoom in traerTipos) {
-          if (typeRoom['idHotel']['idHotel'] == idHotel) {
-            tiposRoom.add({
-              'idTypeRoom': typeRoom['idTypeRoom'],
-              'name': typeRoom['name'],
-            });
-          }
-        }
         setState(() {
+          for (var i = 0; i < traerTipos.length; i++) {
+            if (traerTipos[i]['idHotel']['idHotel'] == idHotel) {
+              tiposRoom.add({
+                'idTypeRoom': traerTipos[i]['idTypeRoom'],
+                'name': traerTipos[i]['name'],
+              });
+            }
+          }
+          tiposRoom = tiposRoom.toSet().toList();
+          print(tiposRoom);
           hasData = true;
         });
       }
@@ -83,12 +99,16 @@ class _RoomRegisterState extends State<RoomRegister> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+    } catch (e, f) {
+      Fluttertoast.showToast(
+          msg: 'Error: $e  en $f',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
       Navigator.pop(context);
-    } catch (e) {
-      setState(() {
-        hasData = true;
-        hasError = true;
-      });
       throw Exception(e);
     }
   }
@@ -97,19 +117,21 @@ class _RoomRegisterState extends State<RoomRegister> {
       const TextStyle(fontSize: 15, fontWeight: FontWeight.w700);
 
   // final TextEditingController _identificador = TextEditingController(text: '');
-
   // final TextEditingController _cantidadInicial =
   //     TextEditingController(text: '');
-
   // final TextEditingController _cantidad = TextEditingController(text: '');
-
   // final TextEditingController _descripcion = TextEditingController(text: '');
 
   @override
   Widget build(BuildContext context) {
-    if (!hasData) {
+    if (hasData != true) {
       traerTiposRoomFetch();
+    } else {
+      tiposRoom = limpiarTiposList();
     }
+
+    print(
+        'Esto es el total de tipos de room que se traen antes de pintar en el drop: $tiposRoom.length');
     return Scaffold(
         appBar: AppBar(
           title: const Text("Registrar habitación"),
@@ -305,10 +327,10 @@ class _RoomRegisterState extends State<RoomRegister> {
                                                       },
                                                       options:
                                                           Options(headers: {
-                                                        "Accept":
-                                                            "application/json",
-                                                        "Content-Type":
-                                                            "application/json",
+                                                        // "Accept":
+                                                        //     "application/json",
+                                                        // "Content-Type":
+                                                        //     "application/json",
                                                         'Authorization':
                                                             'Bearer $token'
                                                       }));

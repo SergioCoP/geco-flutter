@@ -1,4 +1,4 @@
-import 'package:geco_mobile/modules/cleaning_staff/entities/person.dart';
+import 'package:geco_mobile/modules/gerente/user/entities/person.dart';
 import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
 import 'package:geco_mobile/modules/roles/entities/Rol.dart';
 
@@ -42,5 +42,10 @@ class User {
       }
     }
     return users;
+  }
+  @override
+  String toString() {
+    // TODO: implement toString
+    return super.toString();
   }
 }

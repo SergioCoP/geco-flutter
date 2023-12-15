@@ -55,8 +55,8 @@ class _RubrosManagementState extends State<RubrosManagement> {
 
       final response = await dio.get(_path,
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {

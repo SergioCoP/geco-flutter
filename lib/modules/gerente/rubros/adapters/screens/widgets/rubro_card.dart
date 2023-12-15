@@ -63,8 +63,8 @@ class _RubroCardState extends State<RubroCard> {
                   Response response;
                   response = await dio.put(path,
                       options: Options(headers: {
-                        "Accept": "application/json",
-                        "Content-Type": "application/json",
+                        // "Accept": "application/json",
+                        // "Content-Type": "application/json",
                         'Authorization': 'Bearer $token'
                       }));
                   if (response.data['status'] == 'UPDATED') {

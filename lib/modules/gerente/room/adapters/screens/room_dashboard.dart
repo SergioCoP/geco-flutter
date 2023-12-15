@@ -20,7 +20,7 @@ class RoomsDashboard extends StatefulWidget {
 
 class _RoomsDashboardState extends State<RoomsDashboard> {
   late List<Room> listaHabitaciones;
-  final double heightOfFirstContainer = 220.0;
+
   late bool hasFetch = false;
   late int totalCuartos = 0;
   late int totalEnVenta = 0;
@@ -65,8 +65,8 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
       const path = GlobalData.pathRoomUri;
       final response = await dio.get(path,
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -121,7 +121,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
         }
       }
     } on DioException catch (e) {
-      print(e);
+      print('ERROR DIO EN DASHBOARD: $e');
       Fluttertoast.showToast(
           msg:
               "Ha sucedido un error al intentar traer las habitaciones. Por favor intente mas tarde",
@@ -131,23 +131,31 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+      if (e.response!.statusCode == 403) {
+        print('Entró en un error 403');
+        listaHabitaciones = [];
+        fetchRooms();
+        setColor();
+      }
       setState(() {
         hasFetch = true;
         listaHabitaciones = [];
       });
     } catch (e, f) {
-      setState(() {
-        hasFetch = true;
-        listaHabitaciones = [];
-        print('$e   ,    $f');
-        throw Exception(e);
-      });
+      print('ESTE ES UN ERROR DESDE DASHBOARD $e   ,    $f');
+      hasFetch = true;
+      listaHabitaciones = [];
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final deviceWidth = MediaQuery.of(context).size.width - 40.5;
+    final deviceWidth = MediaQuery.of(context).size.width - 56.2;
+    double heightOfFirstContainer = 250.0;
+    TextStyle labelText =
+        TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold);
+    TextStyle labelNumber =
+        TextStyle(fontSize: 30.0, fontWeight: FontWeight.normal);
     // var size = MediaQuery.of(context).size;
 
     /*24 is for notification bar on Android*/
@@ -175,10 +183,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child:  Icon(
-                Icons.logout,
-                color: color2
-              ),
+              child: Icon(Icons.logout, color: color2),
             ),
           ),
         ],
@@ -194,7 +199,7 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                         Scaffold(
                           body: Container(
                             margin: const EdgeInsets.only(
-                              top: 235,
+                              top: 270,
                             ),
                             child: ListView.builder(
                               itemCount: listaHabitaciones.length,
@@ -206,239 +211,233 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                           ),
                         ),
                         Positioned(
-                            child: Card(
-                          elevation: 5.0,
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            side: const BorderSide(
-                                color: Colors.black, width: 0.1),
-                          ),
-                          child: SizedBox(
-                            height: heightOfFirstContainer,
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  //CUADRO DONDE ESTA EL TOTAL DE CUARTOS
-                                  Container(
-                                    padding: const EdgeInsets.all(0.0),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          width: deviceWidth / 2,
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                'Total de habitaciones',
-                                                style: TextStyle(
-                                                    fontSize: 20.0,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                '$totalCuartos',
-                                                style: TextStyle(
-                                                    fontSize: 35.0,
-                                                    fontWeight:
-                                                        FontWeight.w300),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  //AQUI ESTARAN LOS CONTAINER DE EN VENTA Y EN USO
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          10.0), // Ajusta el valor según sea necesario
-                                      border: Border.all(
-                                          color: Colors.black, width: 0.1),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0),
-                                            topRight: Radius.circular(0.0),
-                                            bottomRight: Radius.circular(0.0),
-                                          ),
-                                          child: SizedBox(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 2.0,
+                            color: Colors.white,
+                            surfaceTintColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              side: const BorderSide(
+                                  color: Color.fromARGB(255, 255, 255, 255)),
+                            ),
+                            child: SizedBox(
+                              height: heightOfFirstContainer,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    //CUADRO DONDE ESTA EL TOTAL DE CUARTOS
+                                    Container(
+                                      padding: const EdgeInsets.all(0.0),
+                                      child: Column(
+                                        children: [
+                                          SizedBox(
                                             width: deviceWidth / 2,
-                                            child: Container(
-                                              color: ColorsApp.estadoEnUso,
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    'En uso',
-                                                    style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  'Total de habitaciones',
+                                                  style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                Text(
+                                                  '$totalCuartos',
+                                                  style: TextStyle(
+                                                      fontSize: 35.0,
+                                                      fontWeight:
+                                                          FontWeight.w300),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 5.0,
+                                    ),
+                                    //AQUI ESTARAN LOS CONTAINER DE EN VENTA Y EN USO
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            10.0), // Ajusta el valor según sea necesario
+                                        border: Border.all(
+                                            color: Colors.black, width: 0.1),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10.0),
+                                              bottomLeft: Radius.circular(10.0),
+                                              topRight: Radius.circular(0.0),
+                                              bottomRight: Radius.circular(0.0),
+                                            ),
+                                            child: SizedBox(
+                                              width: deviceWidth / 2,
+                                              child: Container(
+                                                color: ColorsApp.estadoEnUso,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'En uso',
+                                                        style: labelText,
+                                                      ),
+                                                      Text(
+                                                        '$totalEnUso',
+                                                        style: labelNumber,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Text(
-                                                    '$totalEnUso',
-                                                    style: TextStyle(
-                                                        fontSize: 30.0,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                  ),
-                                                ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(0.0),
-                                            bottomLeft: Radius.circular(0.0),
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                          ),
-                                          child: SizedBox(
-                                            width: deviceWidth / 2,
-                                            child: Container(
-                                              color: ColorsApp.estadoEnVenta,
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    'En renta',
-                                                    style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(0.0),
+                                              bottomLeft: Radius.circular(0.0),
+                                              topRight: Radius.circular(10.0),
+                                              bottomRight:
+                                                  Radius.circular(10.0),
+                                            ),
+                                            child: SizedBox(
+                                              width: deviceWidth / 2,
+                                              child: Container(
+                                                color: ColorsApp.estadoEnVenta,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'Disponibles',
+                                                        style: labelText,
+                                                      ),
+                                                      Text(
+                                                        '$totalEnVenta',
+                                                        style: labelNumber,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Text(
-                                                    '$totalEnVenta',
-                                                    style: TextStyle(
-                                                        fontSize: 30.0,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                  ),
-                                                ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  //AQUI ESTARAN LOS CONTAINER DE EN REVISION Y CON INCIDENCIAS
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                          10.0), // Ajusta el valor según sea necesario
-                                      border: Border.all(
-                                          color: Colors.black, width: 0.1),
+                                    SizedBox(
+                                      height: 15.0,
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(10.0),
-                                            bottomLeft: Radius.circular(10.0),
-                                            topRight: Radius.circular(0.0),
-                                            bottomRight: Radius.circular(0.0),
+                                    //AQUI ESTARAN LOS CONTAINER DE EN REVISION Y CON INCIDENCIAS
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                            10.0), // Ajusta el valor según sea necesario
+                                        border: Border.all(
+                                            color: Colors.black, width: 0.1),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(10.0),
+                                              bottomLeft: Radius.circular(10.0),
+                                              topRight: Radius.circular(0.0),
+                                              bottomRight: Radius.circular(0.0),
+                                            ),
+                                            child: SizedBox(
+                                              width: deviceWidth / 3,
+                                              child: Container(
+                                                color: ColorsApp.estadoSucio,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'Sucias',
+                                                        style: labelText,
+                                                      ),
+                                                      Text(
+                                                        '$totalSucio',
+                                                        style: labelNumber,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
-                                          child: SizedBox(
+                                          Container(
                                             width: deviceWidth / 3,
-                                            child: Container(
-                                              color: ColorsApp.estadoSucio,
+                                            decoration: BoxDecoration(
+                                              color: ColorsApp.estadoSinRevisar,
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
                                               child: Column(
                                                 children: [
+                                                  Text('En revisión',
+                                                      style: labelText),
                                                   Text(
-                                                    'Sucias',
-                                                    style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  ),
-                                                  Text(
-                                                    '$totalSucio',
-                                                    style: TextStyle(
-                                                        fontSize: 30.0,
-                                                        fontWeight:
-                                                            FontWeight.normal),
+                                                    '$totalEnRevision',
+                                                    style: labelNumber,
                                                   ),
                                                 ],
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        Container(
-                                          width: deviceWidth / 3,
-                                          decoration: BoxDecoration(
-                                            color: ColorsApp.estadoSinRevisar,
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Text(
-                                                'En revisión',
-                                                style: TextStyle(
-                                                    fontSize: 16.0,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              Text(
-                                                '$totalEnRevision',
-                                                style: TextStyle(
-                                                    fontSize: 30.0,
-                                                    fontWeight:
-                                                        FontWeight.normal),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(0.0),
-                                            bottomLeft: Radius.circular(0.0),
-                                            topRight: Radius.circular(10.0),
-                                            bottomRight: Radius.circular(10.0),
-                                          ),
-                                          child: SizedBox(
-                                            width: deviceWidth / 3,
-                                            child: Container(
-                                              color: ColorsApp
-                                                  .estadoConIncidencias,
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    'Con detalles',
-                                                    style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(0.0),
+                                              bottomLeft: Radius.circular(0.0),
+                                              topRight: Radius.circular(10.0),
+                                              bottomRight:
+                                                  Radius.circular(10.0),
+                                            ),
+                                            child: SizedBox(
+                                              width: deviceWidth / 3,
+                                              child: Container(
+                                                color: ColorsApp
+                                                    .estadoConIncidencias,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        'Con detalles',
+                                                        style: labelText,
+                                                      ),
+                                                      Text(
+                                                        '$totalIncidencias',
+                                                        style: labelNumber,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Text(
-                                                    '$totalIncidencias',
-                                                    style: TextStyle(
-                                                        fontSize: 30.0,
-                                                        fontWeight:
-                                                            FontWeight.normal),
-                                                  ),
-                                                ],
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),

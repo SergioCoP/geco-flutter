@@ -54,8 +54,8 @@ class _RubroUpdateState extends State<RubroUpdate> {
       final dio = Dio();
       final response = await dio.get('$_path/$idRubro',
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -104,8 +104,8 @@ class _RubroUpdateState extends State<RubroUpdate> {
             // 'status': rubro.status,
           },
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {

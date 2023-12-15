@@ -79,14 +79,14 @@ class _RubroRegisterState extends State<RubroRegister> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Identificador',
+                        'Asignar nombre',
                         style: textStyle,
                       ),
                       TextFormField(
                         controller: _description,
                         decoration: const InputDecoration(
-                          labelText: "Descripcion del rubro",
-                          hintText: "Descripcion del rubro",
+                          labelText: "Nombre",
+                          hintText: "Asigna un nombre para el rubro",
                         ),
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -124,8 +124,8 @@ class _RubroRegisterState extends State<RubroRegister> {
                                       response = await dio.post(_path,
                                           data: data,
                                           options: Options(headers: {
-                                            "Accept": "application/json",
-                                            "Content-Type": "application/json",
+                                            // "Accept": "application/json",
+                                            // "Content-Type": "application/json",
                                             'Authorization': 'Bearer $token'
                                           }));
                                       if (response.data['status'] ==

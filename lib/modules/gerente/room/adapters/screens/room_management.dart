@@ -33,14 +33,8 @@ class _RoomManagementState extends State<RoomManagement> {
   @override
   void initState() {
     super.initState();
-    // try {
     _listaHabitaciones = obtenerCuartosFetch();
     _listaHabitacionesRespaldo = _listaHabitaciones;
-    // } catch (e) {
-    //   _listaHabitaciones = fetchError();
-    //   _listaHabitacionesRespaldo = _listaHabitaciones;
-    //   throw Exception(e);
-    // }
     setColor();
   }
 
@@ -58,15 +52,13 @@ class _RoomManagementState extends State<RoomManagement> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     int? idHotel = prefs.getInt('idHotel');
-    print(token);
-    print(idHotel);
     List<Room> habitaciones = [];
     try {
       final dio = Dio();
       final response = await dio.get(_path,
           options: Options(headers: {
             "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -90,7 +82,7 @@ class _RoomManagementState extends State<RoomManagement> {
       }
       return habitaciones;
     } on DioException catch (e) {
-      print(e);
+      print('ESTE ERROR DE DIO DESDE ROOM: $e');
       Fluttertoast.showToast(
           msg:
               "Ha sucedido un error al intentar traer la ahbitación. Por favor intente mas tarde",
@@ -102,7 +94,7 @@ class _RoomManagementState extends State<RoomManagement> {
           fontSize: 16.0);
       return habitaciones;
     } catch (e, f) {
-      print(f);
+      print('ESTE ERROR DESDE ROOMS: $e ,   $f');
       return habitaciones;
     }
   }

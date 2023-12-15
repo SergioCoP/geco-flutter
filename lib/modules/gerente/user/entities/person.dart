@@ -3,8 +3,19 @@ class Person {
   String name;
   String? surname;
   String lastname;
-  String? turn;
-  int idUser;
 
-  Person(this.idPerson,this.name,this.surname,this.lastname,this.turn,this.idUser);
+  Person(this.idPerson, this.name, this.surname, this.lastname);
+
+  static Person fromJson(person) {
+    return Person(
+      person['idPerson'] ?? 0,
+      person['name'] ?? '',
+      person['surname'] ?? '',
+      person['lastname'] ?? '',
+    );
+  }
+
+  static Person? defaulPerson() {
+    return Person(0, '', '', '');
+  }
 }

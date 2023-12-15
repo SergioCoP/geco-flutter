@@ -107,8 +107,8 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
                                             'idHotel': {'idHotel': idHotel}
                                           },
                                           options: Options(headers: {
-                                            "Accept": "application/json",
-                                            "Content-Type": "application/json",
+                                            // "Accept": "application/json",
+                                            // "Content-Type": "application/json",
                                             'Authorization': 'Bearer $token'
                                           }));
                                       if (response.data['status'] ==
@@ -116,7 +116,7 @@ class _TypeRoomRegisterState extends State<TypeRoomRegister> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(const SnackBar(
                                           content: Text(
-                                              'Rubro registrado correctamente.'),
+                                              'Tipo de cuarto registrado correctamente.'),
                                         ));
                                         // Navigator.popAndPushNamed(
                                         //     context, '/manager/types');

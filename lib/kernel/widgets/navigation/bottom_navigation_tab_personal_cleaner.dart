@@ -44,7 +44,7 @@ class _BottomNavigationTabPersonalCleanerState
       ],
       currentIndex: widget.selectedIndex,
       selectedItemColor: color1,
-      unselectedItemColor: color1,
+      unselectedItemColor: color2,
       onTap: widget.onItemTapped,
     );
   }

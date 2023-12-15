@@ -55,8 +55,8 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
       final dio = Dio();
       final response = await dio.get(_path,
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -73,6 +73,7 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
       return listaTiposCuarto;
     } on DioException catch (e) {
       print(e);
+      print('ESTE ES UN ERROR DESDE TIPOS DE CUARTO EN DIO: $e, ');
       Fluttertoast.showToast(
           msg:
               "Ha sucedido un error al intentar traer los tipos de habitación. Por favor intente mas tarde",
@@ -84,7 +85,7 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
           fontSize: 16.0);
       return listaTiposCuarto;
     } catch (e, f) {
-      print('$e, $f');
+      print('ESTE ES UN ERROR DESDE TIPOS DE CUARTO: $e, $f');
       return listaTiposCuarto;
     }
   }
@@ -177,7 +178,7 @@ class _TypeRoomManagementState extends State<TypeRoomManagement> {
                         } else {
                           return const Center(
                             child: Text(
-                                'No hay nigún tipo de habitacion regitrado actualmente.'),
+                                'No hay nigún tipo de habitacion registrado actualmente.'),
                           );
                         }
                       }

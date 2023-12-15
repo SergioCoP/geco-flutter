@@ -63,8 +63,8 @@ class _UserManagementState extends State<UserManagement> {
       final dio = Dio();
       final response = await dio.get(path,
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -78,7 +78,7 @@ class _UserManagementState extends State<UserManagement> {
       }
       return usuariost;
     } on DioException catch (e) {
-      print(e);
+      print('ERROR USERS DE DIO: $e');
       Fluttertoast.showToast(
           msg:
               "Ha sucedido un error al intentar traer a los usuarios. Por favor intente mas tarde",
@@ -89,7 +89,8 @@ class _UserManagementState extends State<UserManagement> {
           textColor: Colors.white,
           fontSize: 16.0);
       return usuariost;
-    } catch (e) {
+    } catch (e, f) {
+      print('ESTE ES UN ERROR DESDE TIPOS DE USUARIOS: $e, $f');
       return usuariost;
     }
   }
@@ -203,9 +204,10 @@ class _UserManagementState extends State<UserManagement> {
                                       // setState(() {
                                       //   obtenerUsuariosFetch();
                                       // });
-                                      Navigator.of(context)
-                                          .pushReplacementNamed(
-                                              '/manager/users');
+                                      setState(() {
+                                        _listUsuarios = obtenerUsuariosFetch();
+                                        _listUsuariosRespaldo = _listUsuarios;
+                                      });
                                     },
                                     child: const Row(
                                       mainAxisAlignment:

@@ -262,8 +262,8 @@ class _UserRegisterState extends State<UserRegister> {
                                           },
                                         },
                                         options: Options(headers: {
-                                          "Accept": "application/json",
-                                          "Content-Type": "application/json",
+                                          // "Accept": "application/json",
+                                          // "Content-Type": "application/json",
                                           'Authorization': 'Bearer $token'
                                         }));
                                     if (response.data['status'] == 'CREATED') {

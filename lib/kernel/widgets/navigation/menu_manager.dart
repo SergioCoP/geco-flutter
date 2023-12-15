@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:geco_mobile/config/navigation/manager_dashboard_stack.dart';
-import 'package:geco_mobile/config/navigation/manager_rubros_stack.dart';
-import 'package:geco_mobile/config/navigation/manager_stack.dart';
-import 'package:geco_mobile/config/navigation/manager_type_rooms_stack.dart';
-import 'package:geco_mobile/config/navigation/manager_user_stack.dart';
 import 'package:geco_mobile/kernel/widgets/navigation/bottom_navigation_tab_gerente.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_dashboard.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';

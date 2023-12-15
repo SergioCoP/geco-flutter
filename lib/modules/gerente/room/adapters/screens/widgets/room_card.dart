@@ -89,9 +89,10 @@ class _RoomCardState extends State<RoomCard> {
         margin: const EdgeInsets.all(12.0),
         elevation: 2.0,
         color: Colors.white,
+        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5.0),
-          side: const BorderSide(color: Colors.black, width: 0.5),
+          side: const BorderSide(color: Colors.white),
         ),
         child: SizedBox(
           child: Padding(

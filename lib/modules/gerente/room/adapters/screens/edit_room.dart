@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously, avoid_print
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,10 @@ import 'package:geco_mobile/kernel/global/global_data.dart';
 import 'package:geco_mobile/kernel/theme/color_app.dart';
 import 'package:geco_mobile/modules/gerente/room/adapters/screens/room_management.dart';
 import 'package:geco_mobile/modules/gerente/room/entities/room.dart';
+import 'package:geco_mobile/modules/gerente/user/entities/person.dart';
 import 'package:geco_mobile/modules/gerente/user/entities/user.dart';
+import 'package:geco_mobile/modules/hotels/entities/Hotel.dart';
+import 'package:geco_mobile/modules/roles/entities/Rol.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:geco_mobile/kernel/theme/color_app.dart';
 
@@ -33,21 +36,20 @@ class _EditRoomState extends State<EditRoom> {
   late List<Map<String, dynamic>> usersVespertinos = [
     {'id': 0, 'name': 'Seleccione un usuario'}
   ];
+
+  List<Map<String, dynamic>> limpiarTiposList(
+      List<Map<String, dynamic>> listToFilter) {
+    final Map<int, dynamic> filter = {};
+    for (Map<String, dynamic> tp in listToFilter) {
+      filter[tp['id']] = tp;
+    }
+    final List<Map<String, dynamic>> lisFilter =
+        filter.keys.map((key) => filter[key] as Map<String, dynamic>).toList();
+    return lisFilter;
+  }
+
   int userMatutinoSeleccionado = 0;
   int userVespertinoSeleccionado = 0;
-
-  List<Map<String, dynamic>> listaEstados = [
-    {'status': 0, 'text': 'Deshabilitada'},
-    {'status': 1, 'text': 'En venta'},
-    {'status': 2, 'text': 'En uso'},
-    {'status': 3, 'text': 'Sucia'},
-    {'status': 4, 'text': 'Para revisar'},
-    {'status': 5, 'text': 'Con incidencias'},
-  ];
-
-  int estadoActual = 0;
-
-  String estadoSeleccionado = '0';
   Color color1 = ColorsApp().primaryColor;
   Color color2 = ColorsApp().secondaryColor;
   @override
@@ -64,10 +66,17 @@ class _EditRoomState extends State<EditRoom> {
     setState(() {
       color1 = Color(int.parse(color11!));
       color2 = Color(int.parse(color22!));
+      // hasData = true;
     });
   }
 
-  Future<void> fetchData(final idRoom) async {
+  Future<void> fetchData(final idRoom, BuildContext context) async {
+    usersMatutinos = [
+      {'id': 0, 'name': 'Seleccione un usuario'}
+    ];
+    usersVespertinos = [
+      {'id': 0, 'name': 'Seleccione un usuario'}
+    ];
     final dio = Dio();
     const pathRoom = GlobalData.pathRoomUri;
     const pathUsers = GlobalData.pathUserUri;
@@ -76,60 +85,76 @@ class _EditRoomState extends State<EditRoom> {
     try {
       final response = await dio.get('$pathRoom/$idRoom',
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
-        final data = response.data['data'];
-        List<User> users = [];
-        if (data['firstIdUser'] != null) {
-          users.add(User.fromJson(data['firstIdUser']));
+        // success ROOM response
+        final dataRoom = response.data['data'];
+        List<User> listUser = [];
+        if (dataRoom['firstIdUser'] != null) {
+          userMatutinoSeleccionado = dataRoom['firstIdUser']['idUser'];
+          listUser.add(User.fromJson(dataRoom['firstIdUser']));
         }
-        if (data['secondIdUser'] != null) {
-          users.add(User.fromJson(data['secondIdUser']));
+        if (dataRoom['secondIdUser'] != null) {
+          userVespertinoSeleccionado = dataRoom['secondIdUser']['idUser'];
+          listUser.add(User.fromJson(dataRoom['secondIdUser']));
         }
-        print('Aqui la longitud de los users por room: ${users.length}');
-        room = Room.fromJson(response.data['data'], users);
+        room = Room.fromJson(dataRoom, listUser);
 
-        final responseUsers = await dio.get(pathUsers,
+        //peticion para traer a los usuarios --------------------------------
+        final response2 = await dio.get(pathUsers,
             options: Options(headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json",
+              // "Accept": "application/json",
+              // "Content-Type": "application/json",
               'Authorization': 'Bearer $token'
             }));
-        if (responseUsers.data['status'] == 'OK') {
-          List<User> listaUsuarios =
-              User.fromListJson(responseUsers.data['data']);
-          for (var user in listaUsuarios) {
-            if (room.users.isNotEmpty) {
-              if (room.users[0] != null) {
-                userMatutinoSeleccionado = room.users[0].idUser!;
-              }
-              if (room.users[1] != null) {
-                userVespertinoSeleccionado = room.users[1].idUser!;
-              }
-            }
-            String fullname =
-                '${user.idPerson?.name} ${user.idPerson?.surname} ${user.idPerson?.lastname ?? ''} ';
-            final userMap = {'id': user.idUser, 'name': fullname};
+        if (response2.data['status'] == 'OK') {
+          for (var users in response2.data['data']) {
+            User user = User(
+                users['idUser'],
+                users['email'],
+                users['password'],
+                users['username'],
+                users['turn'],
+                users['status'],
+                Person.fromJson(users['idPerson']),
+                Rol.fromJson(users['idRol']),
+                Hotel.fromJson(users['idHotel']));
             if (user.turn == 1) {
-              usersMatutinos.add(userMap);
-            } else if (user.turn == 2) {
-              usersVespertinos.add(userMap);
+              usersMatutinos.add({'id': user.idUser, 'name': '${user.idPerson!.name} ${user.idPerson!.surname} ${user.idPerson?.lastname ?? ''}'});
+              print(usersMatutinos.toString());
             }
-          }
+            if (user.turn == 2) {
+              usersVespertinos.add({'id': user.idUser, 'name': user.username});
+            }
 
-          setState(() {
-            hasData = true;
-          });
+            setState(() {
+              hasData = true;
+            });
+          }
+        } else {
+          print('No hay usuarios');
         }
+      } else {
+        print('Peticion fallida');
       }
     } on DioException catch (e) {
-      print(e);
+       print(e);
       Fluttertoast.showToast(
           msg:
-              "Ha sucedido un error al intentar traer al isuario. Por favor intente mas tarde",
+              "Ha sucedido un error al intentar traer la ahabitación. Por favor intente mas tarde",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      // Navigator.pop(context);
+    } catch (e, f) {
+      Fluttertoast.showToast(
+          msg: 'Error: $e  en $f',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           timeInSecForIosWeb: 1,
@@ -137,9 +162,7 @@ class _EditRoomState extends State<EditRoom> {
           textColor: Colors.white,
           fontSize: 16.0);
       Navigator.pop(context);
-    } catch (e, f) {
-      print('$e   ,   $f');
-      Navigator.pop(context);
+      throw Exception(e);
     }
   }
 
@@ -165,8 +188,8 @@ class _EditRoomState extends State<EditRoom> {
             "idHotel": {"idHotel": idHotel}
           },
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data["status"] == 'CREATED') {
@@ -181,7 +204,7 @@ class _EditRoomState extends State<EditRoom> {
         );
       }
     } on DioException catch (e) {
-      print(e);
+      print('ESTE ES UN ERROR AL EDITAR EL CUARTO DE DIO: $e');
       Fluttertoast.showToast(
           msg:
               "Ha sucedido un error al intentar traer al isuario. Por favor intente mas tarde",
@@ -192,7 +215,8 @@ class _EditRoomState extends State<EditRoom> {
           textColor: Colors.white,
           fontSize: 16.0);
       Navigator.pop(context);
-    } catch (e) {
+    } catch (e, f) {
+      print('ESTE ES ERROR DE EDITAR ROOM : $e   ,   $f');
       Navigator.pop(context);
     }
   }
@@ -204,7 +228,10 @@ class _EditRoomState extends State<EditRoom> {
         (rawArgs as Map<String, dynamic>?) ?? {};
     final idRoom = arguments['idRoom'];
     if (!hasData) {
-      fetchData(idRoom);
+      fetchData(idRoom, context);
+    } else {
+      usersMatutinos = limpiarTiposList(usersMatutinos);
+      usersVespertinos = limpiarTiposList(usersVespertinos);
     }
     return Scaffold(
       appBar: AppBar(
@@ -353,12 +380,15 @@ class _EditRoomState extends State<EditRoom> {
                                   )),
                               onPressed: _isButtonDisabled
                                   ? null
-                                  : () {
-                                      actualizarDatos(
-                                          room,
-                                          userMatutinoSeleccionado,
-                                          userVespertinoSeleccionado);
-                                    },
+                                  : userMatutinoSeleccionado == 0 ||
+                                          userVespertinoSeleccionado == 0
+                                      ? null
+                                      : () {
+                                          actualizarDatos(
+                                              room,
+                                              userMatutinoSeleccionado,
+                                              userVespertinoSeleccionado);
+                                        },
                               child: const Text('Guardar Cambios'),
                             ),
                           ],

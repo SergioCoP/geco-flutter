@@ -43,7 +43,7 @@ class _BottomNavigationTabGerenteState
             icon: Icon(Icons.meeting_room_rounded), label: 'Habitaciones'),
         BottomNavigationBarItem(
             icon: Icon(Icons.room_preferences_outlined),
-            label: 'Tipo de cuarto'),
+            label: 'Tipos de habitación'),
         BottomNavigationBarItem(
             icon: Icon(Icons.person_search_rounded), label: 'Usuarios'),
         BottomNavigationBarItem(

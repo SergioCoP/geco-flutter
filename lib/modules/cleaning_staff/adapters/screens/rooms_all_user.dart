@@ -31,14 +31,8 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
   @override
   void initState() {
     super.initState();
-    // try {
     _listaHabitaciones = obtenerCuartosFetch();
     _listaHabitacionesRespaldo = _listaHabitaciones;
-    // } catch (e) {
-    //   _listaHabitaciones = fetchError();
-    //   _listaHabitacionesRespaldo = _listaHabitaciones;
-    //   throw Exception(e);
-    // }
     setColor();
   }
 
@@ -62,7 +56,7 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
       final response = await dio.get(_path,
           options: Options(headers: {
             "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -85,7 +79,8 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
       print(e.response?.statusMessage);
       print(e.response?.statusCode);
       return habitaciones;
-    } catch (e) {
+    } catch (e, f) {
+      print('ESTE ES UN ERROR DE ALLUSERSROOM: $e  ,  $f');
       return habitaciones;
     }
   }
@@ -134,7 +129,7 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
                 color: Colors.transparent,
                 shape: BoxShape.circle,
               ),
-              child:  Icon(
+              child: Icon(
                 Icons.logout,
                 color: color2,
               ),
@@ -201,21 +196,6 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
-                      child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorsApp.buttonPrimaryColor,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              )),
-                          onPressed: () {
-                            Navigator.of(context)
-                                .pushNamed('/manager/check_rooms/register');
-                          },
-                          child: const Icon(Icons.add)),
                     ),
                   ],
                 ),

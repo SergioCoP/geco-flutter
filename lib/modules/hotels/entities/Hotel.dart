@@ -10,10 +10,10 @@ class Hotel {
   static Hotel fromJson(idHotel) {
     return Hotel(
       idHotel['idHotel'] ?? 0,
-      idHotel['name'],
-      idHotel['primaryColor'],
-      idHotel['secondaryColor'],
-      idHotel['imageUrl'],
+      idHotel['name'] ?? '',
+      idHotel['primaryColor'] ?? '',
+      idHotel['secondaryColor'] ?? '',
+      idHotel['imageUrl'] ?? '',
     );
   }
 

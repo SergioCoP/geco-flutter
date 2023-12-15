@@ -54,8 +54,8 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
       Response response;
       response = await dio.get('$_path/$idRoom',
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
@@ -130,8 +130,8 @@ class _RoomRevisionCheckState extends State<RoomRevisionCheck> {
       response = await dio.put('$_path/status/${room.idRoom}',
           data: data,
           options: Options(headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json",
+            // "Accept": "application/json",
+            // "Content-Type": "application/json",
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
