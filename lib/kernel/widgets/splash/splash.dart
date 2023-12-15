@@ -1,37 +1,48 @@
 import 'package:flutter/material.dart';
 
 class Splash extends StatefulWidget {
-  final String legend; //definir propiedades del constructor
-  const Splash({super.key, required this.legend}); 
+  final String legend; // Definir propiedades del constructor
+  const Splash({Key? key, required this.legend}) : super(key: key);
+
   @override
-  State<Splash> createState() => _SplashState();//_refiere a que la clase es privada
+  State<Splash> createState() =>
+      _SplashState(); // _refiere a que la clase es privada
 }
 
 class _SplashState extends State<Splash> {
   @override
-  void initState(){//se ejecuta despues de cargar el componente o widget
+  void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2),() => Navigator.pushReplacementNamed(context, '/login'));
+    _loadSplash();
   }
- //requires para hacer obligatorio
+
+  Future<void> _loadSplash() async {
+    await Future.delayed(const Duration(seconds: 2));
+    Navigator.pushReplacementNamed(context, '/login');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       body: Center(
         child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,//centrar contenido
-        children: <Widget>[
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
             ClipOval(
               child: Image.asset(
                 'assets/images/geco_logo.png',
                 width: 200,
                 height: 200,
-                fit: BoxFit.cover, // Ajusta la imagen al círculo
+                fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(height: 20), // Espacio entre la imagen y el texto
-            Text(widget.legend),
-          ],),),
+            // const SizedBox(height: 20),
+            // Text(widget.legend),
+            const SizedBox(height: 20),
+            const CircularProgressIndicator(color: Colors.green), // Indicador de carga
+          ],
+        ),
+      ),
     );
   }
 }
