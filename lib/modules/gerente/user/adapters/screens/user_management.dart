@@ -71,7 +71,9 @@ class _UserManagementState extends State<UserManagement> {
         if (response.data['data'] != null) {
           for (var usuario in response.data['data']) {
             if (usuario['idHotel']['idHotel'] == idHotel) {
-              usuariost.add(User.fromJson(usuario));
+              if(usuario['idRol']['idRol'] != 1) {
+                usuariost.add(User.fromJson(usuario));
+              }
             }
           }
         }

@@ -95,7 +95,7 @@ class _CreateIncidenceState extends State<CreateIncidenceGerente> {
       print(responseImage.data);
       if (responseImage.data['status'] == 'OK') {
         await dio.put('${GlobalData.pathRoomUri}/status/${widget.room.idRoom}',
-            data: {'status': 5},
+            data: {'status': 4},
             options: Options(headers: {
               // "Accept": "application/json",
               "Content-Type": "application/json",

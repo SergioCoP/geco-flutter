@@ -86,7 +86,7 @@ class _RoomIncidencesCheckState extends State<RoomIncidencesCheck> {
               Navigator.of(context).popAndPushNamed('/manager');
             } else {
               await dio.put('${GlobalData.pathRoomUri}/status/$idRoom',
-                  data: {"status": 4},
+                  data: {"status": 3},
                   options: Options(headers: {
                     // "Accept": "application/json",
                     "Content-Type": "application/json",

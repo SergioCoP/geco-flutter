@@ -60,6 +60,7 @@ class _RoomsAllUserState extends State<RoomsAllUser> {
             'Authorization': 'Bearer $token'
           }));
       if (response.data['status'] == 'OK') {
+        print(response.data['data']);
         for (var habitacion in response.data['data']) {
           if (habitacion['idHotel']['idHotel'] == idHotel) {
             List<User> users = [];

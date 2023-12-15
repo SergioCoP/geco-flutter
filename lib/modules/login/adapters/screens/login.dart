@@ -140,6 +140,7 @@ class _FormCardState extends State<_FormCard> {
 
   void handleSuccessfulLogin(Response response, SharedPreferences prefs) {
     print('Entre a handlerSuccessFull');
+    print(response.data);
     if (response.data['user']['status'] == 1) {
       // Usuario activo
       String color1 = response.data['user']['idHotel']['primaryColor']
@@ -168,6 +169,7 @@ class _FormCardState extends State<_FormCard> {
           Navigator.pushReplacementNamed(context, '/personal_cleaner');
           break;
         default:
+          Toasts.showWarningToast('No cuentas con acceso para la aplicación.');
           prefs.clear();
           break;
       }
@@ -175,7 +177,6 @@ class _FormCardState extends State<_FormCard> {
       prefs.clear();
       // Usuario no activo
       Toasts.showWarningToast('Usuario no activo');
-      Navigator.popUntil(context, ModalRoute.withName('/login'));
     }
   }
 

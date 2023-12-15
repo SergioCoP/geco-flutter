@@ -34,15 +34,15 @@ class _RoomCardState extends State<RoomCard> {
         estado = 'En uso';
         buttonColor = ColorsApp.estadoEnUso;
         break;
-      case 3: //Estado: sucio
+      case 5: //Estado: sucio
         estado = 'Sucia';
         buttonColor = ColorsApp.estadoSucio;
         break;
-      case 4: //Estado: Lista para ser revisada
+      case 3: //Estado: Lista para ser revisada
         estado = 'Para revisar';
         buttonColor = ColorsApp.estadoSinRevisar;
         break;
-      case 5: //Estado con incidencias
+      case 4: //Estado con incidencias
         estado = 'Con incidencias';
         buttonColor = ColorsApp.estadoConIncidencias;
         break;

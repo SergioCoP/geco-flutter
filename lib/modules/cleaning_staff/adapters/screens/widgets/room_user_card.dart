@@ -40,17 +40,17 @@ class _RoomUserCardState extends State<RoomUserCard> {
         estado = 'En uso';
         buttonColor = ColorsApp.estadoEnUso;
         break;
-      case 3:
-        estado = 'Sucia';
-        buttonColor = ColorsApp.estadoSucio;
-        break;
       case 4:
+        estado = 'Con detalles';
+        buttonColor = ColorsApp.estadoConIncidencias;
+        break;
+      case 3:
         estado = 'Para revisar';
         buttonColor = ColorsApp.estadoSinRevisar;
         break;
       case 5:
-        estado = 'Con incidencias';
-        buttonColor = ColorsApp.estadoConIncidencias;
+        estado = 'Sucia';
+        buttonColor = ColorsApp.estadoEnUso;
         break;
       default:
         estado = 'Sin definir';
@@ -228,7 +228,7 @@ class _RoomUserCardState extends State<RoomUserCard> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            widget.room.status == 3
+            widget.room.status == 5
                 ? Container(
                     decoration: const BoxDecoration(
                       color: Colors.blue,

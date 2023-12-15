@@ -26,14 +26,14 @@ class RoomCardDashboard extends StatelessWidget {
       case 2: //Estado: en uso
         buttonColor = ColorsApp.estadoEnUso;
         break;
-      case 3: //Estado: sucio
-        buttonColor = ColorsApp.estadoSucio;
-        break;
-      case 4: //Estado: Lista para ser revisada
+      case 3: //Estado: Para revision
         buttonColor = ColorsApp.estadoSinRevisar;
         break;
-      case 5: //Estado con incidencias
+      case 4: //Estado: Con incidencias
         buttonColor = ColorsApp.estadoConIncidencias;
+        break;
+      case 5: //Estado sucias
+        buttonColor = ColorsApp.estadoSucio;
         break;
       default:
         buttonColor = Colors.grey;
@@ -93,9 +93,9 @@ Widget botonPorEstado(BuildContext context, int estado, int idRoom, Room room) {
       return const Text('Disponible');
     case 2: //En uso
       return const Text('En uso');
-    case 3: //Sucia
+    case 5: //Sucia
       return const Text('Sucia');
-    case 4: //Para revisar
+    case 3: //Limpiar para revision
       return Row(
         children: [
           Ink(
@@ -145,7 +145,7 @@ Widget botonPorEstado(BuildContext context, int estado, int idRoom, Room room) {
           ),
         ],
       );
-    case 5: //Con incidencias
+    case 4: //Con incidencias
       return Ink(
         decoration: ShapeDecoration(
           color: ColorsApp.estadoConIncidencias,
@@ -185,7 +185,10 @@ Widget botonPorEstado(BuildContext context, int estado, int idRoom, Room room) {
                                 'Esta habitación no cuenta con incidencias.'),
                           );
                         } else {
-                          return IncidenciasDialog(incidencias: snapshot.data!);
+                          return IncidenciasDialog(
+                            incidencias: snapshot.data!,
+                            room: room,
+                          );
                         }
                       });
                 },
@@ -246,8 +249,10 @@ Future<List<Map<String, dynamic>>> fetchIncidencias(idRoom) async {
 // ignore: must_be_immutable
 class IncidenciasDialog extends StatelessWidget {
   final List<Map<String, dynamic>> incidencias;
+  final Room room;
 
-  const IncidenciasDialog({super.key, required this.incidencias});
+  const IncidenciasDialog(
+      {super.key, required this.incidencias, required this.room});
 
   @override
   Widget build(BuildContext context) {
@@ -261,53 +266,79 @@ class IncidenciasDialog extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(7.0),
           child: SizedBox(
-            child: DataTable(
-              columnSpacing: 12.0,
-              columns: const [
-                DataColumn(label: Text('Fecha Incidencia')),
-                DataColumn(label: Text('Fecha Resuelta')),
-                DataColumn(label: Text('Estado')),
-              ],
-              rows: incidencias.map((incidencia) {
-                return DataRow(
-                  cells: [
-                    DataCell(Center(child: Text(incidencia['discoveredOn']))),
-                    DataCell(
-                      Center(
-                        child: Text(incidencia['resolvedOn'] ?? '---'),
-                      ),
-                    ),
-                    DataCell(
-                      Center(
-                        child: incidencia['status'] == 0
-                            ? ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: ColorsApp.infoColor,
-                                    foregroundColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5.0),
-                                    )),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const RoomIncidencesCheck(),
-                                        settings: RouteSettings(arguments: {
-                                          'idIncidence':
-                                              incidencia['idIncidence'],
-                                          'idRoom': incidencia['idRoom']
-                                        })),
-                                  );
-                                },
-                                child: const Text('Ver'),
-                              )
-                            : const Text('Resuelta'),
-                      ),
-                    ),
+            child: Column(
+              children: [
+                DataTable(
+                  columnSpacing: 12.0,
+                  columns: const [
+                    DataColumn(label: Text('Fecha Incidencia')),
+                    DataColumn(label: Text('Fecha Resuelta')),
+                    DataColumn(label: Text('Estado')),
                   ],
-                );
-              }).toList(),
+                  rows: incidencias.map((incidencia) {
+                    return DataRow(
+                      cells: [
+                        DataCell(
+                            Center(child: Text(incidencia['discoveredOn']))),
+                        DataCell(
+                          Center(
+                            child: Text(incidencia['resolvedOn'] ?? '---'),
+                          ),
+                        ),
+                        DataCell(
+                          Center(
+                            child: incidencia['status'] == 0
+                                ? ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: ColorsApp.infoColor,
+                                        foregroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(5.0),
+                                        )),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const RoomIncidencesCheck(),
+                                            settings: RouteSettings(arguments: {
+                                              'idIncidence':
+                                                  incidencia['idIncidence'],
+                                              'idRoom': incidencia['idRoom']
+                                            })),
+                                      );
+                                    },
+                                    child: const Text('Ver'),
+                                  )
+                                : const Text('Resuelta'),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
+                const SizedBox(height: 10.0),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorsApp.estadoConIncidencias,
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      )),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              CreateIncidenceGerente(room: room),
+                          settings: RouteSettings(
+                              arguments: {'idroom': room.idRoom})),
+                    );
+                  },
+                  child: const Text('Registrar incidencia'),
+                )
+              ],
             ),
           ),
         ),

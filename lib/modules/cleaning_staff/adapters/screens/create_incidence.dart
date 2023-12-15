@@ -76,6 +76,9 @@ class _CreateIncidenceState extends State<CreateIncidence> {
       int? idUser = prefs.getInt('idUser');
       List<int> imageBytes = await _image!.readAsBytes();
       String base64Image = base64Encode(imageBytes);
+      print('AQUI ESL IDE DEL USUARIO: $idUser');
+      print('AQUI EL TOKEN DEL USER: $token');
+      print('AQUI EL IDE DEL  ROOM: ${widget.room.idRoom}');
       final payload = {
         "image": base64Image,
         "description": _incidenceDescriptionController.text,
@@ -94,7 +97,7 @@ class _CreateIncidenceState extends State<CreateIncidence> {
       print(responseImage.data);
       if (responseImage.data['status'] == 'OK') {
         await dio.put('${GlobalData.pathRoomUri}/status/${widget.room.idRoom}',
-            data: {'status': 5},
+            data: {'status': 4},
             options: Options(headers: {
               // "Accept": "application/json",
               "Content-Type": "application/json",
@@ -105,7 +108,11 @@ class _CreateIncidenceState extends State<CreateIncidence> {
       }
     } on DioException catch (e) {
       print('ERROR DE DIO: $e');
+      Toasts.showErrorToast(
+          'Ha sucedido un error al intentar registrar la incidencia. Por favor, intente mas tarde.');
     } catch (e, f) {
+      Toasts.showErrorToast(
+          'Ha sucedido un error al intentar registrar la incidencia. Por favor, intente mas tarde.');
       print('ERROR DE CATCH AL CREAR LA INCIDENCIA: $e     , $f');
     }
   }

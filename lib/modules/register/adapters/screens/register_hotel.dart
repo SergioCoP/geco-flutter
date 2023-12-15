@@ -265,19 +265,13 @@ class _RegisterHotelState extends State<RegisterHotel> {
               'user': arguments['username'] ?? '',
               'password': arguments['contrasenaUs'] ?? ''
             });
-        if (response2.data['status'] == 'OK') {
-          prefs.setString('token', response2.data['token']);
-          prefs.setInt('idUser', response2.data['user']['idUser']);
-          prefs.setInt('idHotel', response2.data['user']['idHotel']['idHotel']);
-          prefs.setString(
-              'namehotel', response.data['user']['idHotel']['name']);
-          prefs.setString('primaryColor', color1);
-          prefs.setString('secondaryColor', color2);
-          Navigator.pushReplacementNamed(context, '/manager');
-        } else {
-          //Usuario no activo
-          Navigator.popUntil(context, ModalRoute.withName('/login'));
-        }
+        prefs.setString('token', response2.data['token']);
+        prefs.setInt('idUser', response2.data['user']['idUser']);
+        prefs.setInt('idHotel', response2.data['user']['idHotel']['idHotel']);
+        prefs.setString('namehotel', response2.data['user']['idHotel']['name']);
+        prefs.setString('primaryColor', color1);
+        prefs.setString('secondaryColor', color2);
+        Navigator.pushReplacementNamed(context, '/manager');
       }
     } on DioException catch (e) {
       if (e.response != null) {

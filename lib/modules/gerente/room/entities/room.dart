@@ -20,7 +20,7 @@ class Room {
     return Room(
       habitacion['idRoom'] ?? 0,
       habitacion['roomNumber'] ?? 0,
-      habitacion['name'] ?? 'Habitación-${habitacion['idRoom']}',
+      habitacion['name'] ?? 'NC-${habitacion['idRoom']}',
       TypeRoom.fromJson(habitacion['idTypeRoom'] ?? {}),
       habitacion['status'] ?? 0,
       users,

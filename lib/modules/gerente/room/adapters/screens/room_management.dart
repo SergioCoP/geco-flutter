@@ -92,9 +92,11 @@ class _RoomManagementState extends State<RoomManagement> {
           backgroundColor: Colors.red,
           textColor: Colors.white,
           fontSize: 16.0);
+      List<Room> habitaciones = [];
       return habitaciones;
     } catch (e, f) {
       print('ESTE ERROR DESDE ROOMS: $e ,   $f');
+      List<Room> habitaciones = [];
       return habitaciones;
     }
   }

@@ -92,13 +92,13 @@ class _RoomsDashboardState extends State<RoomsDashboard> {
                     case 2: // esta en uso
                       totalEnUso += 1;
                       break;
-                    case 3: // estan sucias
+                    case 5: // estan sucias
                       totalSucio += 1;
                       break;
-                    case 4: // esta en revision pendiente
+                    case 3: // esta en revision pendiente
                       totalEnRevision += 1;
                       break;
-                    case 5: // tienen incidencias
+                    case 4: // tienen incidencias
                       totalIncidencias += 1;
                       break;
                     case 0: // Estan deshabilitadas
