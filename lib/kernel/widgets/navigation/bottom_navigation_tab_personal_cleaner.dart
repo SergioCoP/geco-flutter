@@ -41,6 +41,8 @@ class _BottomNavigationTabPersonalCleanerState
             icon: Icon(Icons.room_service), label: 'Pendientes'),
         BottomNavigationBarItem(
             icon: Icon(Icons.table_bar), label: 'Habitaciones'),
+        BottomNavigationBarItem(
+            icon: Icon(Icons.person), label: 'Perfil'),
       ],
       currentIndex: widget.selectedIndex,
       selectedItemColor: color1,
